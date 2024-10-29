@@ -33,8 +33,11 @@ public class Member {
     @Column(nullable = false, length = 30)
     private String email;
 
-    @Column(nullable = false, length = 30)
+    @Column(length = 30)
     private String name;
+
+    @Column(length = 20)
+    private String birth;
 
     @Column(name = "fcm_token", columnDefinition = "TEXT")
     private String fcmToken;
