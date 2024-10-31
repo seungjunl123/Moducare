@@ -39,8 +39,9 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
             case "kakao":
                 oAuth2User = loadKakaoUser(userRequest);
                 break;
-            default:
-//                oAuth2User = super.loadUser(userRequest);
+            case "google":
+                oAuth2User = loadGoogleUser(userRequest);
+                break;
         }
 
 
@@ -50,6 +51,24 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
 //
 //        return new CustomOAuth2User(member);  // CustomOAuth2User로 반환
         return oAuth2User;
+    }
+
+    private CustomOAuth2User loadGoogleUser(OAuth2UserRequest userRequest) {
+        // 기본 OAuth2UserService를 사용하여 사용자 정보를 가져옵니다.
+        OAuth2User oAuth2User = super.loadUser(userRequest);
+
+        // 구글의 경우, 사용자 정보는 기본적으로 "email"과 "name"을 포함합니다.
+        String email = (String) oAuth2User.getAttributes().get("email");
+        String name = (String) oAuth2User.getAttributes().get("name");
+
+        // 이름이 없는 경우 기본값 설정
+        String finalName = name == null ? "자라나라머리머리" : name;
+
+        // 사용자 정보 저장 또는 업데이트
+        Member member = saveOrUpdate(email, finalName);
+
+        // CustomOAuth2User 객체 생성 후 반환
+        return new CustomOAuth2User(member);
     }
 
     private CustomOAuth2User loadNaverUser(OAuth2UserRequest userRequest) {
@@ -82,7 +101,7 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         Map<String, Object> additionalInfo = getAdditionalInfo(userRequest, oAuth2User);
         String email = (String) additionalInfo.get("email");
-        String name = (String) additionalInfo.getOrDefault("name", "");
+        String name = (String) additionalInfo.getOrDefault("profile_nickname", "");
         String finalName = name==null? "자라나라머리머리" : name;
 
         Member member = saveOrUpdate(email, finalName);
