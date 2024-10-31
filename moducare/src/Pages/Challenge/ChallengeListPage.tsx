@@ -7,8 +7,9 @@ import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '../../constants/colors';
 import SmallList from './../../Components/Challenge/SmallList';
+import BottomNavBar from '../../Components/Navigation/BottomNavBar';
 
-export default function ChallengeMainPage({navigation}) {
+export default function ChallengeListPage() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainArea}>
@@ -24,10 +25,7 @@ export default function ChallengeMainPage({navigation}) {
             <CustomText label="진행중인 챌린지 목록" size={20} />
           </View>
           <ScrollView>
-            <SmallList
-              isFinish={true}
-              onPress={() => navigation.navigate('challenge_list')}
-            />
+            <SmallList isFinish={true} />
             <SmallList isPhoto={true} />
             <SmallList />
             <SmallList />
