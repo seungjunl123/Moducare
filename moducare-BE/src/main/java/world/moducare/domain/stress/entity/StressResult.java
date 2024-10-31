@@ -2,6 +2,7 @@ package world.moducare.domain.stress.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,7 +14,6 @@ import java.time.ZonedDateTime;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "stress_result")
 public class StressResult {
     @Id
@@ -37,4 +37,10 @@ public class StressResult {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_idx", nullable = false)
     private Member member;
+
+    @Builder
+    public StressResult(int score, Member member) {
+        this.score = score;
+        this.member = member;
+    }
 }
