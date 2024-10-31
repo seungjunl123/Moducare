@@ -2,6 +2,7 @@ package world.moducare.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "member")
@@ -46,7 +48,7 @@ public class Member {
     private String refreshToken;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
+    @Column(name = "type")
     private DeviceType type;
 
     @CreatedDate
@@ -89,4 +91,20 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Favorite> favorites = new ArrayList<>();
+
+    public void updateRefreshAndFcm(String newRefreshToken, String newFcmToken) {
+        this.refreshToken = newRefreshToken;
+        this.fcmToken = newFcmToken;
+        this.type = DeviceType.PHONE;
+    }
+
+    public Member updateRefresh(String newRefreshToken) {
+        this.refreshToken = newRefreshToken;
+        return this;
+    }
+
+    public Member updateName(String name) {
+        this.name = name;
+        return this;
+    }
 }
