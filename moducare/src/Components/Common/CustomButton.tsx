@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
   },
   large: {
-    width: '80%',
+    width: '100%',
     paddingVertical: deviceHeight > 700 ? 15 : 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   text: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '100',
   },
   filledText: {
