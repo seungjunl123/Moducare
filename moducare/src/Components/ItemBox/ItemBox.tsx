@@ -6,7 +6,7 @@ const {width} = Dimensions.get('window');
 export default function ItemBox({children}: {children: React.ReactNode}) {
   return (
     <View style={styles.container}>
-      <View style={styles.box}>{children}</View>
+      <View>{children}</View>
     </View>
   );
 }
@@ -17,9 +17,6 @@ const styles = StyleSheet.create({
     width: width * 0.9,
     borderRadius: 10,
     backgroundColor: '#fff',
-  },
-  box: {
-    marginTop: 10,
-    marginBottom: 10,
+    padding: 15,
   },
 });
