@@ -2,6 +2,7 @@ package world.moducare.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import world.moducare.domain.member.dto.ModifyRequest;
 import world.moducare.domain.member.dto.SocialLoginResponse;
 import world.moducare.domain.member.dto.TokenRequest;
 import world.moducare.domain.member.entity.Member;
@@ -44,4 +45,19 @@ public class MemberService {
         return formattedDate + " / " + violationTypeName;
     }
 
+    public void logout(Member member) {
+        member.logout();
+        memberRepository.save(member);
+    }
+
+    public void deleteMember(Member member) {
+        memberRepository.delete(member);
+    }
+
+    public void modifyMember(Member member, ModifyRequest modifyRequest) {
+        String name = modifyRequest.getName();
+        String birth = modifyRequest.getBirth();
+        member.modify(name, birth);
+        memberRepository.save(member);
+    }
 }
