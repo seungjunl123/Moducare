@@ -1,7 +1,7 @@
 package world.moducare.domain.challenge.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -18,7 +18,6 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "challenge")
 public class Challenge {
     @Id
@@ -52,4 +51,9 @@ public class Challenge {
     @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL)
     private List<MyChallenge> myChallenges = new ArrayList<>();
 
+    @Builder
+    public Challenge(String title, String image) {
+        this.title = title;
+        this.image = image;
+    }
 }
