@@ -1,16 +1,40 @@
 import * as React from 'react';
-import {Pressable, Text, View, StyleSheet, Dimensions} from 'react-native';
+import {Dimensions, View, StyleSheet} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MainPage from '../../Pages/MainPage';
 import DiagnosisPage from '../../Pages/AIDiagnosis/DiagnosisPage';
 import ChallengeMainPage from '../../Pages/Challenge/ChallengeMainPage';
-import ReportPage from '../../Pages/Reports/ReportPage';
+import ReportNav from './ReportNav';
 import EditUserPage from '../../Pages/User/EditUserPage';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Feather from 'react-native-vector-icons/Feather';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 const Tab = createBottomTabNavigator();
-const {width, height} = Dimensions.get('window');
+
+const HEIGHT = Dimensions.get('window').height;
+const WIDTH = Dimensions.get('window').width;
+
+const HomeIcon = ({color, size}: {color: string; size: number}) => (
+  <Octicons name="home" color={color} size={size} />
+);
+
+const ChallengeIcon = ({color, size}: {color: string; size: number}) => (
+  <Feather name="check-circle" color={color} size={size} />
+);
+
+const DiagnosisIcon = () => (
+  <View style={styles.walkButton}>
+    <SimpleLineIcons name="camera" color="white" size={40} />
+  </View>
+);
+
+const ReportIcon = ({color, size}: {color: string; size: number}) => (
+  <Feather name="clipboard" color={color} size={size} />
+);
+
+const MoreIcon = ({color, size}: {color: string; size: number}) => (
+  <Feather name="more-horizontal" color={color} size={size} />
+);
 
 export default function BottomNavBar() {
   return (
@@ -22,7 +46,7 @@ export default function BottomNavBar() {
         tabBarStyle: {
           borderTopWidth: 0,
           shadowColor: 'transparent',
-          height: height * 0.07,
+          height: HEIGHT * 0.07,
           position: 'absolute',
         },
         tabBarLabelStyle: {
@@ -34,18 +58,14 @@ export default function BottomNavBar() {
         name="홈"
         component={MainPage}
         options={{
-          tabBarIcon: ({color, size}) => (
-            <Octicons name="home" color={color} size={size} />
-          ),
+          tabBarIcon: HomeIcon,
         }}
       />
       <Tab.Screen
         name="챌린지"
         component={ChallengeMainPage}
         options={{
-          tabBarIcon: ({color, size}) => (
-            <Feather name="check-circle" color={color} size={size} />
-          ),
+          tabBarIcon: ChallengeIcon,
         }}
       />
       <Tab.Screen
@@ -53,31 +73,21 @@ export default function BottomNavBar() {
         component={DiagnosisPage}
         options={{
           tabBarLabel: () => null,
-          tabBarIcon: ({color, size}) => {
-            return (
-              <View style={styles.walkButton}>
-                <SimpleLineIcons name="camera" color="white" size={40} />
-              </View>
-            );
-          },
+          tabBarIcon: DiagnosisIcon,
         }}
       />
       <Tab.Screen
         name="리포트"
-        component={ReportPage}
+        component={ReportNav}
         options={{
-          tabBarIcon: ({color, size}) => (
-            <Feather name="clipboard" color={color} size={size} />
-          ),
+          tabBarIcon: ReportIcon,
         }}
       />
       <Tab.Screen
         name="더보기"
         component={EditUserPage}
         options={{
-          tabBarIcon: ({color, size}) => (
-            <Feather name="more-horizontal" color={color} size={size} />
-          ),
+          tabBarIcon: MoreIcon,
         }}
       />
     </Tab.Navigator>
@@ -86,10 +96,10 @@ export default function BottomNavBar() {
 
 const styles = StyleSheet.create({
   walkButton: {
-    width: width * 0.17,
-    height: width * 0.17,
-    borderRadius: width * 0.09,
-    top: height * -0.025,
+    width: WIDTH * 0.17,
+    height: WIDTH * 0.17,
+    borderRadius: WIDTH * 0.09,
+    top: HEIGHT * -0.025,
     backgroundColor: '#A28E81',
     justifyContent: 'center',
     alignItems: 'center',
