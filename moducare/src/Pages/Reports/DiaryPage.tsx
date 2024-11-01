@@ -1,4 +1,4 @@
-import {View, StyleSheet, Text, Modal, Pressable, Alert} from 'react-native';
+import {View, StyleSheet, Text, Pressable} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {colors} from '../../constants/colors';
 import MyCarousel from '../../Components/Carousel/CarouselCard';
@@ -100,12 +100,11 @@ export default function DiaryPage() {
         />
       </View>
       <SlideModal visible={modalVisible} onClose={() => setModalVisible(false)}>
-        <View>
-          <Text>Hello World!</Text>
+        <View style={styles.modalContent}>
+          <Pressable onPress={() => ()}>
+            <Text>정수리!</Text>
+          </Pressable>
         </View>
-        <Pressable onPress={() => setModalVisible(false)}>
-          <Text>X</Text>
-        </Pressable>
       </SlideModal>
       <View style={{height: 100}} />
     </View>
@@ -147,5 +146,10 @@ const styles = StyleSheet.create({
     margin: 20,
     flexDirection: 'row',
     alignContent: 'space-around',
+  },
+  modalContent: {
+    flex: 1,
+    alignItems: 'center',
+    margin: 20,
   },
 });

@@ -1,6 +1,7 @@
 import React from 'react';
-import {Modal, StyleSheet, Dimensions, Pressable} from 'react-native';
+import {Modal, StyleSheet, Dimensions, Pressable, View} from 'react-native';
 import GestureRecognizer from 'react-native-swipe-gestures';
+import {colors} from '../../constants/colors';
 
 interface SlideModalProps {
   visible: boolean;
@@ -23,7 +24,10 @@ export default function SlideModal({
         animationType="slide"
         onRequestClose={onClose}>
         <Pressable style={styles.overlay} onPress={onClose}>
-          <Pressable style={styles.modalContainer}>{children}</Pressable>
+          <Pressable style={styles.modalContainer}>
+            <View style={styles.modalHeadLine} />
+            {children}
+          </Pressable>
         </Pressable>
       </Modal>
     </GestureRecognizer>
@@ -40,7 +44,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    padding: 20,
+    padding: 15,
     minHeight: HEIGHT * 0.3,
+  },
+  modalHeadLine: {
+    width: 100,
+    height: 4,
+    backgroundColor: colors.MAIN,
+    borderRadius: 10,
+    alignSelf: 'center',
   },
 });
