@@ -9,7 +9,7 @@ const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
 // 타입 정의 추가
-interface CarouselItem {
+interface MainCarouselItem {
   id: number;
   img: string;
   title: string;
@@ -17,20 +17,33 @@ interface CarouselItem {
   buttonOnPress: () => void;
 }
 
-interface CarouselProps {
-  isMain: boolean;
-  data: CarouselItem[];
+interface DiaryCarouselItem {
+  img: string;
+  regDate: string;
 }
 
-const MyCarousel: React.FC<CarouselProps> = ({data}) => {
-  const renderItem = ({item}: {item: CarouselItem}) => {
-    return (
-      <View style={styles.card}>
-        <CustomText label={item.title} variant="bold" size={24} />
-        <Image source={{uri: item.img}} style={styles.img} />
-        <CustomButton label={item.buttonLabel} onPress={item.buttonOnPress} />
-      </View>
-    );
+interface CarouselProps {
+  isMain: boolean;
+  data: MainCarouselItem[] | DiaryCarouselItem[];
+}
+
+const MyCarousel: React.FC<CarouselProps> = ({isMain, data}) => {
+  const renderItem = ({item}: {item: MainCarouselItem | DiaryCarouselItem}) => {
+    if (isMain) {
+      return (
+        <View style={styles.card}>
+          <CustomText label={item.title} variant="bold" size={24} />
+          <Image source={{uri: item.img}} style={styles.img} />
+          <CustomButton label={item.buttonLabel} onPress={item.buttonOnPress} />
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.diaryCard}>
+          <Image source={{uri: item.img}} style={styles.dairyImg} />
+        </View>
+      );
+    }
   };
 
   return (
@@ -72,6 +85,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     width: '60%',
     height: '60%',
+    resizeMode: 'contain',
+  },
+  diaryCard: {
+    width: WIDTH * 0.6,
+    height: HEIGHT * 0.35,
+  },
+  dairyImg: {
+    width: '100%',
+    height: '100%',
     resizeMode: 'contain',
   },
 });
