@@ -1,5 +1,12 @@
 import * as React from 'react';
-import {View, StyleSheet, Alert, ScrollView, Pressable} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  Text,
+  TextInput,
+} from 'react-native';
 import CustomButtom from '../../Components/Common/CustomButton';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomText from '../../Components/Common/CustomText';
@@ -7,7 +14,7 @@ import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '../../constants/colors';
 import SmallList from './../../Components/Challenge/SmallList';
-import CreateChallengeModal from '../../Components/Challenge/CreateChallengeModal';
+import SlideModal from '../../Components/Common/SlideModal';
 
 export default function ChallengeMainPage({navigation}) {
   const [isModal, setIsModal] = React.useState(false);
@@ -52,7 +59,7 @@ export default function ChallengeMainPage({navigation}) {
             </Pressable>
           </View>
           <View>
-            <SmallList />
+            <SmallList onPress={() => navigation.navigate('challenge_feed')} />
             <SmallList />
             <SmallList />
           </View>
@@ -61,7 +68,21 @@ export default function ChallengeMainPage({navigation}) {
       <View>
         <CustomButtom label="챌린지 생성하기" onPress={handleOpenModal} />
       </View>
-      <CreateChallengeModal isVisible={isModal} hide={handleCloseModal} />
+      <SlideModal visible={isModal} onClose={handleCloseModal}>
+        <View style={styles.ModalView}>
+          <Pressable style={styles.UploadArea}>
+            <SvgIconAtom name="Camera" style={{margin: 'auto'}} />
+            <Text style={styles.UploadText}>
+              챌린지 방 대표이미지를 공유해볼까요?
+            </Text>
+          </Pressable>
+          <TextInput
+            style={styles.InputArea}
+            placeholder="챌린지 제목을 작성해주세요."
+          />
+          <CustomButtom label="챌린지 생성하기" onPress={handleCloseModal} />
+        </View>
+      </SlideModal>
     </SafeAreaView>
   );
 }
@@ -108,5 +129,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     marginBottom: 10,
+  },
+  ModalView: {
+    flex: 1,
+    gap: 20,
+  },
+  UploadArea: {
+    marginTop: 20,
+  },
+  UploadText: {
+    textAlign: 'center',
+    color: colors.MAIN,
+    fontSize: 14,
+    fontFamily: 'Pretendard-Medium',
+  },
+  InputArea: {
+    backgroundColor: colors.WHITE_GRAY,
+    borderRadius: 10,
+    paddingHorizontal: 10,
   },
 });
