@@ -33,11 +33,11 @@ public class ChallengeController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-//    @GetMapping()
-//    @Operation(summary = "전체 챌린지 목록 조회 API")
-//    public ResponseEntity<List<ChallengeResponseDto>> getChallengeList(@AuthenticationPrincipal CustomOAuth2User principal){
-//        Member member = memberService.findById(principal.getId());
-//        List<ChallengeResponseDto> list = challengeService.getList(member);
-//        return ResponseEntity.ok(list);
-//    }
+    @GetMapping()
+    @Operation(summary = "전체 챌린지 목록 조회 API")
+    public ResponseEntity<List<ChallengeResponseDto>> getChallengeList(@AuthenticationPrincipal CustomOAuth2User principal){
+        Member member = memberService.findById(principal.getId());
+        List<ChallengeResponseDto> list = challengeService.getList(member);
+        return ResponseEntity.ok(list);
+    }
 }
