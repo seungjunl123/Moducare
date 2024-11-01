@@ -1,5 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, TextProps} from 'react-native';
+import {colors} from '../../constants/colors';
 // import {colors} from '../../constants/colors';
 
 interface CustomTextProps extends TextProps {
@@ -15,23 +16,22 @@ const CustomText = ({
   ...props
 }: CustomTextProps) => {
   return (
-    <Text style={[styles[`${variant}Text`], {fontSize: size}]} {...props}>
+    <Text
+      style={[styles[`${variant}Text`], {fontSize: size, color: colors.BLACK}]}
+      {...props}>
       {label}
     </Text>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: 10,
-    justifyContent: 'center',
-    marginHorizontal: 'auto',
-  },
   boldText: {
     fontFamily: 'Pretendard-Bold',
+    verticalAlign: 'middle',
   },
   regularText: {
     fontFamily: 'Pretendard-Medium',
+    verticalAlign: 'middle',
   },
 });
 

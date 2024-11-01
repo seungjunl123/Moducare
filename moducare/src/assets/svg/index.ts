@@ -1,0 +1,10 @@
+export {default as AiLoading} from './aiLoading.svg';
+export {default as Bad} from './bad.svg';
+export {default as CareItem} from './careItem.svg';
+export {default as Challenge} from './challenge.svg';
+export {default as Good} from './good.svg';
+export {default as IOT} from './IOT.svg';
+export {default as Phone} from './phone.svg';
+export {default as Finish} from './Finish.svg';
+export {default as Right} from './Right.svg';
+export {default as Basic} from './basicImg.svg';
