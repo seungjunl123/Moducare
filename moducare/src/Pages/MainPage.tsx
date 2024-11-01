@@ -1,14 +1,54 @@
 import * as React from 'react';
-import {View, Text, StyleSheet, ScrollView, Image} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Image,
+  Dimensions,
+  Text,
+  Pressable,
+} from 'react-native';
 import ItemBox from '../Components/ItemBox/ItemBox';
+import MyCarousel from '../Components/Carousel/CarouselCard';
+import CustomText from '../Components/Common/CustomText';
+import CustomButton from '../Components/Common/CustomButton';
+import Entypo from 'react-native-vector-icons/Entypo';
+import {colors} from '../constants/colors';
 
+// 메인 캐러셀은 여기서 저장
+const dummyData = [
+  {
+    id: 1,
+    title: '최신 챌린지',
+    img: 'https://reactnative.dev/img/tiny_logo.png',
+    buttonLabel: '보러가기',
+    buttonOnPress: () => {},
+  },
+  {
+    id: 2,
+    title: '스트레스 진단',
+    img: 'https://reactnative.dev/img/tiny_logo.png',
+    buttonLabel: '보러가기',
+    buttonOnPress: () => {},
+  },
+  {
+    id: 3,
+    title: '최근 본 상품',
+    img: 'https://reactnative.dev/img/tiny_logo.png',
+    buttonLabel: '보러가기',
+    buttonOnPress: () => {},
+  },
+];
+
+const WINDOW_WIDTH = Dimensions.get('window').width;
+const WINDOW_HEIGHT = Dimensions.get('window').height;
 export default function MainPage() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.contentContainer}>
         <View style={styles.headerTextContainer}>
-          <Text style={styles.headerText}>두피 사진을 통하여</Text>
-          <Text style={styles.headerText}>AI가 두피 상태를 확인해 드려요.</Text>
+          <CustomText label="두피 사진을 통하여" size={20} />
+          <CustomText label="AI가 두피 상태를 확인해 드려요." size={20} />
         </View>
         <Image
           style={styles.helloImage}
@@ -16,16 +56,66 @@ export default function MainPage() {
             uri: 'https://reactnative.dev/img/tiny_logo.png',
           }}
         />
-
+        <CustomButton label="AI 자가 진단 시작" size="large" />
         <ItemBox>
-          <Text style={styles.boxHeaderText}>오늘의 날씨 정보</Text>
-
-          <Text>아이템 박스</Text>
+          <CustomText label="오늘의 날씨 정보" size={20} />
+          <View style={styles.weatherBox}>
+            <View style={styles.weatherBoxItem}>
+              <Image
+                source={{
+                  uri: 'https://reactnative.dev/img/tiny_logo.png',
+                }}
+                style={styles.weatherBoxImage}
+              />
+              <CustomText label="16℃" size={20} />
+            </View>
+            <View style={styles.weatherBoxItem}>
+              <Image
+                source={{
+                  uri: 'https://reactnative.dev/img/tiny_logo.png',
+                }}
+                style={styles.weatherBoxImage}
+              />
+              <CustomText label="16℃" size={20} />
+            </View>
+            <View style={styles.weatherBoxItem}>
+              <Image
+                source={{
+                  uri: 'https://reactnative.dev/img/tiny_logo.png',
+                }}
+                style={styles.weatherBoxImage}
+              />
+              <CustomText label="16℃" size={20} />
+            </View>
+          </View>
+          <CustomText
+            label="한 두줄 정도 나올 예정인데 일단 열심히 써서 두줄이 나오게 해봅시다 "
+            size={16}
+            variant="regular"
+          />
         </ItemBox>
         <ItemBox>
-          <Text>아이템 박스</Text>
-          <Text>아이템 박스</Text>
+          <CustomText label="진행중인 챌린지 정보" size={20} />
+          <View style={styles.challengeBox}>
+            <View style={styles.challengeBoxItem}>
+              <Image
+                source={{
+                  uri: 'https://reactnative.dev/img/tiny_logo.png',
+                }}
+                style={styles.challengeBoxImage}
+              />
+              <Text style={styles.challengeBoxText}>챌린지 제목</Text>
+              <Pressable onPress={() => {}} style={styles.challengeBoxArrow}>
+                <Entypo name="forward" size={24} color={colors.MAIN} />
+              </Pressable>
+            </View>
+          </View>
         </ItemBox>
+
+        <View>
+          <MyCarousel data={dummyData} isMain={true} />
+        </View>
+        <View style={{height: WINDOW_HEIGHT * 0.1}} />
       </View>
     </ScrollView>
   );
@@ -42,12 +132,13 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   headerTextContainer: {
+    marginStart: 20,
     alignSelf: 'flex-start',
   },
   headerText: {
     fontSize: 20,
-    fontWeight: 'bold',
     marginStart: 20,
+    fontWeight: 'bold',
   },
   boxHeaderText: {
     fontSize: 20,
@@ -57,5 +148,44 @@ const styles = StyleSheet.create({
   helloImage: {
     width: 200,
     height: 200,
+  },
+  startButton: {
+    width: WINDOW_WIDTH * 0.9,
+  },
+  weatherBoxImage: {
+    width: 70,
+    height: 70,
+  },
+  weatherBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 20,
+  },
+  weatherBoxItem: {
+    alignItems: 'center',
+    gap: 5,
+  },
+  challengeBox: {
+    gap: 10,
+    margin: 10,
+  },
+  challengeBoxItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  challengeBoxImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  challengeBoxText: {
+    marginStart: 10,
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: colors.BLACK,
+  },
+  challengeBoxArrow: {
+    marginLeft: 'auto',
   },
 });
