@@ -33,6 +33,11 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "Not allowed method."),
 
     /*
+     * 409 CONFLICT: 리소스 상태와의 충돌이 발생했을 때
+     */
+    CONFLICT(HttpStatus.CONFLICT, "Conflict with the current state of the resource"),
+
+    /*
      * 500 INTERNAL_SERVER_ERROR: 내부 서버 오류
      */
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Server error.");

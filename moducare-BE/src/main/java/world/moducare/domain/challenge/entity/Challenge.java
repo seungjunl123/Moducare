@@ -56,4 +56,14 @@ public class Challenge {
         this.title = title;
         this.image = image;
     }
+
+    // 인원수 증가
+    public void increaseHeadCount() {
+        this.headCount++;
+    }
+
+    // 인원수 감소
+    public void decreaseHeadCount() {
+        this.headCount--;
+    }
 }
