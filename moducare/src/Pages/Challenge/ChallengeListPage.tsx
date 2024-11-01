@@ -1,5 +1,12 @@
 import * as React from 'react';
-import {View, StyleSheet, Alert, ScrollView} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Alert,
+  ScrollView,
+  Pressable,
+  Text,
+} from 'react-native';
 import CustomButtom from '../../Components/Common/CustomButton';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomText from '../../Components/Common/CustomText';
@@ -8,6 +15,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '../../constants/colors';
 import SmallList from './../../Components/Challenge/SmallList';
 import BottomNavBar from '../../Components/Navigation/BottomNavBar';
+import BigList from '../../Components/Challenge/BigList';
 
 export default function ChallengeListPage() {
   return (
@@ -21,37 +29,19 @@ export default function ChallengeListPage() {
           </View>
         </View>
         <View style={styles.ListArea}>
-          <View style={styles.ListTitle}>
-            <CustomText label="진행중인 챌린지 목록" size={20} />
-          </View>
-          <ScrollView>
-            <SmallList isFinish={true} />
-            <SmallList isPhoto={true} />
-            <SmallList />
-            <SmallList />
-            <SmallList />
-            <SmallList />
-            <SmallList />
-            <SmallList />
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <BigList />
+            <BigList />
+            <BigList />
+            <BigList />
+            <BigList />
+            <BigList />
+            <BigList />
+            <BigList />
+            <BigList />
+            <Text style={styles.getListArea}>더보기</Text>
           </ScrollView>
         </View>
-        <View style={styles.BottomListArea}>
-          <View style={styles.ListTitle}>
-            <CustomText label="챌린지 목록 살펴보기" size={20} />
-            <Entypo name="chevron-right" color={colors.BLACK} size={25} />
-          </View>
-          <View>
-            <SmallList />
-            <SmallList />
-            <SmallList />
-          </View>
-        </View>
-      </View>
-      <View>
-        <CustomButtom
-          label="챌린지 생성하기"
-          onPress={() => Alert.alert('er')}
-        />
       </View>
     </SafeAreaView>
   );
@@ -60,12 +50,11 @@ export default function ChallengeListPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.WHITE,
     paddingHorizontal: 20,
-    paddingVertical: 20,
   },
   mainArea: {
-    flex: 0.9,
+    flex: 1,
   },
   topArea: {
     gap: 10,
@@ -74,30 +63,21 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     marginBottom: 20,
   },
-  listBoxArea: {
-    gap: 10,
-  },
   ListArea: {
-    flex: 0.5,
+    flex: 1,
+    backgroundColor: colors.WHITE,
+    borderColor: colors.WHITE_GRAY,
+    paddingTop: 20,
+    borderWidth: 1,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     elevation: 4,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    marginBottom: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
   },
-  BottomListArea: {
-    flex: 0.4,
-    elevation: 4,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    marginBottom: 20,
-    paddingHorizontal: 20,
+  getListArea: {
     paddingVertical: 20,
-  },
-  ListTitle: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    marginBottom: 10,
+    textAlign: 'center',
+    fontFamily: 'Pretendard-Bold',
+    fontSize: 15,
+    color: colors.DARK_GRAY,
   },
 });

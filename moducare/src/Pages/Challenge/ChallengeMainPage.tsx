@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View, StyleSheet, Alert, ScrollView} from 'react-native';
+import {View, StyleSheet, Alert, ScrollView, Pressable} from 'react-native';
 import CustomButtom from '../../Components/Common/CustomButton';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomText from '../../Components/Common/CustomText';
@@ -7,8 +7,18 @@ import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '../../constants/colors';
 import SmallList from './../../Components/Challenge/SmallList';
+import CreateChallengeModal from '../../Components/Challenge/CreateChallengeModal';
 
 export default function ChallengeMainPage({navigation}) {
+  const [isModal, setIsModal] = React.useState(false);
+
+  const handleOpenModal = () => {
+    setIsModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModal(false);
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainArea}>
@@ -23,11 +33,8 @@ export default function ChallengeMainPage({navigation}) {
           <View style={styles.ListTitle}>
             <CustomText label="진행중인 챌린지 목록" size={20} />
           </View>
-          <ScrollView>
-            <SmallList
-              isFinish={true}
-              onPress={() => navigation.navigate('challenge_list')}
-            />
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <SmallList isFinish={true} />
             <SmallList isPhoto={true} />
             <SmallList />
             <SmallList />
@@ -40,7 +47,9 @@ export default function ChallengeMainPage({navigation}) {
         <View style={styles.BottomListArea}>
           <View style={styles.ListTitle}>
             <CustomText label="챌린지 목록 살펴보기" size={20} />
-            <Entypo name="chevron-right" color={colors.BLACK} size={25} />
+            <Pressable onPress={() => navigation.navigate('challenge_list')}>
+              <Entypo name="chevron-right" color={colors.BLACK} size={25} />
+            </Pressable>
           </View>
           <View>
             <SmallList />
@@ -50,11 +59,9 @@ export default function ChallengeMainPage({navigation}) {
         </View>
       </View>
       <View>
-        <CustomButtom
-          label="챌린지 생성하기"
-          onPress={() => Alert.alert('er')}
-        />
+        <CustomButtom label="챌린지 생성하기" onPress={handleOpenModal} />
       </View>
+      <CreateChallengeModal isVisible={isModal} hide={handleCloseModal} />
     </SafeAreaView>
   );
 }

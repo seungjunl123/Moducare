@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   ListArea: {
-    backgroundColor: '#fff',
     flexDirection: 'row',
     gap: 15,
   },
