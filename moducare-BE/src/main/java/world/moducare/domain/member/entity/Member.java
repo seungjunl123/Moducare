@@ -107,4 +107,14 @@ public class Member {
         this.name = name;
         return this;
     }
+
+    public void logout() {
+        this.refreshToken = null;
+        this.fcmToken = null;
+    }
+
+    public void modify(String name, String birth) {
+        this.name=name;
+        this.birth=birth;
+    }
 }
