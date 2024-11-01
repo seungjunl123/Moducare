@@ -12,6 +12,7 @@ import world.moducare.domain.mychallenge.entity.Status;
 import world.moducare.domain.mychallenge.repository.MyChallengeRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +40,16 @@ public class ChallengeService {
         myChallengeRepository.save(myChallenge);
     }
 
-//    public List<ChallengeResponseDto> getList(Member member) {
-//
-//    }
+    public List<ChallengeResponseDto> getList(Member member) {
+
+        List<Challenge> challenges = challengeRepository.findAvailableChallenges(member.getId());
+
+        return challenges.stream().map(challenge -> ChallengeResponseDto.builder()
+                    .challengeId(challenge.getId())
+                    .challengeImg(challenge.getImage())
+                    .challengeUser(challenge.getHeadCount())
+                    .challengeName(challenge.getTitle())
+                    .build()
+                ).collect(Collectors.toList());
+    }
 }
