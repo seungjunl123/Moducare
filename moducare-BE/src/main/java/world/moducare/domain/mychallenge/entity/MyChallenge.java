@@ -2,6 +2,7 @@ package world.moducare.domain.mychallenge.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -44,4 +45,15 @@ public class MyChallenge {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_idx", nullable = false)
     private Member member;
+
+    @Builder
+    public MyChallenge(Status status, Member member, Challenge challenge) {
+        this.status = status;
+        this.member = member;
+        this.challenge = challenge;
+    }
+
+    public void updateStatus(Status newStatus) {
+        this.status = newStatus;
+    }
 }
