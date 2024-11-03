@@ -1,20 +1,9 @@
 import * as React from 'react';
-import {
-  View,
-  StyleSheet,
-  Alert,
-  ScrollView,
-  Pressable,
-  Text,
-} from 'react-native';
-import CustomButtom from '../../Components/Common/CustomButton';
+import {View, StyleSheet, ScrollView, Text} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomText from '../../Components/Common/CustomText';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
-import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '../../constants/colors';
-import SmallList from './../../Components/Challenge/SmallList';
-import BottomNavBar from '../../Components/Navigation/BottomNavBar';
 import BigList from '../../Components/Challenge/BigList';
 
 export default function ChallengeListPage() {
