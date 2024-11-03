@@ -36,7 +36,7 @@ const MoreIcon = ({color, size}: {color: string; size: number}) => (
   <Feather name="more-horizontal" color={color} size={size} />
 );
 
-export default function BottomNavBar() {
+export default function BottomNavBar({navigation}) {
   return (
     <Tab.Navigator
       initialRouteName="Main"
@@ -75,6 +75,12 @@ export default function BottomNavBar() {
           tabBarLabel: () => null,
           tabBarIcon: DiagnosisIcon,
         }}
+        listeners={() => ({
+          tabPress: e => {
+            e.preventDefault();
+            navigation.navigate('ai');
+          },
+        })}
       />
       <Tab.Screen
         name="리포트"

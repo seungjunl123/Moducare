@@ -11,13 +11,67 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '../constants/colors';
 import ChallengeFeedPage from '../Pages/Challenge/ChallengeFeedPage';
 import ChallengeWritePage from '../Pages/Challenge/ChallengeWritePage';
+import DiagnosisCamera from '../Pages/AIDiagnosis/DiagnosisCamera';
+import Loading from '../Pages/AIDiagnosis/Loading';
+import DiagnosisResult from '../Pages/AIDiagnosis/DiagnosisResult';
+import DiagnosisPick from '../Pages/AIDiagnosis/DiagnosisPick';
 
 const StackNavigate = () => {
   const Stack = createStackNavigator();
   return (
     <Stack.Navigator initialRouteName="bottomNavigate">
       <Stack.Screen name="main" component={MainPage} />
-      <Stack.Screen name="ai" component={DiagnosisPage} />
+      <Stack.Screen
+        name="ai"
+        component={DiagnosisPage}
+        options={{
+          title: 'AI 두피 진단',
+          headerTitleAlign: 'center',
+          headerBackImage: () => (
+            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="aiCamera"
+        component={DiagnosisCamera}
+        options={{
+          title: 'AI 두피 진단',
+          headerTitleAlign: 'center',
+          headerBackImage: () => (
+            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
+          ),
+          animationEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name="aiLoading"
+        component={Loading}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="aiResult"
+        component={DiagnosisResult}
+        options={{
+          title: 'AI 두피 진단',
+          headerTitleAlign: 'center',
+          headerBackImage: () => (
+            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="aiPick"
+        component={DiagnosisPick}
+        options={{
+          title: '',
+          headerBackImage: () => (
+            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
+          ),
+        }}
+      />
       <Stack.Screen name="challenge" component={ChallengeMainPage} />
       <Stack.Screen
         name="challenge_list"
