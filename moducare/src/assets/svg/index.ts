@@ -14,3 +14,7 @@ export {default as MainSVG} from './qqq.svg';
 export {default as Kakao} from './kakao.svg';
 export {default as Naver} from './naver.svg';
 export {default as Camera} from './ImgUpload.svg';
+export {default as Ok} from './OK.svg';
+export {default as List} from './List.svg';
+export {default as Exit} from './Exit.svg';
+export {default as Join} from './Join.svg';
