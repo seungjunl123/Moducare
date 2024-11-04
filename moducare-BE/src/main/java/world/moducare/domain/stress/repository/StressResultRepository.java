@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface StressResultRepository extends JpaRepository<StressResult, Long> {
 
-    @Query(value = "SELECT created_at, score FROM (SELECT * FROM stress_result where member_idx = :memberId ORDER BY created_at DESC LIMIT 7) ORDER BY created_at ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM (SELECT * FROM stress_result where member_idx = :memberId ORDER BY created_at DESC LIMIT 7) as recent ORDER BY created_at ASC", nativeQuery = true)
     List<StressResult> findRecentResults(@Param("memberId") Long memberId);
 }
