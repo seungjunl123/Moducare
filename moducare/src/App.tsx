@@ -6,9 +6,11 @@ import queryClinet from './util/queryClient';
 import messaging from '@react-native-firebase/messaging';
 import pushNoti from './util/pushNoti';
 import notifee, {AuthorizationStatus} from '@notifee/react-native';
+import {Alert} from 'react-native';
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  console.log('[Background Remote Message]', remoteMessage);
+  // console.log('[Background Remote Message]', remoteMessage);
+  pushNoti.dispayNoti(remoteMessage);
 });
 
 export default function App() {
@@ -30,7 +32,7 @@ export default function App() {
     requestNotificationPermission();
     getFcmToken();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log('[Remote Message] ', JSON.stringify(remoteMessage));
+      // console.log('[Remote Message] ', JSON.stringify(remoteMessage));
       pushNoti.dispayNoti(remoteMessage);
     });
     return unsubscribe;
