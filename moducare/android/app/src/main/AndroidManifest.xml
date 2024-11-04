@@ -10,7 +10,7 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       <meta-data  android:name="com.google.firebase.messaging.default_notification_icon"
-                    android:resource="@drawable/ic_test" />
+                    android:resource="@drawable/ic_app" />
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
