@@ -10,7 +10,8 @@ import BottomNavBar from '../Components/Navigation/BottomNavBar';
 import ChallengeListPage from '../Pages/Challenge/ChallengeListPage';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '../constants/colors';
-
+import EditUserPage from '../Pages/User/EditUserPage';
+import StressResultPage from '../Pages/StressCheck/StressResultPage';
 const StackNavigate = () => {
   const Stack = createStackNavigator();
   return (
@@ -30,6 +31,12 @@ const StackNavigate = () => {
       />
       <Stack.Screen name="stress" component={StressDiagnosisPage} />
       <Stack.Screen name="report" component={ReportPage} />
+      <Stack.Screen name="회원 정보 수정" component={EditUserPage} />
+      <Stack.Screen
+        name="StressResultPage"
+        component={StressResultPage}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="bottomNavigate"
         component={BottomNavBar}

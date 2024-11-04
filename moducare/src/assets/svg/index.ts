@@ -8,3 +8,6 @@ export {default as Phone} from './phone.svg';
 export {default as Finish} from './Finish.svg';
 export {default as Right} from './Right.svg';
 export {default as Basic} from './basicImg.svg';
+export {default as Camera} from './ph_camera-plus-light.svg';
+export {default as Checked} from './CheckBox_checked.svg';
+export {default as Unchecked} from './CheckBox_unchecked.svg';

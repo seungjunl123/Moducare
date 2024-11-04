@@ -33,9 +33,7 @@ export default function ReportPage() {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <Image
-          source={{
-            uri: 'https://reactnative.dev/img/tiny_logo.png',
-          }}
+          source={require('../../assets/img/report.png')}
           style={styles.reportIcon}
         />
         <View>

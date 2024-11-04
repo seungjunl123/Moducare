@@ -14,35 +14,41 @@ import CustomText from '../Components/Common/CustomText';
 import CustomButton from '../Components/Common/CustomButton';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '../constants/colors';
-
+import {useNavigation} from '@react-navigation/native';
 // 메인 캐러셀은 여기서 저장
-const dummyData = [
-  {
-    id: 1,
-    title: '최신 챌린지',
-    img: 'https://reactnative.dev/img/tiny_logo.png',
-    buttonLabel: '보러가기',
-    buttonOnPress: () => {},
-  },
-  {
-    id: 2,
-    title: '스트레스 진단',
-    img: 'https://reactnative.dev/img/tiny_logo.png',
-    buttonLabel: '보러가기',
-    buttonOnPress: () => {},
-  },
-  {
-    id: 3,
-    title: '최근 본 상품',
-    img: 'https://reactnative.dev/img/tiny_logo.png',
-    buttonLabel: '보러가기',
-    buttonOnPress: () => {},
-  },
-];
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 export default function MainPage() {
+  const navigation = useNavigation();
+  const dummyData = [
+    {
+      id: 1,
+      title: '최신 챌린지',
+      img: require('../assets/img/Challenge.png'),
+      buttonLabel: '보러가기',
+      buttonOnPress: () => {
+        navigation.navigate('challenge');
+      },
+    },
+    {
+      id: 2,
+      title: '스트레스 진단',
+      img: require('../assets/img/StressCheck.png'),
+      buttonLabel: '보러가기',
+      buttonOnPress: () => {
+        navigation.navigate('stress');
+      },
+    },
+    {
+      id: 3,
+      title: '최근 본 상품',
+      img: 'https://reactnative.dev/img/tiny_logo.png',
+      buttonLabel: '보러가기',
+      buttonOnPress: () => {},
+    },
+  ];
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.contentContainer}>
@@ -52,9 +58,7 @@ export default function MainPage() {
         </View>
         <Image
           style={styles.helloImage}
-          source={{
-            uri: 'https://reactnative.dev/img/tiny_logo.png',
-          }}
+          source={require('../assets/img/MainCharacter.png')}
         />
         <CustomButton label="AI 자가 진단 시작" size="large" />
         <ItemBox>
@@ -105,7 +109,9 @@ export default function MainPage() {
                 style={styles.challengeBoxImage}
               />
               <Text style={styles.challengeBoxText}>챌린지 제목</Text>
-              <Pressable onPress={() => {}} style={styles.challengeBoxArrow}>
+              <Pressable
+                onPress={() => navigation.navigate('challenge_list')}
+                style={styles.challengeBoxArrow}>
                 <Entypo name="forward" size={24} color={colors.MAIN} />
               </Pressable>
             </View>
