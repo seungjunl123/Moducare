@@ -8,10 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import world.moducare.domain.challengefeed.dto.FeedRequestDto;
+import world.moducare.domain.challengefeed.dto.FeedResponseDto;
 import world.moducare.domain.challengefeed.service.ChallengeFeedService;
 import world.moducare.domain.member.entity.Member;
 import world.moducare.domain.member.service.MemberService;
 import world.moducare.global.config.oauth.CustomOAuth2User;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,5 +31,13 @@ public class ChallengeFeedController {
         Member member = memberService.findById(principal.getId());
         feedService.saveFeed(member, challengeId,  requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/{challengeId}")
+    @Operation(summary = "챌린지 인증하기(하루 단위)")
+    public ResponseEntity<List<FeedResponseDto>> getFeed(@AuthenticationPrincipal CustomOAuth2User principal, @PathVariable Long challengeId) {
+        Member member = memberService.findById(principal.getId());
+        List<FeedResponseDto> feedResponseDtoList = feedService.getFeed(member, challengeId);
+        return ResponseEntity.status(HttpStatus.OK).body(feedResponseDtoList);
     }
 }
