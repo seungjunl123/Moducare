@@ -16,7 +16,7 @@ import world.moducare.domain.api.service.PromptService;
 @RestController
 @RequestMapping("/weather")
 @RequiredArgsConstructor
-@Tag(name = "Environment API", description = "환경 데이터 관련 API")
+@Tag(name = "날씨 정보 API 컨트롤러", description = "환경 데이터 관련 API")
 public class WeatherController {
 
     private final EnvironmentalDataService environmentalDataService;

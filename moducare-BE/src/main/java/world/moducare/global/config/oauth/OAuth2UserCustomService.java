@@ -61,11 +61,8 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
         String email = (String) oAuth2User.getAttributes().get("email");
         String name = (String) oAuth2User.getAttributes().get("name");
 
-        // 이름이 없는 경우 기본값 설정
-        String finalName = name == null ? "자라나라머리머리" : name;
-
         // 사용자 정보 저장 또는 업데이트
-        Member member = saveOrUpdate(email, finalName);
+        Member member = saveOrUpdate(email, name);
 
         // CustomOAuth2User 객체 생성 후 반환
         return new CustomOAuth2User(member);
@@ -90,9 +87,8 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
         Map<String, Object> attributes = (Map<String, Object>) responseBody.get("response");
         String email = (String) attributes.get("email");
         String name = (String) attributes.get("name");
-        String finalName = name==null? "자라나라머리머리" : name;
-        
-        Member member = saveOrUpdate(email, finalName);
+
+        Member member = saveOrUpdate(email, name);
 
         return new CustomOAuth2User(member);
     }
@@ -102,9 +98,8 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
         Map<String, Object> additionalInfo = getAdditionalInfo(userRequest, oAuth2User);
         String email = (String) additionalInfo.get("email");
         String name = (String) additionalInfo.getOrDefault("profile_nickname", "");
-        String finalName = name==null? "자라나라머리머리" : name;
 
-        Member member = saveOrUpdate(email, finalName);
+        Member member = saveOrUpdate(email, name);
 
         return new CustomOAuth2User(member);
     }
@@ -134,11 +129,18 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
     }
 
     private Member saveOrUpdate(String email, String name) {
+        String finalName;
+        if (name.equals("")||name==null) {
+            finalName = "자라나라머리머리";
+        } else {
+            finalName = name;
+        }
+
         Member member = memberRepository.findByEmail(email)
-                .map(entity -> entity.updateName(name))
+                .map(entity -> entity.updateName(finalName))
                 .orElseGet(() -> Member.builder()
                         .email(email)
-                        .name(name)
+                        .name(finalName)
                         .build());
 
         memberRepository.save(member);
