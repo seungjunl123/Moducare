@@ -1,6 +1,5 @@
 import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
-import {StyleSheet} from 'react-native';
 import MainPage from '../Pages/MainPage';
 import DiagnosisPage from '../Pages/AIDiagnosis/DiagnosisPage';
 import ChallengeMainPage from '../Pages/Challenge/ChallengeMainPage';
@@ -10,6 +9,13 @@ import BottomNavBar from '../Components/Navigation/BottomNavBar';
 import ChallengeListPage from '../Pages/Challenge/ChallengeListPage';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '../constants/colors';
+import ChallengeFeedPage from '../Pages/Challenge/ChallengeFeedPage';
+import ChallengeWritePage from '../Pages/Challenge/ChallengeWritePage';
+import DiagnosisCamera from '../Pages/AIDiagnosis/DiagnosisCamera';
+import Loading from '../Pages/AIDiagnosis/Loading';
+import DiagnosisResult from '../Pages/AIDiagnosis/DiagnosisResult';
+import DiagnosisPick from '../Pages/AIDiagnosis/DiagnosisPick';
+
 import EditUserPage from '../Pages/User/EditUserPage';
 import StressResultPage from '../Pages/StressCheck/StressResultPage';
 const StackNavigate = () => {
@@ -17,11 +23,82 @@ const StackNavigate = () => {
   return (
     <Stack.Navigator initialRouteName="bottomNavigate">
       <Stack.Screen name="main" component={MainPage} />
-      <Stack.Screen name="ai" component={DiagnosisPage} />
+      <Stack.Screen
+        name="ai"
+        component={DiagnosisPage}
+        options={{
+          title: 'AI 두피 진단',
+          headerTitleAlign: 'center',
+          headerBackImage: () => (
+            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="aiCamera"
+        component={DiagnosisCamera}
+        options={{
+          title: 'AI 두피 진단',
+          headerTitleAlign: 'center',
+          headerBackImage: () => (
+            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
+          ),
+          animationEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name="aiLoading"
+        component={Loading}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="aiResult"
+        component={DiagnosisResult}
+        options={{
+          title: 'AI 두피 진단 결과지',
+          headerTitleAlign: 'center',
+          headerBackImage: () => (
+            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="aiPick"
+        component={DiagnosisPick}
+        options={{
+          title: 'AI 두피 진단 결과지',
+          headerTitleAlign: 'center',
+          headerBackImage: () => (
+            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
+          ),
+        }}
+      />
       <Stack.Screen name="challenge" component={ChallengeMainPage} />
       <Stack.Screen
         name="challenge_list"
         component={ChallengeListPage}
+        options={{
+          title: '',
+          headerBackImage: () => (
+            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="challenge_feed"
+        component={ChallengeFeedPage}
+        options={{
+          title: '',
+          headerBackImage: () => (
+            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="challenge_write"
+        component={ChallengeWritePage}
         options={{
           title: '',
           headerBackImage: () => (
@@ -46,5 +123,4 @@ const StackNavigate = () => {
   );
 };
 
-const styles = StyleSheet.create({});
 export default StackNavigate;

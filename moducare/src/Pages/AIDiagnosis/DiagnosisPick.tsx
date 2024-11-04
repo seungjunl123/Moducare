@@ -1,46 +1,43 @@
-import * as React from 'react';
-import {View, StyleSheet, ScrollView, Text} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import CustomText from '../../Components/Common/CustomText';
-import SvgIconAtom from '../../Components/Common/SvgIconAtom';
+import React from 'react';
+import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {colors} from '../../constants/colors';
-import BigList from '../../Components/Challenge/BigList';
+import SvgIconAtom from '../../Components/Common/SvgIconAtom';
+import CustomText from '../../Components/Common/CustomText';
+import CareItem from '../../Components/AI/CareItem';
 
-export default function ChallengeListPage() {
+const DiagnosisPick = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainArea}>
         <View style={styles.topArea}>
-          <SvgIconAtom name={'Challenge'} />
+          <SvgIconAtom name={'CareItem'} />
           <View>
-            <CustomText size={20} label="챌린지를 통해" />
-            <CustomText size={20} label="모두와 함께 두피를 지켜요." />
+            <CustomText size={20} label="오진영 님의 두피에 맞는" />
+            <CustomText size={20} label="상품들을 소개시켜 드릴게요." />
           </View>
         </View>
         <View style={styles.ListArea}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <BigList />
-            <BigList />
-            <BigList />
-            <BigList />
-            <BigList />
-            <BigList />
-            <BigList />
-            <BigList />
-            <BigList />
-            <Text style={styles.getListArea}>더보기</Text>
+            <CareItem />
+            <CareItem />
+            <CareItem />
+            <CareItem />
+            <CareItem />
+            <CareItem />
+            <CareItem />
+            <CareItem />
           </ScrollView>
         </View>
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.WHITE,
-    paddingHorizontal: 20,
+    padding: 20,
   },
   mainArea: {
     flex: 1,
@@ -70,3 +67,5 @@ const styles = StyleSheet.create({
     color: colors.DARK_GRAY,
   },
 });
+
+export default DiagnosisPick;

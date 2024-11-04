@@ -46,7 +46,6 @@ const ReportIcon = ({color, size}: {color: string; size: number}) => (
 function CustomTabBarButton() {
   const navigation = useNavigation<any>();
   const [moreOpen, setMoreOpen] = useState(false);
-
   return (
     <>
       <TouchableOpacity
@@ -77,7 +76,7 @@ function CustomTabBarButton() {
     </>
   );
 }
-export default function BottomNavBar() {
+export default function BottomNavBar({navigation}) {
   return (
     <Tab.Navigator
       initialRouteName="Main"
@@ -116,6 +115,12 @@ export default function BottomNavBar() {
           tabBarLabel: () => null,
           tabBarIcon: DiagnosisIcon,
         }}
+        listeners={() => ({
+          tabPress: e => {
+            e.preventDefault();
+            navigation.navigate('ai');
+          },
+        })}
       />
       <Tab.Screen
         name="리포트"
