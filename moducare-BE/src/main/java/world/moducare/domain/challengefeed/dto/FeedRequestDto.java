@@ -1,4 +1,4 @@
-package world.moducare.domain.stress.dto;
+package world.moducare.domain.challengefeed.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor
-public class StressResultRequestDto {
-    private int score;
+public class FeedRequestDto {
+
+    private String feedImg;
+
+    private String content;
 }

@@ -2,6 +2,7 @@ package world.moducare.domain.challengefeed.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -52,5 +53,13 @@ public class ChallengeFeed {
 
     @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL)
     private List<Favorite> favorites = new ArrayList<>();
+
+    @Builder
+    public ChallengeFeed(String image, String content, Challenge challenge, Member member) {
+        this.image = image;
+        this.content = content;
+        this.challenge = challenge;
+        this.member = member;
+    }
 
 }
