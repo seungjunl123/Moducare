@@ -5,13 +5,21 @@ import org.springframework.stereotype.Service;
 import world.moducare.domain.challenge.entity.Challenge;
 import world.moducare.domain.challenge.repository.ChallengeRepository;
 import world.moducare.domain.challengefeed.dto.FeedRequestDto;
+import world.moducare.domain.challengefeed.dto.FeedResponseDto;
 import world.moducare.domain.challengefeed.entity.ChallengeFeed;
 import world.moducare.domain.challengefeed.repository.ChallengeFeedRepository;
+import world.moducare.domain.favorite.repository.FavoriteRepository;
 import world.moducare.domain.member.entity.Member;
+import world.moducare.domain.mychallenge.repository.MyChallengeRepository;
 import world.moducare.global.exception.ErrorCode;
 import world.moducare.global.exception.RestApiException;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +27,7 @@ public class ChallengeFeedService {
 
     private final ChallengeFeedRepository challengeFeedRepository;
     private final ChallengeRepository challengeRepository;
+    private final FavoriteRepository favoriteRepository;
 
     public void saveFeed(Member member, Long challengeId, FeedRequestDto requestDto) {
 
@@ -42,5 +51,36 @@ public class ChallengeFeedService {
                 .build();
 
         challengeFeedRepository.save(challengeFeed);
+    }
+
+    public List<FeedResponseDto> getFeed(Member member, Long challengeId) {
+        Challenge challenge = challengeRepository.findById(challengeId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+
+        List<ChallengeFeed> challengeFeed = challengeFeedRepository.findAllByChallengeAndMember(challenge, member).orElseThrow(()->new RestApiException(ErrorCode.NOT_FOUND));
+
+        List<FeedResponseDto> list = new ArrayList<>();
+        for(ChallengeFeed feed : challengeFeed){
+            int likeCnt = favoriteRepository.countByFeed(feed);
+            boolean exists = favoriteRepository.existsByFeedAndMember(feed, member);
+
+            FeedResponseDto responseDto = FeedResponseDto.builder()
+                    .feedImg(feed.getImage())
+                    .feedUserName(feed.getMember().getName())
+                    .content(feed.getContent())
+                    .feedRegDate(formatToCustomString(feed.getCreatedAt()))
+                    .like(likeCnt)
+                    .isLiked(exists?1:0)
+                    .build();
+
+            list.add(responseDto);
+        }
+        return list;
+    }
+
+    // YYYY-MM-DD 오전/오후 HH:MM:SS 형식으로 변환
+    public static String formatToCustomString(ZonedDateTime zonedDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm:ss", Locale.KOREAN);
+        return zonedDateTime.format(formatter);
     }
 }

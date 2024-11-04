@@ -3,9 +3,13 @@ package world.moducare.domain.challengefeed.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import world.moducare.domain.challenge.entity.Challenge;
 import world.moducare.domain.challengefeed.entity.ChallengeFeed;
+import world.moducare.domain.member.entity.Member;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 public interface ChallengeFeedRepository extends JpaRepository<ChallengeFeed, Long> {
 
@@ -16,4 +20,6 @@ public interface ChallengeFeedRepository extends JpaRepository<ChallengeFeed, Lo
     boolean existsByChallengeAndMemberAndToday(@Param("memberId") Long memberId,
                                                @Param("challengeId") Long challengeId,
                                                @Param("today")LocalDate today);
+
+    Optional<List<ChallengeFeed>> findAllByChallengeAndMember(Challenge challenge, Member member);
 }
