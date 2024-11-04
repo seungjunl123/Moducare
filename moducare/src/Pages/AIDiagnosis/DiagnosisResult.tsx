@@ -18,7 +18,9 @@ const DiagnosisResult = ({navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingHorizontal: 5}}>
         <View style={styles.photoArea}>
           <View style={styles.photoDetailArea}>
             <CustomText label="제공된 두피 사진" size={20} />
@@ -59,6 +61,10 @@ const DiagnosisResult = ({navigation}) => {
             onPress={() => navigation.navigate('aiPick')}
           />
           <CustomButtom label="두피 검진 문서 생성" />
+          <CustomButtom
+            label="메인으로"
+            onPress={() => navigation.navigate('bottomNavigate')}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

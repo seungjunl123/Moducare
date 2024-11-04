@@ -55,7 +55,7 @@ const StackNavigate = () => {
         name="aiResult"
         component={DiagnosisResult}
         options={{
-          title: 'AI 두피 진단',
+          title: 'AI 두피 진단 결과지',
           headerTitleAlign: 'center',
           headerBackImage: () => (
             <Entypo name="chevron-left" color={colors.BLACK} size={25} />
@@ -66,7 +66,8 @@ const StackNavigate = () => {
         name="aiPick"
         component={DiagnosisPick}
         options={{
-          title: '',
+          title: 'AI 두피 진단 결과지',
+          headerTitleAlign: 'center',
           headerBackImage: () => (
             <Entypo name="chevron-left" color={colors.BLACK} size={25} />
           ),

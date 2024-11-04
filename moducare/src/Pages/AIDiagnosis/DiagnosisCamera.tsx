@@ -11,7 +11,7 @@ const DiagnosisCamera = ({navigation}) => {
       <View style={styles.cameraArea}></View>
       <Pressable
         style={styles.BtnArea}
-        onPress={() => navigation.navigate('aiLoading')}></Pressable>
+        onPress={() => navigation.navigate('aiResult')}></Pressable>
     </SafeAreaView>
   );
 };
