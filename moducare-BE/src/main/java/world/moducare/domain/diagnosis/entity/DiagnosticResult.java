@@ -28,22 +28,28 @@ public class DiagnosticResult {
     private String advice;
 
     @Column(name = "hairloss", nullable = false)
-    private float hairLoss;
+    private int hairLoss;
 
     @Column(name = "dandruff", nullable = false)
-    private float dandruff;
+    private int dandruff;
 
     @Column(name = "inflammatory", nullable = false)
-    private float inflammatory;
+    private int inflammatory;
 
     @Column(name = "erythema", nullable = false)
-    private float erythema;
+    private int erythema;
 
     @Column(name = "sebum", nullable = false)
-    private float sebum;
+    private int sebum;
 
     @Column(name = "deadskin", nullable = false)
-    private float deadSkin;
+    private int deadSkin;
+
+    @Column(name = "comparison", nullable = false)
+    private int comparison;
+
+    @Column(name = "result", nullable = false, columnDefinition = "TEXT")
+    private String result;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
