@@ -10,7 +10,6 @@ import world.moducare.domain.challengefeed.entity.ChallengeFeed;
 import world.moducare.domain.challengefeed.repository.ChallengeFeedRepository;
 import world.moducare.domain.favorite.repository.FavoriteRepository;
 import world.moducare.domain.member.entity.Member;
-import world.moducare.domain.mychallenge.repository.MyChallengeRepository;
 import world.moducare.global.exception.ErrorCode;
 import world.moducare.global.exception.RestApiException;
 
@@ -57,7 +56,7 @@ public class ChallengeFeedService {
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
-        List<ChallengeFeed> challengeFeed = challengeFeedRepository.findAllByChallengeAndMember(challenge, member).orElseThrow(()->new RestApiException(ErrorCode.NOT_FOUND));
+        List<ChallengeFeed> challengeFeed = challengeFeedRepository.findAllByChallengeAndMemberOrderByCreatedAtDesc(challenge, member).orElseThrow(()->new RestApiException(ErrorCode.NOT_FOUND));
 
         List<FeedResponseDto> list = new ArrayList<>();
         for(ChallengeFeed feed : challengeFeed){

@@ -21,5 +21,5 @@ public interface ChallengeFeedRepository extends JpaRepository<ChallengeFeed, Lo
                                                @Param("challengeId") Long challengeId,
                                                @Param("today")LocalDate today);
 
-    Optional<List<ChallengeFeed>> findAllByChallengeAndMember(Challenge challenge, Member member);
+    Optional<List<ChallengeFeed>> findAllByChallengeAndMemberOrderByCreatedAtDesc(Challenge challenge, Member member);
 }
