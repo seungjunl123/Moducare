@@ -16,7 +16,7 @@ import world.moducare.global.config.oauth.CustomOAuth2User;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/product")
-@Tag(name = "Product API", description = "추천 제품 관련 API")
+@Tag(name = "제품 컨트롤러", description = "추천 제품 관련 API")
 public class ProductController {
 
     private final MemberService memberService;

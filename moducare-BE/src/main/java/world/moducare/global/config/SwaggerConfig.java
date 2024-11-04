@@ -30,10 +30,11 @@ public class SwaggerConfig {
                 )
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .servers(List.of(
-                        new Server().url("http://localhost:8080/api/swagger-ui/index.html").description("Production server")  // HTTPS로 설정
+                        new Server().url("http://localhost:8080/swagger-ui/index.html").description("Local server")
                 ))
                 .info(new Info().title("MODU CARE Swagger")
                         .description("탈모 두피 케어 플랫폼 MODU REST API")
-                        .version("3.0.3")); // OpenAPI 버전 정의
+                        .version("3.0.3"));
     }
+
 }

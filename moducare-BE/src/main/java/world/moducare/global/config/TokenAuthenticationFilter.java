@@ -24,16 +24,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final static String TOKEN_PREFIX = "Bearer ";
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+        return path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.startsWith("/tokens/refresh") || path.startsWith("/health-check");
+    }
 
-//        // 요청 경로 확인
-//        String requestURI = request.getRequestURI();
-//
-//        // 로그인 또는 토큰 재발급 요청이면 토큰 검증을 하지 않음
-//        if (requestURI.equals("/tokens/refresh") || requestURI.equals("/health-check")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         // 요청 헤더의 Authorization 키의 값 조회
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);

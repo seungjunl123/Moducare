@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/diagnosis")
-@Tag(name = "Diagnosis API", description = "AI 진단 관련 API")
+@Tag(name = "AI 진단 컨트롤러", description = "AI 진단 관련 API")
 public class DiagnosticResultController {
 
     private final MemberService memberService;

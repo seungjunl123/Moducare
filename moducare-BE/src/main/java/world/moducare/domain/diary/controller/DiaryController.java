@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/diaries")
-@Tag(name = "Diary API", description = "머리 다이어리 관련 API")
+@Tag(name = "머리 다이어리 컨트롤러", description = "머리 다이어리 관련 API")
 public class DiaryController {
 
     private final MemberService memberService;

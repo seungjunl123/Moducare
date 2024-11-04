@@ -12,5 +12,8 @@ public interface FavoriteRepository extends CrudRepository<Favorite, Long> {
     int countByFeed(ChallengeFeed feed);
 
     boolean existsByFeedAndMember(ChallengeFeed feed, Member member);
+
+    void deleteByMemberAndFeed(Member member, ChallengeFeed feed);
+
 }
 

@@ -19,7 +19,7 @@ import world.moducare.global.config.oauth.CustomOAuth2User;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/members")
-@Tag(name = "Member API", description = "시민 사용자 관련 API")
+@Tag(name = "회원 관리 컨트롤러", description = "사용자 관련 API")
 public class MemberController {
     private final MemberService memberService;
 
