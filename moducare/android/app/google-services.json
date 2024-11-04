@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "608668018853",
+    "project_id": "moducare-1c501",
+    "storage_bucket": "moducare-1c501.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608668018853:android:c1f94224b607816d9b854c",
+        "android_client_info": {
+          "package_name": "com.moducare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZeFTYTTCoEKd8mBiL_h9Upd0JXwdmnHc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
