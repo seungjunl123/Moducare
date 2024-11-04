@@ -1,10 +1,134 @@
 import * as React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
+import {stressQuestion, stressAnswer} from './StressQuestion';
+import {useRef, useState} from 'react';
+import CustomButton from '../../Components/Common/CustomButton';
+import CustomText from '../../Components/Common/CustomText';
+import {colors} from '../../constants/colors';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {useNavigation} from '@react-navigation/native';
+class Stack {
+  private storage: {[key: number]: number};
+  private size: number;
+
+  constructor() {
+    this.storage = {};
+    this.size = 0;
+  }
+  push(item: number) {
+    this.size++;
+    this.storage[this.size] = item;
+  }
+  pop() {
+    const result = this.storage[this.size];
+    delete this.storage[this.size];
+    this.size--;
+    return result;
+  }
+  isEmpty() {
+    return this.size === 0;
+  }
+}
+const WIDTH = Dimensions.get('window').width;
 
 export default function StressDiagnosisPage() {
+  const scoreStack = useRef(new Stack());
+  const navigation = useNavigation();
+  const [isChecked, setIsChecked] = useState(0);
+  const [QuestionIdx, setQuestionIdx] = useState(0);
+  const [stressScore, setStressScore] = useState(0);
+
+  const handleNext = () => {
+    if (isChecked !== 0) {
+      if (QuestionIdx === 14) {
+        navigation.navigate('StressResultPage', {
+          stressScore: stressScore + isChecked, // 마지막 질문의 점수도 포함
+        });
+      } else {
+        setStressScore(stressScore + isChecked);
+        setQuestionIdx(QuestionIdx + 1);
+        setIsChecked(0);
+        scoreStack.current.push(isChecked);
+      }
+    } else {
+      return;
+    }
+  };
+
+  const handlePrev = () => {
+    if (!scoreStack.current.isEmpty()) {
+      let prevScore = scoreStack.current.pop();
+      setStressScore(stressScore - prevScore);
+      setQuestionIdx(QuestionIdx - 1);
+      setIsChecked(0);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text>스트레스 진단입니다용!</Text>
+      <View style={styles.questionContainer}>
+        <CustomText
+          label={stressQuestion[QuestionIdx].question}
+          size={20}
+          variant="regular"
+        />
+      </View>
+
+      <View style={styles.answerContainer}>
+        {stressAnswer.map(answer => (
+          <TouchableOpacity
+            onPress={() => setIsChecked(answer.id)}
+            style={[
+              styles.answer,
+              isChecked === answer.id && styles.selectedAnswerContainer,
+            ]}>
+            <AntDesign
+              name={isChecked === answer.id ? 'checksquare' : 'checksquareo'}
+              size={24}
+              color={isChecked === answer.id ? colors.MAIN : colors.GRAY}
+            />
+            <Text
+              style={[
+                styles.answerText,
+                isChecked === answer.id && styles.selectedAnswerText,
+              ]}>
+              {answer.answer}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={styles.bottomContainer}>
+        <View style={styles.progressContainer}>
+          <View style={styles.progressLine} />
+          <View
+            style={[
+              styles.progressBar,
+              {width: `${(QuestionIdx / 15) * 100}%`},
+            ]}
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          <CustomButton
+            label="이전"
+            size="small"
+            variant="filled"
+            onPress={() => handlePrev()}
+          />
+          <CustomButton
+            label="다음"
+            size="small"
+            variant="filled"
+            onPress={() => handleNext()}
+          />
+        </View>
+      </View>
     </View>
   );
 }
@@ -15,5 +139,58 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    width: '100%',
+  },
+  questionContainer: {
+    paddingVertical: 40,
+  },
+  answerContainer: {
+    gap: 20,
+  },
+  answer: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderWidth: 1,
+    borderRadius: 10,
+    width: WIDTH * 0.8,
+    height: 50,
+    borderColor: colors.GRAY,
+    flexDirection: 'row',
+    gap: 20,
+  },
+  answerText: {
+    fontSize: 16,
+  },
+  selectedAnswerContainer: {
+    borderWidth: 2,
+    borderColor: colors.MAIN,
+  },
+  selectedAnswerText: {
+    color: colors.MAIN,
+    fontWeight: 'bold',
+  },
+  progressContainer: {
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
+  progressLine: {
+    width: WIDTH * 0.9,
+    height: 6,
+    backgroundColor: colors.LIGHT_GRAY,
+    borderRadius: 10,
+  },
+  progressBar: {
+    height: 6,
+    backgroundColor: colors.MAIN,
+    borderRadius: 10,
+    alignSelf: 'flex-start',
+    position: 'absolute',
+  },
+  bottomContainer: {
+    position: 'absolute',
+    bottom: 50,
   },
 });

@@ -1,5 +1,11 @@
 import * as React from 'react';
-import {Dimensions, View, StyleSheet} from 'react-native';
+import {
+  Dimensions,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MainPage from '../../Pages/MainPage';
 import DiagnosisPage from '../../Pages/AIDiagnosis/DiagnosisPage';
@@ -9,6 +15,11 @@ import EditUserPage from '../../Pages/User/EditUserPage';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Feather from 'react-native-vector-icons/Feather';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import {useState} from 'react';
+import SlideModal from '../Common/SlideModal';
+import CustomButton from '../Common/CustomButton';
+import {useNavigation} from '@react-navigation/native';
+
 const Tab = createBottomTabNavigator();
 
 const HEIGHT = Dimensions.get('window').height;
@@ -32,10 +43,39 @@ const ReportIcon = ({color, size}: {color: string; size: number}) => (
   <Feather name="clipboard" color={color} size={size} />
 );
 
-const MoreIcon = ({color, size}: {color: string; size: number}) => (
-  <Feather name="more-horizontal" color={color} size={size} />
-);
-
+function CustomTabBarButton() {
+  const navigation = useNavigation<any>();
+  const [moreOpen, setMoreOpen] = useState(false);
+  return (
+    <>
+      <TouchableOpacity
+        style={styles.moreButton}
+        onPress={() => setMoreOpen(!moreOpen)}>
+        <Feather name="more-horizontal" color="#8E8E8E" size={25} />
+        <Text style={styles.moreText}>더보기</Text>
+      </TouchableOpacity>
+      <SlideModal visible={moreOpen} onClose={() => setMoreOpen(!moreOpen)}>
+        <View style={styles.moreModal}>
+          <CustomButton
+            label="내 정보 수정"
+            onPress={() => {
+              setMoreOpen(false);
+              navigation.navigate('회원 정보 수정');
+            }}
+          />
+          <CustomButton
+            label="로그아웃"
+            onPress={() => console.log('로그아웃')}
+          />
+          <CustomButton
+            label="회원 탈퇴"
+            onPress={() => console.log('회원 탈퇴')}
+          />
+        </View>
+      </SlideModal>
+    </>
+  );
+}
 export default function BottomNavBar({navigation}) {
   return (
     <Tab.Navigator
@@ -93,7 +133,7 @@ export default function BottomNavBar({navigation}) {
         name="더보기"
         component={EditUserPage}
         options={{
-          tabBarIcon: MoreIcon,
+          tabBarButton: () => CustomTabBarButton(),
         }}
       />
     </Tab.Navigator>
@@ -114,5 +154,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 4,
     elevation: 5,
+  },
+  moreButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  moreText: {
+    marginTop: 4,
+    paddingBottom: 8,
+    fontSize: 12,
+  },
+  moreModal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 15,
   },
 });

@@ -7,17 +7,19 @@ interface CustomTextProps extends TextProps {
   label: string;
   variant?: 'bold' | 'regular';
   size?: number;
+  color?: string;
 }
 
 const CustomText = ({
   label,
   variant = 'bold',
   size = 15,
+  color = colors.BLACK,
   ...props
 }: CustomTextProps) => {
   return (
     <Text
-      style={[styles[`${variant}Text`], {fontSize: size, color: colors.BLACK}]}
+      style={[styles[`${variant}Text`], {fontSize: size, color: color}]}
       {...props}>
       {label}
     </Text>

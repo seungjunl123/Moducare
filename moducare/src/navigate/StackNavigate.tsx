@@ -16,6 +16,8 @@ import Loading from '../Pages/AIDiagnosis/Loading';
 import DiagnosisResult from '../Pages/AIDiagnosis/DiagnosisResult';
 import DiagnosisPick from '../Pages/AIDiagnosis/DiagnosisPick';
 
+import EditUserPage from '../Pages/User/EditUserPage';
+import StressResultPage from '../Pages/StressCheck/StressResultPage';
 const StackNavigate = () => {
   const Stack = createStackNavigator();
   return (
@@ -106,6 +108,12 @@ const StackNavigate = () => {
       />
       <Stack.Screen name="stress" component={StressDiagnosisPage} />
       <Stack.Screen name="report" component={ReportPage} />
+      <Stack.Screen name="회원 정보 수정" component={EditUserPage} />
+      <Stack.Screen
+        name="StressResultPage"
+        component={StressResultPage}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="bottomNavigate"
         component={BottomNavBar}

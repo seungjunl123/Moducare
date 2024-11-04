@@ -18,3 +18,5 @@ export {default as Ok} from './OK.svg';
 export {default as List} from './List.svg';
 export {default as Exit} from './Exit.svg';
 export {default as Join} from './Join.svg';
+export {default as Checked} from './CheckBox_checked.svg';
+export {default as Unchecked} from './CheckBox_unchecked.svg';

@@ -32,9 +32,16 @@ const MyCarousel: React.FC<CarouselProps> = ({isMain, data}) => {
     if (isMain) {
       return (
         <View style={styles.card}>
-          <CustomText label={item.title} variant="bold" size={24} />
-          <Image source={{uri: item.img}} style={styles.img} />
-          <CustomButton label={item.buttonLabel} onPress={item.buttonOnPress} />
+          <View style={styles.titleContainer}>
+            <CustomText label={item.title} variant="bold" size={24} />
+          </View>
+          <Image source={item.img} style={styles.img} />
+          <View style={styles.buttonContainer}>
+            <CustomButton
+              label={item.buttonLabel}
+              onPress={item.buttonOnPress}
+            />
+          </View>
         </View>
       );
     } else {
@@ -95,5 +102,11 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
+  },
+  buttonContainer: {
+    width: '80%',
+  },
+  titleContainer: {
+    marginTop: 5,
   },
 });
