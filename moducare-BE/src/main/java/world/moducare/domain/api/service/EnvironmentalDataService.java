@@ -26,7 +26,7 @@ public class EnvironmentalDataService {
     private final UvApiService uvApiService;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    @Cacheable(value = "weatherData", key = "#weatherRequestDto.sido + ':' + #weatherRequestDto.gugn",
+    @Cacheable(value = "weatherData", key = "#weatherRequestDto.sido + ':' + #weatherRequestDto.gugun",
             cacheManager = "redisCacheManager")
     public WeatherResponseDto getEnvironmentalData(WeatherRequestDto weatherRequestDto) {
         String locationKey = buildLocationKey(weatherRequestDto);
@@ -66,7 +66,7 @@ public class EnvironmentalDataService {
     }
 
     private String buildLocationKey(WeatherRequestDto weatherRequestDto) {
-        return weatherRequestDto.getSido() + ":" + weatherRequestDto.getGugn();
+        return weatherRequestDto.getSido() + ":" + weatherRequestDto.getGugun();
     }
 
     // 매시 20분에 캐시 갱신

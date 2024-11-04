@@ -42,7 +42,7 @@ public class UvApiService {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 String sidoName = weatherRequestDto.getSido();
-                String gugunName = weatherRequestDto.getGugn();
+                String gugunName = weatherRequestDto.getGugun();
 
                 String areaNo = getAreaNo(sidoName, gugunName);
 

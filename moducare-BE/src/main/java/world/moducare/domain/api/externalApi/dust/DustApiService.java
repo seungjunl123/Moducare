@@ -61,7 +61,7 @@ public class DustApiService {
                     throw new DataNotFoundException("Empty JSON response");
                 }
 
-                return parseDustValue(response.getBody(), weatherRequestDto.getGugn());
+                return parseDustValue(response.getBody());
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new DataNotFoundException("Data not found for the requested station");
@@ -70,7 +70,7 @@ public class DustApiService {
     }
 
     // stationName이 동일한 item의 pm10Grade1h
-    private int parseDustValue(String responseBody, String targetStationName) {
+    private int parseDustValue(String responseBody) {
         try {
 
             ObjectMapper objectMapper = new ObjectMapper();
@@ -79,17 +79,18 @@ public class DustApiService {
 
             if (itemsNode.isArray()) {
                 for (JsonNode itemNode : itemsNode) {
-                    String stationName = itemNode.path("stationName").asText();
-                    if (stationName.equals(targetStationName)) {
-                        String pm10Grade1hStr = itemNode.path("pm10Grade1h").asText();
-                        if (pm10Grade1hStr == null || pm10Grade1hStr.isEmpty() || pm10Grade1hStr.equals("-")) {
-                            throw new DataNotFoundException("PM10 data not available for the requested station");
-                        } else {
-                            try {
-                                return Integer.parseInt(pm10Grade1hStr);
-                            } catch (NumberFormatException e) {
-                                throw new DataNotFoundException("PM10 data not numbered for the requested station");
-                            }
+//                    String stationName = itemNode.path("stationName").asText();
+//                    if (stationName.equals(targetStationName)) {
+//
+//                    }
+                    String pm10Grade1hStr = itemNode.path("pm10Grade1h").asText();
+                    if (pm10Grade1hStr == null || pm10Grade1hStr.isEmpty() || pm10Grade1hStr.equals("-")) {
+                        throw new DataNotFoundException("PM10 data not available for the requested station");
+                    } else {
+                        try {
+                            return Integer.parseInt(pm10Grade1hStr);
+                        } catch (NumberFormatException e) {
+                            throw new DataNotFoundException("PM10 data not numbered for the requested station");
                         }
                     }
                 }
