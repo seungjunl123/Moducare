@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../constants/colors';
@@ -6,16 +6,44 @@ import CustomText from '../../Components/Common/CustomText';
 import usePermission from '../../hook/usePermission';
 import {useNavigation} from '@react-navigation/native';
 import useAppState from '../../hook/useAppState';
+import {PERMISSIONS, request} from 'react-native-permissions';
+import {Camera, useCameraDevice} from 'react-native-vision-camera';
 
 const DiagnosisCamera = () => {
   const navigation = useNavigation<Navigation>();
   usePermission('CAM');
-  const {isComeback} = useAppState();
-  console.log('isComback', isComeback);
+  // const {isComeback} = useAppState();
+  // useEffect(() => {
+  //   if (isComeback) {
+  //     request(PERMISSIONS.ANDROID.CAMERA);
+  //   }
+  // }, [isComeback]);
+  // console.log('isComback', isComeback);
+
+  const cameraRef = useRef(null);
+  const device = useCameraDevice('back'); // 후면 카메라 사용
+  const frontDevice = useCameraDevice('front');
+  const [cameraType, setCameraType] = useState('back');
+
+  const switchCameraType = async () => {
+    setCameraType(prevCameraType =>
+      prevCameraType === 'back' ? 'front' : 'back',
+    );
+  };
+
+  const currentDevice = cameraType === 'back' ? device : frontDevice;
+
   return (
     <SafeAreaView style={styles.container}>
       <CustomText label="두피가 잘 나오게 사진을 찍어주세요." size={20} />
-      <View style={styles.cameraArea}></View>
+      <View style={styles.cameraArea}>
+        <Camera
+          style={{width: '100%', height: '100%'}}
+          device={currentDevice}
+          isActive={true}
+          focusable={true}
+        />
+      </View>
       <Pressable
         style={styles.BtnArea}
         onPress={() => navigation.navigate('aiResult')}></Pressable>

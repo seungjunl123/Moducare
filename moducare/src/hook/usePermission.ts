@@ -17,7 +17,7 @@ type PerssionOS = {
 
 const androidPermissons: PerssionOS = {
   CAM: PERMISSIONS.ANDROID.CAMERA,
-  PHOTO: PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
+  PHOTO: PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
 };
 
 const usePermission = (type: PermissionType) => {
@@ -48,7 +48,7 @@ const usePermission = (type: PermissionType) => {
             ],
           );
       }
-      await request(permissonOS);
+      // await request(permissonOS);
     })();
   }, []);
 };
