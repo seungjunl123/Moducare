@@ -19,6 +19,13 @@ export default function DiagnosisPage({navigation}) {
   const handlePress = (device: string) => {
     setProduct(device);
   };
+
+  const handleMovePage = () => {
+    product === 'camera'
+      ? navigation.navigate('aiCamera')
+      : navigation.navigate('aiIOT');
+  };
+
   useFocusEffect(
     //하단 nav로 이동했을 때
     React.useCallback(() => {
@@ -70,10 +77,7 @@ export default function DiagnosisPage({navigation}) {
       </View>
       <View style={styles.BtnArea}>
         {product !== '' ? (
-          <CustomButtom
-            label="두피 촬영하기"
-            onPress={() => navigation.navigate('aiCamera')}
-          />
+          <CustomButtom label="두피 촬영하기" onPress={handleMovePage} />
         ) : (
           <CustomButtom
             label="두피 촬영하기"

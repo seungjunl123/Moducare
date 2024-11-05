@@ -1,10 +1,17 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../constants/colors';
 import CustomText from '../../Components/Common/CustomText';
+import usePermission from '../../hook/usePermission';
+import {useNavigation} from '@react-navigation/native';
+import useAppState from '../../hook/useAppState';
 
-const DiagnosisCamera = ({navigation}) => {
+const DiagnosisCamera = () => {
+  const navigation = useNavigation<Navigation>();
+  usePermission('CAM');
+  const {isComeback} = useAppState();
+  console.log('isComback', isComeback);
   return (
     <SafeAreaView style={styles.container}>
       <CustomText label="두피가 잘 나오게 사진을 찍어주세요." size={20} />
