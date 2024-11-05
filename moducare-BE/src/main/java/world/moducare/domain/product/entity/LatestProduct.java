@@ -47,7 +47,7 @@ public class LatestProduct {
     }
 
     // relationships
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_idx", nullable = false)
     private Member member;
 

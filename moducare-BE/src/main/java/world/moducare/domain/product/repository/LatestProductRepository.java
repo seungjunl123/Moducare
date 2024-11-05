@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface LatestProductRepository extends JpaRepository<LatestProduct, Long> {
     Optional<LatestProduct> findByMember(Member member);
+
+    void deleteByMember(Member member);
 }

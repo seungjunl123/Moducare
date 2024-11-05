@@ -23,8 +23,8 @@ public class WeatherController {
     private final GptService gptService;
     private final PromptService promptService;
 
+    @PostMapping(value = "")
     @Operation(summary = "현재 기준 3일동안의 밤 9시 날씨 예보 정보 조회")
-    @GetMapping(value = "", produces = "application/json")
     public ResponseEntity<WeatherResultResponseDto> getWeatherData(@RequestBody WeatherRequestDto weatherRequestDto) throws Exception {
         WeatherResponseDto weatherResponseDto = environmentalDataService.getEnvironmentalData(weatherRequestDto);
         System.out.println("result: " + weatherResponseDto.getAirCondition()+" : "+weatherResponseDto.getTemperature()+" : "+weatherResponseDto.getUvCondition());

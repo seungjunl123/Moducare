@@ -34,7 +34,7 @@ public class DiaryController {
     }
 
     @GetMapping("/top")
-    @Operation(summary = "최근 본 상품 저장", description = "사용자가 가장 최근에 본 추천 제품을 저장")
+    @Operation(summary = "정수리 다이어리 조회", description = "사용자 머리 다이어리 중 정수리 다이어리를 조회")
     public ResponseEntity<List<DiaryResponseDto>> getTopDiary(@AuthenticationPrincipal CustomOAuth2User principal) {
         Member member = memberService.findById(principal.getId());
         List<DiaryResponseDto> diaryResponseDtoList = diaryService.findDiary(member, "top");
@@ -42,7 +42,7 @@ public class DiaryController {
     }
 
     @GetMapping("/line")
-    @Operation(summary = "최근 본 상품 저장", description = "사용자가 가장 최근에 본 추천 제품을 저장")
+    @Operation(summary = "이마라인 다이어리 조회", description = "사용자 머리 다이어리 중 이마라인 다이어리를 조회")
     public ResponseEntity<List<DiaryResponseDto>> getLineDiary(@AuthenticationPrincipal CustomOAuth2User principal) {
         Member member = memberService.findById(principal.getId());
         List<DiaryResponseDto> diaryResponseDtoList = diaryService.findDiary(member, "line");

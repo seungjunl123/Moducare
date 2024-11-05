@@ -2,11 +2,13 @@ package world.moducare.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import world.moducare.domain.member.dto.ModifyRequest;
 import world.moducare.domain.member.dto.SocialLoginResponse;
 import world.moducare.domain.member.dto.TokenRequest;
 import world.moducare.domain.member.entity.Member;
 import world.moducare.domain.member.repository.MemberRepository;
+import world.moducare.domain.product.repository.LatestProductRepository;
 import world.moducare.global.exception.ErrorCode;
 import world.moducare.global.exception.RestApiException;
 
@@ -17,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final LatestProductRepository latestProductRepository;
 
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email)
@@ -50,6 +53,7 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    @Transactional
     public void deleteMember(Member member) {
         memberRepository.delete(member);
     }

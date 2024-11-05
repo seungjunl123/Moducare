@@ -31,7 +31,7 @@ public class ProductController {
     }
 
     @GetMapping("/latest")
-    @Operation(summary = "최근 본 상품 저장", description = "사용자가 가장 최근에 본 추천 제품을 저장")
+    @Operation(summary = "최근 본 상품 조회", description = "사용자가 가장 최근에 본 추천 제품을 조회")
     public ResponseEntity<LatestProductDto> getLatestProduct(@AuthenticationPrincipal CustomOAuth2User principal) {
         Member member = memberService.findById(principal.getId());
         LatestProductDto latestProductDto = productService.findLatestProduct(member);
