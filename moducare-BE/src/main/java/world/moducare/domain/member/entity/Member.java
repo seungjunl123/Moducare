@@ -13,6 +13,7 @@ import world.moducare.domain.diary.entity.HeadDiary;
 import world.moducare.domain.favorite.entity.Favorite;
 import world.moducare.domain.mychallenge.entity.MyChallenge;
 import world.moducare.domain.notification.entity.Notification;
+import world.moducare.domain.product.entity.LatestProduct;
 import world.moducare.domain.stress.entity.StressResult;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -71,6 +72,9 @@ public class Member {
     }
 
     // relationships
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private LatestProduct latestProduct = new LatestProduct();
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<StressResult> stressResults = new ArrayList<>();
 

@@ -53,6 +53,7 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
         // static 하위 경로에 있는 리소스와 h2의 데이터를 확인하는데 사용하는 h2-console 하위 url 대상으로 ignore
     }
 
+
     // 특정 HTTP 요청에 대한 웹 기반 보안 구성
     // 인증/인가 및 로그인, 로그아웃 관련 설정 가능
     @Bean
@@ -77,7 +78,7 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
                         new AntPathRequestMatcher("/members/login"),
                         new AntPathRequestMatcher("/tokens/refresh"),
                         new AntPathRequestMatcher("/members/logout"),
-                        new AntPathRequestMatcher("/swagger-ui/**"),  // Swagger UI 경로 추가
+                        new AntPathRequestMatcher("/swagger-ui.html"),  // Swagger UI 경로 추가
                         new AntPathRequestMatcher("/v3/api-docs/**")  // OpenAPI 문서 경로 추가
                 ).permitAll() // 누구나 접근이 가능하게 (/login, /police-login로 요청이 오면 인증,인가 없이도 접근 가능)
                 .requestMatchers("/api/**").authenticated()

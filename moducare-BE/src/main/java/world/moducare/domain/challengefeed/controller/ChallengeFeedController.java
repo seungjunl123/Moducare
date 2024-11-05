@@ -34,7 +34,7 @@ public class ChallengeFeedController {
     }
 
     @GetMapping("/{challengeId}")
-    @Operation(summary = "챌린지 인증하기(하루 단위)")
+    @Operation(summary = "챌린지 피드 조회")
     public ResponseEntity<List<FeedResponseDto>> getFeed(@AuthenticationPrincipal CustomOAuth2User principal, @PathVariable Long challengeId) {
         Member member = memberService.findById(principal.getId());
         List<FeedResponseDto> feedResponseDtoList = feedService.getFeed(member, challengeId);

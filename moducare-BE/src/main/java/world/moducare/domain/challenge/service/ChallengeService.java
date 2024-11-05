@@ -43,6 +43,7 @@ public class ChallengeService {
     public List<ChallengeResponseDto> getList(Member member) {
 
         List<Challenge> challenges = challengeRepository.findAvailableChallenges(member.getId());
+        System.out.println(challenges.size());
 
         return challenges.stream().map(challenge -> ChallengeResponseDto.builder()
                     .challengeId(challenge.getId())
