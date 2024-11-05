@@ -4,14 +4,16 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import SvgIconAtom from '../Components/Common/SvgIconAtom';
 import {colors} from '../constants/colors';
 
-const LoginPage = () => {
+const LoginPage = ({navigation}) => {
   return (
     <>
       <SafeAreaView style={styles.container}>
         <View style={styles.mainArea}>
           <SvgIconAtom style={{margin: 'auto'}} name="Logo" />
           <View style={styles.btnArea}>
-            <Pressable style={[styles.btn, styles.kakao]}>
+            <Pressable
+              style={[styles.btn, styles.kakao]}
+              onPress={() => navigation.navigate('kakaoLogin')}>
               <SvgIconAtom name="Kakao" />
               <Text style={styles.kakaoText}>카카오 로그인</Text>
               <View />
