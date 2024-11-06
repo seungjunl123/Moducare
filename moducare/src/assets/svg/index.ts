@@ -20,3 +20,6 @@ export {default as Exit} from './Exit.svg';
 export {default as Join} from './Join.svg';
 export {default as Checked} from './CheckBox_checked.svg';
 export {default as Unchecked} from './CheckBox_unchecked.svg';
+export {default as Main_temparature} from './Main_temparature.svg';
+export {default as Main_air} from './Main_air.svg';
+export {default as Main_UV} from './Main_UV.svg';

@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, StyleSheet, Image} from 'react-native';
+
+import {View, StyleSheet, Image, ImageSourcePropType} from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 import {Dimensions} from 'react-native';
 import CustomButton from '../Common/CustomButton';
@@ -11,7 +12,7 @@ const HEIGHT = Dimensions.get('window').height;
 // 타입 정의 추가
 interface MainCarouselItem {
   id: number;
-  img: string;
+  img: ImageSourcePropType;
   title: string;
   buttonLabel: string;
   buttonOnPress: () => void;
@@ -30,24 +31,30 @@ interface CarouselProps {
 const MyCarousel: React.FC<CarouselProps> = ({isMain, data}) => {
   const renderItem = ({item}: {item: MainCarouselItem | DiaryCarouselItem}) => {
     if (isMain) {
+      const mainItem = item as MainCarouselItem;
       return (
         <View style={styles.card}>
           <View style={styles.titleContainer}>
-            <CustomText label={item.title} variant="bold" size={24} />
+            <CustomText label={mainItem.title} variant="bold" size={24} />
           </View>
-          <Image source={item.img} style={styles.img} />
+          <Image
+            source={mainItem.img}
+            style={styles.img}
+            defaultSource={require('../../assets/img/Blue.png')}
+          />
           <View style={styles.buttonContainer}>
             <CustomButton
-              label={item.buttonLabel}
-              onPress={item.buttonOnPress}
+              label={mainItem.buttonLabel}
+              onPress={mainItem.buttonOnPress}
             />
           </View>
         </View>
       );
     } else {
+      const diaryItem = item as DiaryCarouselItem;
       return (
         <View style={styles.diaryCard}>
-          <Image source={{uri: item.img}} style={styles.dairyImg} />
+          <Image source={{uri: diaryItem.img}} style={styles.dairyImg} />
         </View>
       );
     }

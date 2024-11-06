@@ -1,33 +1,38 @@
-import {View, Image, StyleSheet, ScrollView} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Image,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import React from 'react';
 import {colors} from '../../constants/colors';
 import CustomText from '../../Components/Common/CustomText';
 import ItemBox from '../../Components/ItemBox/ItemBox';
 
-interface Report {
-  id: number;
-  date: string;
-  result: string;
-}
-const reports: Report[] = [
+import {useReportQuery, ReportItem} from '../../quires/useReportsQuery';
+import {useNavigation} from '@react-navigation/native';
+const reports: ReportItem[] = [
   {
-    id: 1,
+    idx: 1,
     date: '2024-01-01 오후 10:12',
-    result: '정상',
+    diagnosis: '정상',
   },
   {
-    id: 2,
+    idx: 2,
     date: '2024-02-01 오후 10:12',
-    result: '탈모 ㅋㅋ',
+    diagnosis: '탈모 ㅋㅋ',
   },
 ];
 
 export default function ReportPage() {
-  const [reportList, setReportList] = useState<Report[]>([]);
+  const navigation = useNavigation();
+  const {data: reportData, isLoading: reportLoading} = useReportQuery();
 
-  useEffect(() => {
-    setReportList(reports);
-  }, []);
+  if (reportLoading) {
+    return <CustomText label="로딩중~" />;
+  }
+  const reportList = reportData || reports;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -42,17 +47,22 @@ export default function ReportPage() {
         </View>
       </View>
       <View style={styles.reportList}>
-        {reportList.map(report => (
-          <ItemBox style={styles.reportCard}>
-            <View style={styles.reportCardItem}>
-              <CustomText label="진단 일시" variant="regular" />
-              <CustomText label={report.date} variant="regular" />
-            </View>
-            <View style={styles.reportCardItem}>
-              <CustomText label="진단 결과" variant="regular" />
-              <CustomText label={report.result} variant="regular" />
-            </View>
-          </ItemBox>
+        {reportList.map((report: ReportItem) => (
+          <TouchableOpacity
+            onPress={() => {
+              // navigation.navigate('reportDetail', {id: report.idx});
+            }}>
+            <ItemBox style={styles.reportCard}>
+              <View style={styles.reportCardItem}>
+                <CustomText label="진단 일시" variant="regular" />
+                <CustomText label={report.date} variant="regular" />
+              </View>
+              <View style={styles.reportCardItem}>
+                <CustomText label="진단 결과" variant="regular" />
+                <CustomText label={report.diagnosis} variant="regular" />
+              </View>
+            </ItemBox>
+          </TouchableOpacity>
         ))}
       </View>
     </ScrollView>

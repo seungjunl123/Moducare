@@ -12,40 +12,25 @@ import CustomButton from '../../Components/Common/CustomButton';
 import CustomText from '../../Components/Common/CustomText';
 import {colors} from '../../constants/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useNavigation} from '@react-navigation/native';
-class Stack {
-  private storage: {[key: number]: number};
-  private size: number;
 
-  constructor() {
-    this.storage = {};
-    this.size = 0;
-  }
-  push(item: number) {
-    this.size++;
-    this.storage[this.size] = item;
-  }
-  pop() {
-    const result = this.storage[this.size];
-    delete this.storage[this.size];
-    this.size--;
-    return result;
-  }
-  isEmpty() {
-    return this.size === 0;
-  }
-}
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {Stack} from '../../util/stack';
 const WIDTH = Dimensions.get('window').width;
+
+type RootStackParamList = {
+  StressResultPage: {stressScore: number};
+};
 
 export default function StressDiagnosisPage() {
   const scoreStack = useRef(new Stack());
-  const navigation = useNavigation();
-  const [isChecked, setIsChecked] = useState(0);
+
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const [isChecked, setIsChecked] = useState(-1);
   const [QuestionIdx, setQuestionIdx] = useState(0);
   const [stressScore, setStressScore] = useState(0);
 
   const handleNext = () => {
-    if (isChecked !== 0) {
+    if (isChecked !== -1) {
       if (QuestionIdx === 14) {
         navigation.navigate('StressResultPage', {
           stressScore: stressScore + isChecked, // 마지막 질문의 점수도 포함
@@ -53,7 +38,7 @@ export default function StressDiagnosisPage() {
       } else {
         setStressScore(stressScore + isChecked);
         setQuestionIdx(QuestionIdx + 1);
-        setIsChecked(0);
+        setIsChecked(-1);
         scoreStack.current.push(isChecked);
       }
     } else {
@@ -66,7 +51,7 @@ export default function StressDiagnosisPage() {
       let prevScore = scoreStack.current.pop();
       setStressScore(stressScore - prevScore);
       setQuestionIdx(QuestionIdx - 1);
-      setIsChecked(0);
+      setIsChecked(-1);
     }
   };
 

@@ -8,11 +8,7 @@ import CustomButton from '../../Components/Common/CustomButton';
 import CustomText from '../../Components/Common/CustomText';
 import {LineChart} from 'react-native-gifted-charts';
 
-type RootStackParamList = {
-  DiagnosisDonePage: {
-    stressScore: number;
-  };
-};
+import {RootStackParamList} from '../../navigate/StackNavigate';
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
 
@@ -58,7 +54,8 @@ export default function StressResultPage() {
   const [isDone, setIsDone] = useState(false);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const {stressScore} = navigation.getState().routes[2].params;
+
+  const stressScore = navigation.getState().routes[2].params?.stressScore || 0;
   const getStressImage = (score: number) => {
     if (score >= 20) {
       return require('../../assets/img/Red.png');

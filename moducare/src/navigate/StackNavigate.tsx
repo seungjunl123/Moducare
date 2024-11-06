@@ -19,6 +19,16 @@ import DiagnosisPick from '../Pages/AIDiagnosis/DiagnosisPick';
 import EditUserPage from '../Pages/User/EditUserPage';
 import StressResultPage from '../Pages/StressCheck/StressResultPage';
 import DiagnosisIOT from '../Pages/AIDiagnosis/DiagnosisIOT';
+
+type RootStackParamList = {
+  StressResultPage: {stressScore: number};
+  bottomNavigate: undefined;
+};
+
+const PrevIcon = () => (
+  <Entypo name="chevron-left" color={colors.BLACK} size={25} />
+);
+
 const StackNavigate = () => {
   const Stack = createStackNavigator();
   return (
@@ -30,9 +40,7 @@ const StackNavigate = () => {
         options={{
           title: 'AI 두피 진단',
           headerTitleAlign: 'center',
-          headerBackImage: () => (
-            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
-          ),
+          headerBackImage: () => <PrevIcon />,
         }}
       />
       <Stack.Screen
@@ -41,9 +49,7 @@ const StackNavigate = () => {
         options={{
           title: 'AI 두피 진단 (IOT)',
           headerTitleAlign: 'center',
-          headerBackImage: () => (
-            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
-          ),
+          headerBackImage: () => <PrevIcon />,
           animationEnabled: false,
         }}
       />
@@ -53,9 +59,7 @@ const StackNavigate = () => {
         options={{
           title: 'AI 두피 진단 (Phone)',
           headerTitleAlign: 'center',
-          headerBackImage: () => (
-            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
-          ),
+          headerBackImage: () => <PrevIcon />,
           animationEnabled: false,
         }}
       />
@@ -72,9 +76,7 @@ const StackNavigate = () => {
         options={{
           title: 'AI 두피 진단 결과지',
           headerTitleAlign: 'center',
-          headerBackImage: () => (
-            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
-          ),
+          headerBackImage: () => <PrevIcon />,
         }}
       />
       <Stack.Screen
@@ -83,9 +85,7 @@ const StackNavigate = () => {
         options={{
           title: 'AI 두피 진단 결과지',
           headerTitleAlign: 'center',
-          headerBackImage: () => (
-            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
-          ),
+          headerBackImage: () => <PrevIcon />,
         }}
       />
       <Stack.Screen name="challenge" component={ChallengeMainPage} />
@@ -94,9 +94,7 @@ const StackNavigate = () => {
         component={ChallengeListPage}
         options={{
           title: '',
-          headerBackImage: () => (
-            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
-          ),
+          headerBackImage: () => <PrevIcon />,
         }}
       />
       <Stack.Screen
@@ -104,9 +102,7 @@ const StackNavigate = () => {
         component={ChallengeFeedPage}
         options={{
           title: '',
-          headerBackImage: () => (
-            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
-          ),
+          headerBackImage: () => <PrevIcon />,
         }}
       />
       <Stack.Screen
@@ -114,12 +110,9 @@ const StackNavigate = () => {
         component={ChallengeWritePage}
         options={{
           title: '',
-          headerBackImage: () => (
-            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
-          ),
+          headerBackImage: () => <PrevIcon />,
         }}
       />
-      <Stack.Screen name="stress" component={StressDiagnosisPage} />
       <Stack.Screen name="report" component={ReportPage} />
       <Stack.Screen name="회원 정보 수정" component={EditUserPage} />
       <Stack.Screen
@@ -132,8 +125,20 @@ const StackNavigate = () => {
         component={BottomNavBar}
         options={{headerShown: false, animationEnabled: false}}
       />
+
+      <Stack.Screen
+        name="stress"
+        component={StressDiagnosisPage}
+        options={{
+          title: '스트레스 자가 진단',
+          headerTitleAlign: 'center',
+          headerBackImage: () => <PrevIcon />,
+        }}
+      />
     </Stack.Navigator>
   );
 };
 
 export default StackNavigate;
+
+export type {RootStackParamList};

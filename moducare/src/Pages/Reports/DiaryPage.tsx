@@ -1,13 +1,12 @@
 import {
   View,
   StyleSheet,
-  Text,
   Pressable,
   Dimensions,
   Alert,
   Image,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../constants/colors';
 import MyCarousel from '../../Components/Carousel/CarouselCard';
@@ -21,6 +20,12 @@ import {
   ImageLibraryOptions,
   ImagePickerResponse,
 } from 'react-native-image-picker';
+
+import {
+  useLineDiaryQuery,
+  usePostHairImgQuery,
+  useTopDiaryQuery,
+} from '../../quires/useReportsQuery';
 
 interface DiaryCarouselItem {
   img: string;
@@ -86,8 +91,11 @@ const options: Action = {
 };
 
 export default function DiaryPage() {
+  const {data: lineDiaryData, isLoading: lineDiaryLoading} =
+    useLineDiaryQuery();
+  const {data: topDiaryData, isLoading: topDiaryLoading} = useTopDiaryQuery();
+  const {mutate: postHairImg} = usePostHairImgQuery();
   const [modalVisible, setModalVisible] = useState(false);
-  const [imgList, setImgList] = useState<DiaryCarouselItem[]>([]);
   const [isLine, setIsLine] = useState(false);
   const [image, setImage] = useState<ImagePickerResponse>();
   const [imgType, setImgType] = useState<string>('');
@@ -100,6 +108,13 @@ export default function DiaryPage() {
     }
   };
 
+  const lineList: DiaryCarouselItem[] = lineDiaryData || lineImageList; // fallback으로 더미 데이터 사용
+  const topList: DiaryCarouselItem[] = topDiaryData || topImageList;
+
+  if (lineDiaryLoading || topDiaryLoading) {
+    return <CustomText label="로딩중~" />;
+  }
+
   const uploadImage = async () => {
     if (!image?.assets) {
       Alert.alert('사진을 선택해주세요');
@@ -107,44 +122,27 @@ export default function DiaryPage() {
     }
     Alert.alert('업로드');
 
-    // formData 생성
-    // const formData = new FormData();
-    // formData.append('file', {
-    //   uri: image?.assets[0].uri,
-    //   name: image?.assets[0].fileName,
-    //   type: image?.assets[0].type,
-    // });
-    // formData.append('type', imgType);
-
-    // // 서버에 업로드
-    // // const response = await fetch(URL, {
-    // const response = await fetch(URL, {
-    //   method: 'POST',
-    //   body: formData,
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data',
-    //   },
-    // });
-
+    const formData = new FormData();
+    formData.append('file', {
+      uri: image?.assets?.[0].uri,
+      name: image?.assets?.[0].fileName,
+      type: image?.assets?.[0].type,
+    });
+    formData.append('type', imgType);
     setImgType(''); //초기화
     setImage(undefined);
     setModalVisible(false);
+    postHairImg(formData);
   };
-
-  useEffect(() => {
-    setImgList(
-      lineImageList.map(item => ({img: item.img, regDate: item.regDate})),
-    );
-  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>머리 빠짐 유무를</Text>
-        <Text style={styles.headerText}>사진을 통해 체크해보세요</Text>
+        <CustomText label="머리 빠짐 유무를" size={24} />
+        <CustomText label="사진을 통해 체크해보세요" size={24} />
       </View>
       <View>
-        <MyCarousel isMain={false} data={isLine ? topImageList : imgList} />
+        <MyCarousel isMain={false} data={isLine ? topList : lineList} />
       </View>
       <View style={styles.buttonGroup}>
         <View style={styles.gallaryButtonGroup}>
@@ -178,7 +176,7 @@ export default function DiaryPage() {
           {imgType !== '' ? (
             <View style={styles.imageContainer}>
               <Image
-                source={{uri: image?.assets[0].uri}}
+                source={{uri: image?.assets?.[0].uri}}
                 style={{width: 150, height: 150}}
               />
             </View>
