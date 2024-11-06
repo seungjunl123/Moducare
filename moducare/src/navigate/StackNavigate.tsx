@@ -18,6 +18,7 @@ import DiagnosisPick from '../Pages/AIDiagnosis/DiagnosisPick';
 
 import EditUserPage from '../Pages/User/EditUserPage';
 import StressResultPage from '../Pages/StressCheck/StressResultPage';
+import DiagnosisIOT from '../Pages/AIDiagnosis/DiagnosisIOT';
 const StackNavigate = () => {
   const Stack = createStackNavigator();
   return (
@@ -35,10 +36,22 @@ const StackNavigate = () => {
         }}
       />
       <Stack.Screen
+        name="aiIOT"
+        component={DiagnosisIOT}
+        options={{
+          title: 'AI 두피 진단 (IOT)',
+          headerTitleAlign: 'center',
+          headerBackImage: () => (
+            <Entypo name="chevron-left" color={colors.BLACK} size={25} />
+          ),
+          animationEnabled: false,
+        }}
+      />
+      <Stack.Screen
         name="aiCamera"
         component={DiagnosisCamera}
         options={{
-          title: 'AI 두피 진단',
+          title: 'AI 두피 진단 (Phone)',
           headerTitleAlign: 'center',
           headerBackImage: () => (
             <Entypo name="chevron-left" color={colors.BLACK} size={25} />
