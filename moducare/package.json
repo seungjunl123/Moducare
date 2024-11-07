@@ -15,6 +15,7 @@
     "@notifee/react-native": "^9.1.2",
     "@react-native-firebase/app": "^21.3.0",
     "@react-native-firebase/messaging": "^21.3.0",
+    "@react-native-kakao/core": "^2.2.6",
     "@react-native-masked-view/masked-view": "^0.3.1",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/material-top-tabs": "^6.6.14",
