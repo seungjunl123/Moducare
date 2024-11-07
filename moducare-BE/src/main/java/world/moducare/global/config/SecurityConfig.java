@@ -36,8 +36,6 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
     private final TokenProvider tokenProvider;
     private final MemberService memberService;
     private final MemberRepository memberRepository;
-    @Value("${redirect_uri}")
-    private String REDIRECT_PATH;
 
     // 스프링 시큐리티 기능 비활성화
     // 스프링 시큐리티의 모든 기능을 사용하지 않게 설정 = 인증, 인가 서비스를 모든 곳에 적용하진 않는다
