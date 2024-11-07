@@ -75,70 +75,35 @@ public class DustApiService {
     }
 
     // stationName이 동일한 item의 pm10Grade1h
-//    private int parseDustValue(String responseBody) {
-//        try {
-//
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            JsonNode rootNode = objectMapper.readTree(responseBody);
-//            JsonNode itemsNode = rootNode.path("response").path("body").path("items");
-//
-//            if (itemsNode.isArray()) {
-//                for (JsonNode itemNode : itemsNode) {
-////                    String stationName = itemNode.path("stationName").asText();
-////                    if (stationName.equals(targetStationName)) {
-////
-////                    }
-//                    String pm10Grade1hStr = itemNode.path("pm10Grade1h").asText();
-//                    if (pm10Grade1hStr == null || pm10Grade1hStr.isEmpty() || pm10Grade1hStr.equals("-")) {
-//                        throw new DataNotFoundException("PM10 data not available for the requested station");
-//                    } else {
-//                        try {
-//                            return Integer.parseInt(pm10Grade1hStr);
-//                        } catch (NumberFormatException e) {
-//                            throw new DataNotFoundException("PM10 data not numbered for the requested station");
-//                        }
-//                    }
-//                }
-//            }
-//            // 일치하는 stationName이 없을 경우
-//            throw new DataNotFoundException("Station name not found in the response");
-//        } catch (Exception e) {
-//            throw new DataNotFoundException("Error parsing JSON response");
-//        }
-//    }
     private int parseDustValue(String responseBody) {
         try {
+
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(responseBody);
-            logger.info("Root node: {}", rootNode);
-
             JsonNode itemsNode = rootNode.path("response").path("body").path("items");
-            logger.info("Items node: {}", itemsNode);
 
-            if (itemsNode.isArray() && itemsNode.size() > 0) {
+            if (itemsNode.isArray()) {
                 for (JsonNode itemNode : itemsNode) {
+//                    String stationName = itemNode.path("stationName").asText();
+//                    if (stationName.equals(targetStationName)) {
+//
+//                    }
                     String pm10Grade1hStr = itemNode.path("pm10Grade1h").asText();
-                    if (pm10Grade1hStr == null || pm10Grade1hStr.isEmpty() || pm10Grade1hStr.equals("-")) {
-                        logger.warn("PM10 data not available for the requested station");
-                        throw new DataNotFoundException("PM10 data not available for the requested station");
-                    } else {
+                    if (!pm10Grade1hStr.equals("-") && !pm10Grade1hStr.equals("null")) {
                         try {
                             return Integer.parseInt(pm10Grade1hStr);
                         } catch (NumberFormatException e) {
-                            logger.warn("PM10 data is not a valid number: {}", pm10Grade1hStr);
                             throw new DataNotFoundException("PM10 data not numbered for the requested station");
                         }
                     }
                 }
-            } else {
-                logger.warn("No items found or items node is not an array");
             }
-
+            // 일치하는 stationName이 없을 경우
             throw new DataNotFoundException("Station name not found in the response");
         } catch (Exception e) {
-            logger.error("Error parsing JSON response: {}", responseBody, e);
             throw new DataNotFoundException("Error parsing JSON response");
         }
     }
+
 
 }
