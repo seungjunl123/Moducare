@@ -41,7 +41,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         logger.info("Request URI: " + requestURI);
         // 로그인 또는 토큰 재발급 요청이면 토큰 검증을 하지 않음
-        if (requestURI.equals("/members/login/kakao") || requestURI.equals("/members/login/naver") || requestURI.equals("/members/login/google") || requestURI.equals("/tokens/refresh")) {
+        if (requestURI.equals("/members/login/kakao")
+                || requestURI.equals("/members/login/naver")
+                || requestURI.equals("/members/login/google")
+                || requestURI.equals("/tokens/refresh")
+                || requestURI.equals("/api/login/oauth2/code/kakao")) { // Exclude OAuth callback path
             filterChain.doFilter(request, response);
             return;
         }
