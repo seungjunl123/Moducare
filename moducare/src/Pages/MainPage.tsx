@@ -1,18 +1,8 @@
 import * as React from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Image,
-  Dimensions,
-  Text,
-  Pressable,
-} from 'react-native';
+import {View, StyleSheet, ScrollView, Image, Dimensions} from 'react-native';
 import ItemBox from '../Components/ItemBox/ItemBox';
-import MyCarousel from '../Components/Carousel/CarouselCard';
 import CustomText from '../Components/Common/CustomText';
 import CustomButton from '../Components/Common/CustomButton';
-import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '../constants/colors';
 import {useNavigation} from '@react-navigation/native';
 import SmallList from '../Components/Challenge/SmallList';

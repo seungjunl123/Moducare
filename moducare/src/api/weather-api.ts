@@ -1,5 +1,5 @@
 import axios from 'axios';
-import axiosInstance from '../util/axios';
+// import axiosInstance from '../util/axios';
 import Config from 'react-native-config';
 
 type Location = {
@@ -34,9 +34,28 @@ const getLocation = async (
   }
 };
 
-const getWeather = async (sido: string, gugun: string) => {
-  const {data} = await axiosInstance.post('/weather/', {sido, gugun});
-  return data;
+const postWeather = async (sido: string, gugun: string) => {
+  try {
+    // axiosInstance로 변경 필요
+    const response = await axios.post(
+      `${Config.API_URL}weather`,
+      {
+        sido,
+        gugun,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${Config.ACCESS_TOKEN}`,
+        },
+      },
+    );
+
+    console.log('response.data', response.data);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
-export {getLocation, getWeather};
+export {getLocation, postWeather};

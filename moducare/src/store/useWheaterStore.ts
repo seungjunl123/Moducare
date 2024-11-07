@@ -1,6 +1,6 @@
-const handleAirPhrase = (airCondition: number | undefined): string => {
-  if (!airCondition || airCondition < 0 || airCondition > 4) {
-    return '에러!';
+const handleAirPhrase = (airCondition: number): string => {
+  if (airCondition < 0 || airCondition > 4) {
+    return '';
   } else if (airCondition === 1) {
     return '좋음';
   } else if (airCondition === 2) {
@@ -12,9 +12,9 @@ const handleAirPhrase = (airCondition: number | undefined): string => {
   }
 };
 
-const handleUvPhrase = (uvCondition: number | undefined): string => {
-  if (!uvCondition || uvCondition < 0) {
-    return '에러!';
+const handleUvPhrase = (uvCondition: number): string => {
+  if (uvCondition < 0) {
+    return '';
   } else if (uvCondition >= 0 && uvCondition <= 2) {
     return '낮음';
   } else if (uvCondition >= 3 && uvCondition <= 5) {

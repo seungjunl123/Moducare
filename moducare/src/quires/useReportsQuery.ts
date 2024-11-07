@@ -31,7 +31,7 @@ export const useLineDiaryQuery = () => {
     queryFn: getLineDiaryData,
     select: response =>
       response.data.map((item: DiaryItem) => ({
-        img: item.img,
+        img: {uri: item.img},
         regDate: item.regDate,
       })),
   });
@@ -39,15 +39,17 @@ export const useLineDiaryQuery = () => {
 };
 
 export const useTopDiaryQuery = () => {
-  return useQuery({
+  const {data, error} = useQuery({
+    // data를 구조분해할당으로 받아야 함
     queryKey: [QueryKey.top],
     queryFn: getTopDiaryData,
     select: response =>
       response.data.map((item: DiaryItem) => ({
-        img: item.img,
+        img: {uri: item.img},
         regDate: item.regDate,
       })),
   });
+  return {data}; // data만 반환하도록 수정
 };
 
 export const useReportQuery = () => {

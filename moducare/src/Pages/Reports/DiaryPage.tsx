@@ -6,7 +6,7 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../constants/colors';
 import MyCarousel from '../../Components/Carousel/CarouselCard';
@@ -18,17 +18,26 @@ import {
   CameraOptions,
   launchImageLibrary,
   ImageLibraryOptions,
-  ImagePickerResponse,
 } from 'react-native-image-picker';
-
+import useImageStore from '../../store/useImageStore';
 import {
   useLineDiaryQuery,
-  usePostHairImgQuery,
   useTopDiaryQuery,
 } from '../../quires/useReportsQuery';
+import {
+  getLineDiaryData,
+  getTopDiaryData,
+  postHairImg,
+} from '../../api/report-api';
+import AWS from 'aws-sdk';
+import RNFS from 'react-native-fs';
+import {Buffer} from 'buffer';
+import Config from 'react-native-config';
 
 interface DiaryCarouselItem {
-  img: string;
+  img: {
+    uri: string;
+  };
   regDate: string;
 }
 interface Action {
@@ -37,47 +46,21 @@ interface Action {
   options: CameraOptions | ImageLibraryOptions;
 }
 
-const lineImageList = [
+// AWS S3 설정
+const s3 = new AWS.S3({
+  accessKeyId: Config.AWS_ACCESS_KEY_ID,
+  secretAccessKey: Config.AWS_SECRET_ACCESS_KEY,
+  region: Config.AWS_REGION,
+});
+
+// 데이터가 없을 경우 더미 데이터
+const DefaultImage = [
   {
-    img: 'https://reactnative.dev/img/tiny_logo.png',
+    img: require('../../assets/img/MainCharacter.png'),
     regDate: '2024-01-04',
-  },
-  {
-    img: 'https://reactnative.dev/img/tiny_logo.png',
-    regDate: '2024-01-03',
-  },
-  {
-    img: 'https://reactnative.dev/img/tiny_logo.png',
-    regDate: '2024-01-02',
-  },
-  {
-    img: 'https://reactnative.dev/img/tiny_logo.png',
-    regDate: '2024-01-01',
   },
 ];
 
-const topImageList = [
-  {
-    img: 'https://reactnative.dev/img/tiny_logo.png',
-    regDate: '2024-01-05',
-  },
-  {
-    img: 'https://reactnative.dev/img/tiny_logo.png',
-    regDate: '2024-01-04',
-  },
-  {
-    img: 'https://reactnative.dev/img/tiny_logo.png',
-    regDate: '2024-01-03',
-  },
-  {
-    img: 'https://reactnative.dev/img/tiny_logo.png',
-    regDate: '2024-01-02',
-  },
-  {
-    img: 'https://reactnative.dev/img/tiny_logo.png',
-    regDate: '2024-01-01',
-  },
-];
 const WIDTH = Dimensions.get('window').width;
 
 const options: Action = {
@@ -91,49 +74,97 @@ const options: Action = {
 };
 
 export default function DiaryPage() {
-  const {data: lineDiaryData, isLoading: lineDiaryLoading} =
-    useLineDiaryQuery();
-  const {data: topDiaryData, isLoading: topDiaryLoading} = useTopDiaryQuery();
-  const {mutate: postHairImg} = usePostHairImgQuery();
+  const [lineDiaryData, setLineDiaryData] = useState<DiaryCarouselItem[]>([]);
+  const [topDiaryData, setTopDiaryData] = useState<DiaryCarouselItem[]>([]);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [isLine, setIsLine] = useState(false);
-  const [image, setImage] = useState<ImagePickerResponse>();
-  const [imgType, setImgType] = useState<string>('');
+  const [imgUrl, setImgUrl] = useState('');
+  const [imgType, setImgType] = useState('');
+  const [imgConfig, setImgConfig] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const upLoadImgToS3 = async (img: any) => {
+    console.log('upLoadImgToS3', img);
+
+    return new Promise(async (resolve, reject) => {
+      const fileData = await RNFS.readFile(img.assets[0].uri, 'base64');
+      const params = {
+        Key: img.assets[0].fileName,
+        Bucket: Config.AWS_BUCKET,
+        Body: Buffer.from(fileData, 'base64'),
+        ContentType: img?.assets?.[0].type,
+      };
+
+      // S3 버켓에 파일 업로드
+      s3.upload(params, (err: any, data: any) => {
+        if (err) {
+          console.log('업로드 실패', err);
+          reject(err);
+        } else {
+          setImgUrl(data.Location);
+          console.log(`File uploaded successfully. ${data.Location}`);
+          resolve(data.Location);
+        }
+      });
+    });
+  };
 
   const openImageLibrary = async (type: string) => {
     const images = await launchImageLibrary(options);
     if (images.assets) {
-      setImage(images);
+      setImgConfig(images);
       setImgType(type);
     }
   };
 
-  const lineList: DiaryCarouselItem[] = lineDiaryData || lineImageList; // fallback으로 더미 데이터 사용
-  const topList: DiaryCarouselItem[] = topDiaryData || topImageList;
-
-  if (lineDiaryLoading || topDiaryLoading) {
-    return <CustomText label="로딩중~" />;
-  }
-
-  const uploadImage = async () => {
-    if (!image?.assets) {
+  const imageUpload = () => {
+    if (!imgConfig?.assets) {
       Alert.alert('사진을 선택해주세요');
       return;
     }
     Alert.alert('업로드');
-
-    const formData = new FormData();
-    formData.append('file', {
-      uri: image?.assets?.[0].uri,
-      name: image?.assets?.[0].fileName,
-      type: image?.assets?.[0].type,
-    });
-    formData.append('type', imgType);
-    setImgType(''); //초기화
-    setImage(undefined);
+    // 1. S3 업로드
+    upLoadImgToS3(imgConfig);
+    // 2. 업로드 된 이미지 정보 전송
+    postHairImg(imgUrl, imgType);
+    // 3. 초기화
+    setImgType('');
+    setImgConfig(null);
+    setImgUrl('');
+    // 4. 모달 닫기
     setModalVisible(false);
-    postHairImg(formData);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const [lineData, topData] = await Promise.all([
+          getLineDiaryData(),
+          getTopDiaryData(),
+        ]);
+
+        setLineDiaryData(lineData.length > 0 ? lineData : DefaultImage);
+        setTopDiaryData(topData.length > 0 ? topData : DefaultImage);
+      } catch (error) {
+        console.error('데이터 로딩 실패:', error);
+        setLineDiaryData(DefaultImage);
+        setTopDiaryData(DefaultImage);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <CustomText label="로딩 중..." />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -142,7 +173,10 @@ export default function DiaryPage() {
         <CustomText label="사진을 통해 체크해보세요" size={24} />
       </View>
       <View>
-        <MyCarousel isMain={false} data={isLine ? topList : lineList} />
+        <MyCarousel
+          isMain={false}
+          data={isLine ? lineDiaryData : topDiaryData}
+        />
       </View>
       <View style={styles.buttonGroup}>
         <View style={styles.gallaryButtonGroup}>
@@ -176,7 +210,7 @@ export default function DiaryPage() {
           {imgType !== '' ? (
             <View style={styles.imageContainer}>
               <Image
-                source={{uri: image?.assets?.[0].uri}}
+                source={{uri: imgConfig?.assets?.[0].uri}}
                 style={{width: 150, height: 150}}
               />
             </View>
@@ -210,7 +244,7 @@ export default function DiaryPage() {
             <CustomButton
               label="사진 업로드"
               variant="filled"
-              onPress={uploadImage}
+              onPress={imageUpload}
             />
           </View>
         </View>

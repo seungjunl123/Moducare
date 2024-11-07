@@ -12,6 +12,7 @@ import CustomButton from '../../Components/Common/CustomButton';
 import CustomText from '../../Components/Common/CustomText';
 import {colors} from '../../constants/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {postResult} from '../../api/stress-check-api';
 
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {Stack} from '../../util/stack';
@@ -32,9 +33,11 @@ export default function StressDiagnosisPage() {
   const handleNext = () => {
     if (isChecked !== -1) {
       if (QuestionIdx === 14) {
-        navigation.navigate('StressResultPage', {
-          stressScore: stressScore + isChecked, // 마지막 질문의 점수도 포함
-        });
+        if (postResult(stressScore + isChecked) !== undefined) {
+          navigation.navigate('StressResultPage', {
+            stressScore: stressScore + isChecked, // 마지막 질문의 점수도 포함
+          });
+        }
       } else {
         setStressScore(stressScore + isChecked);
         setQuestionIdx(QuestionIdx + 1);
@@ -68,6 +71,7 @@ export default function StressDiagnosisPage() {
       <View style={styles.answerContainer}>
         {stressAnswer.map(answer => (
           <TouchableOpacity
+            key={answer.id}
             onPress={() => setIsChecked(answer.id)}
             style={[
               styles.answer,

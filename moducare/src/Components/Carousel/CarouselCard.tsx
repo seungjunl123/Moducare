@@ -19,7 +19,9 @@ interface MainCarouselItem {
 }
 
 interface DiaryCarouselItem {
-  img: string;
+  img: {
+    uri: string;
+  };
   regDate: string;
 }
 
@@ -52,9 +54,10 @@ const MyCarousel: React.FC<CarouselProps> = ({isMain, data}) => {
       );
     } else {
       const diaryItem = item as DiaryCarouselItem;
+
       return (
         <View style={styles.diaryCard}>
-          <Image source={{uri: diaryItem.img}} style={styles.dairyImg} />
+          <Image source={diaryItem.img} style={styles.dairyImg} />
         </View>
       );
     }

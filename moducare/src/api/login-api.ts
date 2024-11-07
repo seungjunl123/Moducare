@@ -1,5 +1,12 @@
+import axios from 'axios';
 import {getEncryptStorage} from '../util';
 import axiosInstance from './../util/axios';
+import Config from 'react-native-config';
+
+type RequestMember = {
+  name: string;
+  birth: string;
+};
 
 type RequestLogin = {
   fcmToken: string;
@@ -46,10 +53,28 @@ const deleteMember = async (): Promise<void> => {
   return data;
 };
 
-const putMember = async ({name, birth}: ResponseLogin): Promise<void> => {
-  const {data} = await axiosInstance.put(`/members/modify`, {name, birth});
+const putMember = async (userInfo: RequestMember): Promise<void> => {
+  try {
+    // axiosInstance로 변경 필요
+    const {data} = await axios.put(
+      `${Config.API_URL}members/modify`,
+      {
+        name: userInfo.name,
+        birth: userInfo.birth,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${Config.ACCESS_TOKEN}`,
+        },
+      },
+    );
 
-  return data;
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 export {postLogin, postRefreshToken, postLogout, deleteMember, putMember};

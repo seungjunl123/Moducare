@@ -7,16 +7,22 @@ import {Dimensions} from 'react-native';
 import CustomButton from '../../Components/Common/CustomButton';
 import Feather from 'react-native-vector-icons/Feather';
 import CalenderModal from '../../Components/CalenderModal/CalenderModal';
-
+import {useNavigation} from '@react-navigation/native';
+import {putMember} from '../../api/login-api';
 const WIDTH = Dimensions.get('window').width;
 
 export default function EditUserPage() {
+  const navigation = useNavigation();
   const date = new Date();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(
     `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
   );
   const [userName, setUserName] = useState('');
+  const onPressSave = () => {
+    putMember({name: userName, birth: selectedDate});
+    navigation.goBack();
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,7 +54,7 @@ export default function EditUserPage() {
       </View>
 
       <View style={styles.buttonContainer}>
-        <CustomButton label="저장하기" onPress={() => {}} />
+        <CustomButton label="저장하기" onPress={onPressSave} />
       </View>
 
       <CalenderModal

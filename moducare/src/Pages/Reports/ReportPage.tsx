@@ -9,30 +9,18 @@ import React from 'react';
 import {colors} from '../../constants/colors';
 import CustomText from '../../Components/Common/CustomText';
 import ItemBox from '../../Components/ItemBox/ItemBox';
-
 import {useReportQuery, ReportItem} from '../../quires/useReportsQuery';
-import {useNavigation} from '@react-navigation/native';
-const reports: ReportItem[] = [
-  {
-    idx: 1,
-    date: '2024-01-01 오후 10:12',
-    diagnosis: '정상',
-  },
-  {
-    idx: 2,
-    date: '2024-02-01 오후 10:12',
-    diagnosis: '탈모 ㅋㅋ',
-  },
-];
+import {Dimensions} from 'react-native';
+
+const HEIGHT = Dimensions.get('window').height;
 
 export default function ReportPage() {
-  const navigation = useNavigation();
   const {data: reportData, isLoading: reportLoading} = useReportQuery();
 
   if (reportLoading) {
     return <CustomText label="로딩중~" />;
   }
-  const reportList = reportData || reports;
+  const reportList = reportData;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -47,23 +35,29 @@ export default function ReportPage() {
         </View>
       </View>
       <View style={styles.reportList}>
-        {reportList.map((report: ReportItem) => (
-          <TouchableOpacity
-            onPress={() => {
-              // navigation.navigate('reportDetail', {id: report.idx});
-            }}>
-            <ItemBox style={styles.reportCard}>
-              <View style={styles.reportCardItem}>
-                <CustomText label="진단 일시" variant="regular" />
-                <CustomText label={report.date} variant="regular" />
-              </View>
-              <View style={styles.reportCardItem}>
-                <CustomText label="진단 결과" variant="regular" />
-                <CustomText label={report.diagnosis} variant="regular" />
-              </View>
-            </ItemBox>
-          </TouchableOpacity>
-        ))}
+        {!reportList && (
+          <View style={styles.reportListEmpty}>
+            <CustomText label="리포트가 아직 작성되지 않았습니다." />
+          </View>
+        )}
+        {reportList &&
+          reportList.map((report: ReportItem) => (
+            <TouchableOpacity
+              onPress={() => {
+                // navigation.navigate('reportDetail', {id: report.idx});
+              }}>
+              <ItemBox style={styles.reportCard}>
+                <View style={styles.reportCardItem}>
+                  <CustomText label="진단 일시" variant="regular" />
+                  <CustomText label={report.date} variant="regular" />
+                </View>
+                <View style={styles.reportCardItem}>
+                  <CustomText label="진단 결과" variant="regular" />
+                  <CustomText label={report.diagnosis} variant="regular" />
+                </View>
+              </ItemBox>
+            </TouchableOpacity>
+          ))}
       </View>
     </ScrollView>
   );
@@ -95,5 +89,10 @@ const styles = StyleSheet.create({
   reportCardItem: {
     flexDirection: 'row',
     gap: 20,
+  },
+  reportListEmpty: {
+    height: HEIGHT * 0.5,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

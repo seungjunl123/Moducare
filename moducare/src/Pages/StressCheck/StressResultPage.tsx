@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Dimensions, Image, SafeAreaView} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -7,55 +7,27 @@ import {colors} from '../../constants/colors';
 import CustomButton from '../../Components/Common/CustomButton';
 import CustomText from '../../Components/Common/CustomText';
 import {LineChart} from 'react-native-gifted-charts';
+import {getResult, ResultData} from '../../api/stress-check-api';
 
 import {RootStackParamList} from '../../navigate/StackNavigate';
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
-
-const data = [
-  {
-    value: 10,
-    dataPointText: '10',
-    label: '09-02',
-  },
-  {
-    value: 12,
-    dataPointText: '12',
-    label: '09-03',
-  },
-  {
-    value: 14,
-    dataPointText: '14',
-    label: '09-04',
-  },
-  {
-    value: 21,
-    dataPointText: '21',
-    label: '09-05',
-  },
-  {
-    value: 13,
-    dataPointText: '13',
-    label: '09-06',
-  },
-  {
-    value: 16,
-    dataPointText: '16',
-    label: '09-07',
-  },
-  {
-    value: 8,
-    dataPointText: '8',
-    label: '09-08',
-  },
-];
-
 export default function StressResultPage() {
   const [isDone, setIsDone] = useState(false);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const stressScore = navigation.getState().routes[2].params?.stressScore || 0;
+  const [resultData, setResultData] = useState<ResultData[]>([]);
+
+  useEffect(() => {
+    const fetchResultData = async () => {
+      const result = await getResult();
+      setResultData(result);
+    };
+    fetchResultData();
+  }, []);
+
   const getStressImage = (score: number) => {
     if (score >= 20) {
       return require('../../assets/img/Red.png');
@@ -180,7 +152,7 @@ export default function StressResultPage() {
               <CustomText label={'최근 7건 검사결과'} variant="regular" />
               <LineChart
                 initialSpacing={20}
-                data={data}
+                data={resultData}
                 width={WIDTH * 0.75}
                 hideRules={true}
                 thickness={1}
