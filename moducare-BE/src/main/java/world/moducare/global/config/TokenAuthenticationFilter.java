@@ -48,6 +48,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             // 유저 객체에는 유저 이름과 권한 목록과 같은 인증 정보가 포함
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
+            logger.info("Token not found in request header. token: {}", token);
             logger.warn("Token is invalid or expired");
             // 토큰이 만료되거나 유효하지 않을 경우
             SecurityContextHolder.clearContext();
