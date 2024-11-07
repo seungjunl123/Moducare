@@ -12,4 +12,7 @@ import lombok.NoArgsConstructor;
 public class SocialLoginResponse {
     private String jwtAccessToken;
     private String refreshToken;
+    private String name;
+    private String email;
+    private String birth;
 }

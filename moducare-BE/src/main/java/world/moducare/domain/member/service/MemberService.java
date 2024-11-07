@@ -66,4 +66,13 @@ public class MemberService {
         return member;
     }
 
+    public SocialLoginResponse getSocialMember(Member member, String jwtToken) {
+        return SocialLoginResponse.builder()
+                .jwtAccessToken(jwtToken)
+                .refreshToken(member.getRefreshToken())
+                .name(member.getName())
+                .email(member.getEmail())
+                .birth(member.getBirth())
+                .build();
+    }
 }
