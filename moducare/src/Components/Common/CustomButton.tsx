@@ -11,7 +11,7 @@ import {colors} from '../../constants/colors';
 interface CustomButtomProps extends PressableProps {
   label: string;
   variant?: 'filled' | 'outlined';
-  size?: 'large' | 'medium';
+  size?: 'large' | 'medium' | 'small';
   inValid?: boolean;
 }
 
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
   },
   large: {
-    width: '80%',
+    width: '100%',
     paddingVertical: deviceHeight > 700 ? 15 : 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -66,8 +66,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  small: {
+    width: '30%',
+    paddingVertical: deviceHeight > 700 ? 12 : 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   text: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '100',
   },
   filledText: {

@@ -1,31 +1,54 @@
 import * as React from 'react';
-import {View, Text, StyleSheet, ScrollView, Image} from 'react-native';
+import {View, StyleSheet, ScrollView, Image, Dimensions} from 'react-native';
 import ItemBox from '../Components/ItemBox/ItemBox';
+import CustomText from '../Components/Common/CustomText';
+import CustomButton from '../Components/Common/CustomButton';
+import {colors} from '../constants/colors';
+import {useNavigation} from '@react-navigation/native';
+import SmallList from '../Components/Challenge/SmallList';
+import WeatherInfo from '../Components/Weather/WeatherInfo';
+import MainCarousel from '../Components/Carousel/MainCarousel';
 
+const WINDOW_WIDTH = Dimensions.get('window').width;
+const WINDOW_HEIGHT = Dimensions.get('window').height;
 export default function MainPage() {
+  const navigation = useNavigation();
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.contentContainer}>
         <View style={styles.headerTextContainer}>
-          <Text style={styles.headerText}>두피 사진을 통하여</Text>
-          <Text style={styles.headerText}>AI가 두피 상태를 확인해 드려요.</Text>
+          <CustomText label="두피 사진을 통하여" size={20} />
+          <CustomText label="AI가 두피 상태를 확인해 드려요." size={20} />
         </View>
         <Image
           style={styles.helloImage}
-          source={{
-            uri: 'https://reactnative.dev/img/tiny_logo.png',
-          }}
+          source={require('../assets/img/MainCharacter.png')}
         />
 
+        <CustomButton
+          label="AI 자가 진단 시작"
+          size="large"
+          onPress={() => navigation.navigate('ai')}
+        />
+        <WeatherInfo />
         <ItemBox>
-          <Text style={styles.boxHeaderText}>오늘의 날씨 정보</Text>
+          <CustomText label="진행중인 챌린지 정보" size={20} />
+          <View style={styles.challengeBox}>
+            <View style={styles.challengeBoxItem}>
+              <ScrollView showsVerticalScrollIndicator={false}>
+                <SmallList isFinish={true} />
+                <SmallList isPhoto={true} />
+                <SmallList />
+              </ScrollView>
+            </View>
+          </View>
+        </ItemBox>
 
-          <Text>아이템 박스</Text>
-        </ItemBox>
-        <ItemBox>
-          <Text>아이템 박스</Text>
-          <Text>아이템 박스</Text>
-        </ItemBox>
+        <View>
+          <MainCarousel />
+        </View>
+        <View style={{height: WINDOW_HEIGHT * 0.1}} />
       </View>
     </ScrollView>
   );
@@ -42,12 +65,13 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   headerTextContainer: {
+    marginStart: 20,
     alignSelf: 'flex-start',
   },
   headerText: {
     fontSize: 20,
-    fontWeight: 'bold',
     marginStart: 20,
+    fontWeight: 'bold',
   },
   boxHeaderText: {
     fontSize: 20,
@@ -57,5 +81,45 @@ const styles = StyleSheet.create({
   helloImage: {
     width: 200,
     height: 200,
+  },
+  startButton: {
+    width: WINDOW_WIDTH * 0.9,
+  },
+  weatherBoxImage: {
+    width: 70,
+    height: 70,
+  },
+  weatherBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 20,
+  },
+  weatherBoxItem: {
+    alignItems: 'center',
+    gap: 5,
+  },
+  challengeBox: {
+    height: WINDOW_HEIGHT * 0.17,
+    gap: 10,
+    margin: 10,
+  },
+  challengeBoxItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  challengeBoxImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  challengeBoxText: {
+    marginStart: 10,
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: colors.BLACK,
+  },
+  challengeBoxArrow: {
+    marginLeft: 'auto',
   },
 });
