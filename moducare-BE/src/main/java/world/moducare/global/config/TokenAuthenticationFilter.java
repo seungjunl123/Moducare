@@ -37,6 +37,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         logger.info("Request path: {}", path);
 
+        // 요청 경로 확인
+        String requestURI = request.getRequestURI();
+        // 로그인 또는 토큰 재발급 요청이면 토큰 검증을 하지 않음
+        if (requestURI.equals("/members/login/kakao") || requestURI.equals("/members/login/naver") || requestURI.equals("/members/login/google") || requestURI.equals("/tokens/refresh")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // 요청 헤더의 Authorization 키의 값 조회
         // 가져온 값에서 접두사 제거
         String token = getAccessToken(request.getHeader(HEADER_AUTHORIZATION));
