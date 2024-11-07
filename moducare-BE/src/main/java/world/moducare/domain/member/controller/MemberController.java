@@ -3,19 +3,18 @@ package world.moducare.domain.member.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import world.moducare.domain.member.dto.*;
+import world.moducare.domain.member.dto.ModifyRequest;
+import world.moducare.domain.member.dto.SocialLoginRequest;
+import world.moducare.domain.member.dto.SocialLoginResponse;
 import world.moducare.domain.member.entity.Member;
 import world.moducare.domain.member.service.MemberService;
 import world.moducare.global.config.jwt.TokenProvider;
 import world.moducare.global.config.oauth.CustomOAuth2User;
 import world.moducare.global.config.oauth.OAuth2UserCustomService;
-import world.moducare.global.exception.ErrorCode;
-import world.moducare.global.exception.RestApiException;
 
 import java.time.Duration;
 

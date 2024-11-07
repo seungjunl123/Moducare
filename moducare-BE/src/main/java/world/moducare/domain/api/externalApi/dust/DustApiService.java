@@ -27,7 +27,8 @@ public class DustApiService {
     private String DUST_KEY;
     private static final String API_URL = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty";
 
-    @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 5, backoff = @Backoff(delay = 500))
+//    @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 5, backoff = @Backoff(delay = 500))
+    @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 10, backoff = @Backoff(delay = 1000))
     public CompletableFuture<Integer> callDustApi(WeatherRequestDto weatherRequestDto) {
         System.out.println("try dust");
         return CompletableFuture.supplyAsync(() -> {

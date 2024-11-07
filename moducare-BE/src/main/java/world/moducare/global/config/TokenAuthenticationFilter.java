@@ -49,6 +49,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         // 요청 헤더의 Authorization 키의 값 조회
         // 가져온 값에서 접두사 제거
         String token = getAccessToken(request.getHeader(HEADER_AUTHORIZATION));
+        System.out.println(token);
         // 가져온 토큰이 유효한지 확인하고, 유효한 때는 인증 정보 설정
         if (token != null && tokenProvider.validToken(token)) {
             logger.info("Token found in request header. Verifying token: {}", token);
