@@ -48,10 +48,6 @@ public class Member {
     @Column(name = "refresh_token", columnDefinition = "TEXT")
     private String refreshToken;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private DeviceType type;
-
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime createdAt;
@@ -99,7 +95,6 @@ public class Member {
     public void updateRefreshAndFcm(String newRefreshToken, String newFcmToken) {
         this.refreshToken = newRefreshToken;
         this.fcmToken = newFcmToken;
-        this.type = DeviceType.PHONE;
     }
 
     public Member updateRefresh(String newRefreshToken) {
