@@ -65,7 +65,7 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
                 // URL 접근 권한 설정
             .authorizeRequests(auth -> auth // 특정 경로에 대한 인증, 인가 액세스 설정
                 .requestMatchers( // 특정 요청과 일치하는 url에 대한 액세스 설정
-                        new AntPathRequestMatcher("/members/login"),
+                        new AntPathRequestMatcher("/members/login/**"),
                         new AntPathRequestMatcher("/tokens/refresh"),
                         new AntPathRequestMatcher("/members/logout"),
                         new AntPathRequestMatcher("/swagger-ui.html"),  // Swagger UI 경로 추가
