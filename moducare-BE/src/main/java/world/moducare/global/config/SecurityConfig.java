@@ -90,7 +90,6 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedOrigin("http://localhost:3001");
         configuration.addAllowedOrigin("http://localhost:8080");
-        configuration.addAllowedOrigin("http://localhost:8080");
         configuration.addAllowedOrigin("http://k11b203.p.ssafy.io");
         configuration.addAllowedOrigin("https://k11b203.p.ssafy.io"); // 허용할 Origin 설정
         configuration.addAllowedMethod("*");  // 모든 메서드 허용 (GET, POST, PUT 등)
