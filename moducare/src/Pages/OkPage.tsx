@@ -22,8 +22,8 @@ const OkPage = ({route}) => {
       url: 'https://kauth.kakao.com/oauth/token',
       params: {
         grant_type: 'authorization_code',
-        client_id: Config.KAKAO_API_KEY,
-        redirect_uri: Config.KAKAO_RERIRECT,
+        client_id: Config.KAKAO_API,
+        redirect_uri: Config.KAKAO_REDIRECT,
         code,
       },
     });
