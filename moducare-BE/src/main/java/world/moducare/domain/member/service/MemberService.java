@@ -31,23 +31,6 @@ public class MemberService {
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
     }
 
-    public SocialLoginResponse saveFcmAndRefresh(Long id, TokenRequest tokenRequest) {
-        String fcmToken = tokenRequest.getFcmToken();
-        String refreshToken = tokenRequest.getRefreshToken();
-        Member member = memberRepository.findById(id).orElseThrow(()->new RestApiException(ErrorCode.NOT_FOUND));
-        member.updateRefreshAndFcm(refreshToken, fcmToken);
-        memberRepository.save(member);
-        return SocialLoginResponse.builder().name(member.getName()).birth(member.getBirth()).email(member.getEmail()).build();
-    }
-
-
-    private String formatHistory(ZonedDateTime reportTime, String violationTypeName) {
-        // 원하는 형식으로 포맷팅
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-        String formattedDate = reportTime.format(formatter);
-        return formattedDate + " / " + violationTypeName;
-    }
-
     public void logout(Member member) {
         member.logout();
         memberRepository.save(member);
@@ -64,4 +47,23 @@ public class MemberService {
         member.modify(name, birth);
         memberRepository.save(member);
     }
+
+    public void saveMemberAndToken(Member member, String fcmToken, String refreshToken) {
+        member.updateRefreshAndFcm(refreshToken, fcmToken);
+        memberRepository.save(member);
+    }
+
+    public Member saveOrUpdateMember(String email, String name) {
+
+        Member member = memberRepository.findByEmail(email)
+                .map(entity -> entity.updateName(name))
+                .orElseGet(() -> Member.builder()
+                        .email(email)
+                        .name(name)
+                        .build());
+
+        memberRepository.save(member);
+        return member;
+    }
+
 }
