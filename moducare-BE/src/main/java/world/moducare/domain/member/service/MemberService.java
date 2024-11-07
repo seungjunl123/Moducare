@@ -5,15 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import world.moducare.domain.member.dto.ModifyRequest;
 import world.moducare.domain.member.dto.SocialLoginResponse;
-import world.moducare.domain.member.dto.TokenRequest;
 import world.moducare.domain.member.entity.Member;
 import world.moducare.domain.member.repository.MemberRepository;
 import world.moducare.domain.product.repository.LatestProductRepository;
 import world.moducare.global.exception.ErrorCode;
 import world.moducare.global.exception.RestApiException;
-
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 
 @RequiredArgsConstructor
 @Service

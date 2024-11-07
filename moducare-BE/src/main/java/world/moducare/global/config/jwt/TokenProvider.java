@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import world.moducare.domain.member.entity.Member;
 import world.moducare.domain.member.service.MemberService;
 import world.moducare.global.config.oauth.CustomOAuth2User;
-import world.moducare.global.exception.ErrorCode;
-import world.moducare.global.exception.RestApiException;
 
 import java.time.Duration;
 import java.util.Collections;
