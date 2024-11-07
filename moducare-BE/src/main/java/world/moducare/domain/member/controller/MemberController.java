@@ -44,7 +44,7 @@ public class MemberController {
         memberService.saveMemberAndToken(oAuth2User.getMember(), socialLoginRequest.getFcmToken(), refreshToken);
 
         // 응답 생성
-        SocialLoginResponse response = new SocialLoginResponse(jwtToken, refreshToken);
+        SocialLoginResponse response = memberService.getSocialMember(oAuth2User.getMember(), jwtToken);
         return ResponseEntity.ok(response);
     }
 
