@@ -19,6 +19,11 @@ import {useState} from 'react';
 import SlideModal from '../Common/SlideModal';
 import CustomButton from '../Common/CustomButton';
 import {useNavigation} from '@react-navigation/native';
+import NaverLogin, {NaverLoginResponse} from '@react-native-seoul/naver-login';
+import useAuthStore from '../../store/useAuthStore';
+import AuthStackNavigate from '../../navigate/AuthStackNavigate';
+import {deleteMember, postLogout} from '../../api/login-api';
+import {getEncryptStorage} from '../../util';
 
 const Tab = createBottomTabNavigator();
 
@@ -44,8 +49,49 @@ const ReportIcon = ({color, size}: {color: string; size: number}) => (
 );
 
 function CustomTabBarButton() {
+  const {setNaverLoginSuccess, setNaverLoginFailure, setIsLoggedIn} =
+    useAuthStore(
+      state =>
+        state as {
+          setNaverLoginSuccess: (
+            value: NaverLoginResponse['successResponse'],
+          ) => void;
+          setNaverLoginFailure: (
+            value: NaverLoginResponse['failureResponse'],
+          ) => void;
+          setIsLoggedIn: (value: boolean) => void;
+          isLoggedIn: boolean;
+        },
+    );
   const navigation = useNavigation<any>();
   const [moreOpen, setMoreOpen] = useState(false);
+  const withdrawUser = async (): Promise<void> => {
+    console.log('회원 탈퇴 시작');
+    // await deleteMember();
+  };
+  const logout = async (): Promise<void> => {
+    try {
+      // 네이버 로그아웃 -> 전체 로그아웃으로 변경 필요
+      await NaverLogin.logout();
+      await Promise.all([
+        setNaverLoginSuccess(undefined),
+        setNaverLoginFailure(undefined),
+        setIsLoggedIn(false),
+      ]);
+      setMoreOpen(false);
+
+      // 로그아웃 상태 백엔드 전달
+      const fcmToken = await getEncryptStorage('fcmToken');
+      // await postLogout(fcmToken);
+
+      // 로그인 화면으로 복귀.
+      setTimeout(() => {
+        navigation.navigate('AuthStack');
+      }, 100);
+    } catch (e) {
+      console.error(e);
+    }
+  };
   return (
     <>
       <TouchableOpacity
@@ -63,20 +109,15 @@ function CustomTabBarButton() {
               navigation.navigate('회원 정보 수정');
             }}
           />
-          <CustomButton
-            label="로그아웃"
-            onPress={() => console.log('로그아웃')}
-          />
-          <CustomButton
-            label="회원 탈퇴"
-            onPress={() => console.log('회원 탈퇴')}
-          />
+          <CustomButton label="로그아웃" onPress={logout} />
+          <CustomButton label="회원 탈퇴" onPress={withdrawUser} />
         </View>
       </SlideModal>
     </>
   );
 }
-export default function BottomNavBar({navigation}) {
+
+export default function BottomNavBar({navigation}: {navigation: any}) {
   return (
     <Tab.Navigator
       initialRouteName="Main"
@@ -134,6 +175,16 @@ export default function BottomNavBar({navigation}) {
         component={EditUserPage}
         options={{
           tabBarButton: () => CustomTabBarButton(),
+        }}
+      />
+      <Tab.Screen
+        name="AuthStack"
+        component={AuthStackNavigate}
+        options={{
+          tabBarButton: () => null,
+          tabBarStyle: {
+            display: 'none',
+          },
         }}
       />
     </Tab.Navigator>

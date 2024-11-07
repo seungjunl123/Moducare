@@ -1,5 +1,5 @@
 import axios from 'axios';
-// import axiosInstance from '../util/axios';
+import axiosInstance from '../util/axios';
 import Config from 'react-native-config';
 
 type ResultData = {
@@ -12,18 +12,9 @@ type ResultData = {
 
 const postResult = async (stressScore: number): Promise<void> => {
   try {
-    // axiosInstance로 변경 필요
-    const {data} = await axios.post(
-      `${Config.API_URL}stress`,
-      {
-        score: stressScore,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${Config.ACCESS_TOKEN}`,
-        },
-      },
-    );
+    const {data} = await axiosInstance.post(`${Config.API_URL}stress`, {
+      score: stressScore,
+    });
 
     console.log(data);
     return data;
@@ -36,11 +27,7 @@ const postResult = async (stressScore: number): Promise<void> => {
 const getResult = async (): Promise<ResultData[]> => {
   // axiosInstance로 변경 필요
   try {
-    const {data} = await axios.get(`${Config.API_URL}stress/recent`, {
-      headers: {
-        Authorization: `Bearer ${Config.ACCESS_TOKEN}`,
-      },
-    });
+    const {data} = await axiosInstance.get(`${Config.API_URL}stress/recent`);
 
     return data.map((item: ResultData) => ({
       ...item,

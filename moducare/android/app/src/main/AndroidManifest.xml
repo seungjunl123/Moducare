@@ -16,7 +16,7 @@
       android:label="@string/app_name"
       android:icon="@drawable/ic_launcher"
       android:roundIcon="@mipmap/ic_launcher"
-      android:allowBackup="false"
+      android:allowBackup="true"
       android:theme="@style/AppTheme">
       <meta-data  android:name="com.google.firebase.messaging.default_notification_icon"
                     android:resource="@drawable/ic_app" />
@@ -30,6 +30,15 @@
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        
+        <intent-filter>
+          <action android:name="android.intent.action.VIEW" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.BROWSABLE" />
+          <!-- Redirect URI: "kakao{NATIVE_APP_KEY}://oauth“ -->
+          <data android:host="oauth" android:scheme="kakao585639d392d8089816cb2f337aea44d9"/>
+          <data android:host="spalashPage" android:scheme="moducare"/>
         </intent-filter>
       </activity>
     </application>

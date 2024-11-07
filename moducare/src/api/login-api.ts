@@ -10,24 +10,32 @@ type RequestMember = {
 
 type RequestLogin = {
   fcmToken: string;
+  accessToken: string;
+  registerId: 'kakao' | 'naver';
+};
+interface ResponseLogin {
+  jwtAccessToken: string;
   refreshToken: string;
-};
+}
 
-type ResponseLogin = {
-  name: string;
-  email?: string;
-  birth: string;
-};
 const postLogin = async ({
+  registerId,
   fcmToken,
-  refreshToken,
+  accessToken,
 }: RequestLogin): Promise<ResponseLogin> => {
-  const {data} = await axiosInstance.post(`members/fcm`, {
-    fcmToken,
-    refreshToken,
-  });
-
-  return data;
+  console.log('!!registerId', registerId);
+  console.log('!!accessToken', accessToken);
+  console.log('!!fcmToken', fcmToken);
+  try {
+    const {data} = await axiosInstance.post(`members/login/${registerId}`, {
+      accessToken,
+      fcmToken,
+    });
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 type ResponseAccess = {
@@ -76,6 +84,39 @@ const putMember = async (userInfo: RequestMember): Promise<void> => {
     throw error;
   }
 };
+type socialLoginType = {
+  registerId: string;
+  accessToken: string;
+  fcmToken: string;
+};
+type socialResponse = {
+  jwtAccessToken: string;
+  refreshToken: string;
+};
+const postLoginKaKao = async ({
+  accessToken,
+  fcmToken,
+}: socialLoginType): Promise<socialResponse> => {
+  const {data} = await axiosInstance.post(`/member/social/kakao`, {
+    accessToken,
+    fcmToken,
+  });
+  console.log('데이터', data);
+  return data;
+};
 
-export {postLogin, postRefreshToken, postLogout, deleteMember, putMember};
-export type {RequestLogin, ResponseLogin, ResponseAccess};
+export {
+  postLoginKaKao,
+  postLogin,
+  postRefreshToken,
+  postLogout,
+  deleteMember,
+  putMember,
+};
+export type {
+  socialLoginType,
+  socialResponse,
+  RequestLogin,
+  ResponseLogin,
+  ResponseAccess,
+};

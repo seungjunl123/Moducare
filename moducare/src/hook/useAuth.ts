@@ -5,14 +5,27 @@ import {removeHeader, setHeader} from '../util/headers';
 import {UseMutationCustomOptions} from '../types/common';
 import {useEffect} from 'react';
 import queryClinet from '../util/queryClient';
+import NaverLogin from '@react-native-seoul/naver-login';
+import Config from 'react-native-config';
 
 const useLogin = (mutationOptions?: UseMutationCustomOptions) => {
+  useEffect(() => {
+    // 네이버 로그인 초기화
+    NaverLogin.initialize({
+      appName: 'moducare',
+      consumerKey: Config.NAVER_CLIENT_ID as string,
+      consumerSecret: Config.NAVER_CLIENT_SECRET as string,
+    });
+  }, []);
+
   return useMutation({
     mutationFn: postLogin,
-    // onSuccess: ({accessToken, refreshToken}) => {
-    //   setEncryptStorage('refreshToken', refreshToken);
-    //   setHeader('Authorization', `Bearer ${accessToken}`);
-    // },
+    onSuccess: data => {
+      const {jwtAccessToken, refreshToken} = data;
+      console.log('jwtAccessToken', jwtAccessToken);
+      setEncryptStorage('refreshToken', refreshToken);
+      setHeader('Authorization', `Bearer ${jwtAccessToken}`);
+    },
     onSettled: () => {
       queryClinet.refetchQueries({queryKey: ['auth', 'getAccessToken']});
     },
@@ -46,11 +59,12 @@ const useGetRefreshToken = () => {
   return {isSuccess, isError};
 };
 
-const useAuth = () => {
+function useAuth() {
   const loginMutation = useLogin();
   const refreshTokenQuery = useGetRefreshToken();
+  const isLogin = refreshTokenQuery.isSuccess;
 
-  return {loginMutation, refreshTokenQuery};
-};
+  return {loginMutation, refreshTokenQuery, isLogin};
+}
 
 export default useAuth;
