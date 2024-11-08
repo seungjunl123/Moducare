@@ -41,33 +41,40 @@ public class OAuth2UserCustomService {
     }
 
     private CustomOAuth2User loadGoogleUser(String accessToken) {
-        // 네이버와 같은 방식으로 구글 API 호출하여 사용자 정보 가져오기
-        return retrieveUser("https://www.googleapis.com/oauth2/v3/userinfo", accessToken);
-    }
-
-    private CustomOAuth2User loadNaverUser(String accessToken) {
-        return retrieveUser("https://openapi.naver.com/v1/nid/me", accessToken);
-    }
-
-    private CustomOAuth2User loadKakaoUser(String accessToken) {
-        return retrieveUser("https://kapi.kakao.com/v2/user/me", accessToken);
-    }
-
-    private CustomOAuth2User retrieveUser(String userInfoEndpoint, String accessToken) {
-        logger.info("Fetching user information from endpoint: {}", userInfoEndpoint);
+        logger.info("Fetching user information from endpoint: {}", "https://www.googleapis.com/oauth2/v3/userinfo");
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Map> response = restTemplate.exchange(userInfoEndpoint, HttpMethod.GET, entity, Map.class);
-        Map<String, Object> userAttributes = parseAttributes(response);
-        logger.info("User attributes retrieved: {}", userAttributes);
+        ResponseEntity<Map> response = restTemplate.exchange("https://www.googleapis.com/oauth2/v3/userinfo", HttpMethod.GET, entity, Map.class);
 
-        if (userAttributes.containsKey("error")) {
-            logger.warn("No user information found in response.");
-            throw new RestApiException(ErrorCode.CONFLICT);
+        Map<String, Object> responseBody = response.getBody();
+        Map<String, Object> userAttributes = (Map<String, Object>) responseBody.get("response");
+        String email = (String) userAttributes.get("email");
+        String name = (String) userAttributes.getOrDefault("name", "자라나라머리머리");
+        String finalName;
+        if (name.equals("")||name==null) {
+            finalName = "자라나라머리머리";
+        } else {
+            finalName = name;
         }
+
+        logger.info("Retrieved email: {}, name: {}", email, finalName);
+        Member member = memberService.saveOrUpdateMember(email, finalName);
+        return new CustomOAuth2User(member);
+    }
+
+    private CustomOAuth2User loadNaverUser(String accessToken) {
+        logger.info("Fetching user information from endpoint: {}", "https://openapi.naver.com/v1/nid/me");
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Map> response = restTemplate.exchange("https://openapi.naver.com/v1/nid/me", HttpMethod.GET, entity, Map.class);
+        Map<String, Object> responseBody = response.getBody();
+        Map<String, Object> userAttributes = (Map<String, Object>) responseBody.get("response");
 
         String email = (String) userAttributes.get("email");
         String name = (String) userAttributes.getOrDefault("name", "자라나라머리머리");
@@ -83,13 +90,67 @@ public class OAuth2UserCustomService {
         return new CustomOAuth2User(member);
     }
 
-    private Map<String, Object> parseAttributes(ResponseEntity<Map> response) {
-        logger.info("Parsing attributes from response");
-        Map<String, Object> responseBody = response.getBody();
-        if (responseBody == null || !responseBody.containsKey("response")) {
-            logger.error("Failed to retrieve response body or 'response' key missing");
-            throw new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST);
+    private CustomOAuth2User loadKakaoUser(String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Map> response = restTemplate.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.GET, entity, Map.class);
+        Map<String, Object> additionalInfo = (Map<String, Object>) response.getBody().get("kakao_account");
+
+        String email = (String) additionalInfo.get("email");
+        String name = (String) additionalInfo.getOrDefault("profile_nickname", "");
+        String finalName;
+        if (name.equals("")||name==null) {
+            finalName = "자라나라머리머리";
+        } else {
+            finalName = name;
         }
-        return (Map<String, Object>) responseBody.get("response");
+
+        logger.info("Retrieved email: {}, name: {}", email, finalName);
+        Member member = memberService.saveOrUpdateMember(email, finalName);
+        return new CustomOAuth2User(member);
     }
+
+//    private CustomOAuth2User retrieveUser(Map<String, Object> userAttributes) {
+//
+//        if (userAttributes.containsKey("error")) {
+//            logger.warn("No user information found in response.");
+//            throw new RestApiException(ErrorCode.CONFLICT);
+//        }
+//
+//        String email = (String) userAttributes.get("email");
+//        String name = (String) userAttributes.getOrDefault("name", "자라나라머리머리");
+//        String finalName;
+//        if (name.equals("")||name==null) {
+//            finalName = "자라나라머리머리";
+//        } else {
+//            finalName = name;
+//        }
+//
+//        logger.info("Retrieved email: {}, name: {}", email, finalName);
+//        Member member = memberService.saveOrUpdateMember(email, finalName);
+//        return new CustomOAuth2User(member);
+//    }
+//
+//    private Map<String, Object> parseAttributes(ResponseEntity<Map> response, String registerId) {
+//        logger.info("Parsing attributes from response");
+//        Map<String, Object> responseBody = response.getBody();
+//        if (responseBody == null || !responseBody.containsKey("response")) {
+//            logger.error("Failed to retrieve response body or 'response' key missing");
+//            throw new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST);
+//        }
+//        switch (registerId) {
+//            case "naver":
+//                return (Map<String, Object>) responseBody.get("response");
+//            case "kakao":
+//                return (Map<String, Object>) responseBody.get("kakao_account");
+//            case "google":
+//                return (Map<String, Object>) responseBody.get("response");
+//            default:
+//                logger.error("response provider {} not found", registerId);
+//                throw new RestApiException(ErrorCode.NOT_FOUND);
+//        }
+//    }
 }
