@@ -32,7 +32,7 @@ public class DustApiService {
     private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
 
     //    @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 5, backoff = @Backoff(delay = 500))
-    @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 10, backoff = @Backoff(delay = 1000))
+    @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 10, backoff = @Backoff(delay = 500))
     public CompletableFuture<Integer> callDustApi(WeatherRequestDto weatherRequestDto) {
         System.out.println("try dust");
         return CompletableFuture.supplyAsync(() -> {
