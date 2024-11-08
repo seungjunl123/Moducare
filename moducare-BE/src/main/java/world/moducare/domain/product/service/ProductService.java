@@ -27,7 +27,7 @@ public class ProductService {
         if (member == null) {
             return null; // member가 null이면 바로 null 반환
         }
-        System.out.println("member found");
+        System.out.println("aaaaaaaaaaaaaaaaaaaaaaa member found");
 
         LatestProduct latestProduct = latestProductRepository.findByMember(member).orElse(null);
         if (latestProduct == null) {
