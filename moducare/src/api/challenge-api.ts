@@ -1,19 +1,22 @@
 import axiosInstance from '../util/axios';
 
-type createChallengeType = {
-  title: string;
-  challengeImage: string;
-};
-const postCreateChallenge = async ({
-  title,
-  challengeImage,
-}: createChallengeType): Promise<void> => {
-  const {data} = await axiosInstance.post('/challenges', {
-    title,
-    challengeImage,
-  });
+const postCreateChallenge = async (
+  title: string,
+  challengeImage: string,
+): Promise<void> => {
+  try {
+    const {data} = await axiosInstance.post('challenges', {
+      title,
+      challengeImage,
+    });
 
-  return data;
+    console.log('챌린지 생성 성공', data);
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 type getListType = {
@@ -24,7 +27,7 @@ type getListType = {
 };
 
 const getChallengeList = async (): Promise<getListType[]> => {
-  const {data} = await axiosInstance.get('/challenges');
+  const {data} = await axiosInstance.get('challenges');
 
   return data;
 };
@@ -32,24 +35,29 @@ const getChallengeList = async (): Promise<getListType[]> => {
 type getMyListType = {
   challengeId: number;
   challengeImg: string;
-  challengeName: number;
+  challengeName: string;
   isDone: number;
 };
 
 const getMyChallengeList = async (): Promise<getMyListType[]> => {
-  const {data} = await axiosInstance.get('/my-challenges');
+  try {
+    const {data} = await axiosInstance.get('my-challenges');
 
-  return data;
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 const postJoinChallenge = async (challengeId: number): Promise<void> => {
-  const {data} = await axiosInstance.post(`/my-challenges/${challengeId}/in`);
+  const {data} = await axiosInstance.post(`my-challenges/${challengeId}/in`);
 
   return data;
 };
 
 const postOutChallenge = async (challengeId: number): Promise<void> => {
-  const {data} = await axiosInstance.post(`/my-challenges/${challengeId}/out`);
+  const {data} = await axiosInstance.post(`my-challenges/${challengeId}/out`);
 
   return data;
 };
@@ -62,7 +70,7 @@ const postFeedChallenge = async (
   challengeId: number,
   {feedImg, content}: feedChallengeType,
 ): Promise<void> => {
-  const {data} = await axiosInstance.post(`/challenge-feeds/${challengeId}`, {
+  const {data} = await axiosInstance.post(`challenge-feeds/${challengeId}`, {
     feedImg,
     content,
   });
@@ -101,3 +109,5 @@ export {
   getFeed,
   getMyChallengeList,
 };
+
+export type {FeedType, feedChallengeType, getListType, getMyListType};

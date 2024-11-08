@@ -13,9 +13,16 @@ import {colors} from '../../constants/colors';
 
 interface ListProps extends PressableProps {
   isPhoto?: boolean;
+  title?: string;
+  user?: number;
 }
 
-const BigList = ({isPhoto = false, ...props}: ListProps) => {
+const BigList = ({
+  isPhoto = false,
+  title = '',
+  user = 0,
+  ...props
+}: ListProps) => {
   return (
     <>
       <Pressable style={styles.container} {...props}>
@@ -30,9 +37,9 @@ const BigList = ({isPhoto = false, ...props}: ListProps) => {
           </>
         )}
         <View style={styles.detailArea}>
-          <CustomText label="찬 바람으로 머리말리기" size={18} />
+          <CustomText label={title} size={18} />
           <View style={styles.dateArea}>
-            <Text style={styles.dateArea}>5 / 10</Text>
+            <Text style={styles.dateArea}>{user} / 10</Text>
           </View>
         </View>
       </Pressable>

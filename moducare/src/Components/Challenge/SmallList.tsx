@@ -4,19 +4,23 @@ import CustomText from '../Common/CustomText';
 import SvgIconAtom from '../Common/SvgIconAtom';
 
 interface ListProps extends PressableProps {
-  isPhoto?: boolean;
-  isFinish?: boolean;
+  isPhoto?: string;
+  isFinish?: number;
+  title?: string;
+  id?: number;
 }
 
 const SmallList = ({
-  isPhoto = false,
-  isFinish = false,
+  isPhoto = '',
+  isFinish = 0,
+  title,
+  id,
   ...props
 }: ListProps) => {
   return (
     <Pressable style={styles.container} {...props}>
       <View style={styles.ListArea}>
-        {isPhoto ? (
+        {isPhoto === '' ? (
           <SvgIconAtom name="Basic" size={40} />
         ) : (
           <>
@@ -24,14 +28,14 @@ const SmallList = ({
               style={styles.ImgTest}
               source={require('../../assets/test.png')}
             />
-            {isFinish && (
+            {isFinish === 1 && (
               <View style={styles.isFinish}>
                 <SvgIconAtom name="Finish" size={40} />
               </View>
             )}
           </>
         )}
-        <CustomText label="찬 바람으로 머리말리기" size={15} />
+        <CustomText label={title} size={15} />
       </View>
       <SvgIconAtom name="Right" size={24} />
     </Pressable>

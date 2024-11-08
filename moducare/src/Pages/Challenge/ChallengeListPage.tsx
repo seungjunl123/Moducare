@@ -5,8 +5,18 @@ import CustomText from '../../Components/Common/CustomText';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import {colors} from '../../constants/colors';
 import BigList from '../../Components/Challenge/BigList';
+import {getChallengeList, getListType} from '../../api/challenge-api';
 
 export default function ChallengeListPage() {
+  const [allList, setAllList] = React.useState<getListType[] | []>([]);
+  const getListCompo = async () => {
+    const allData = await getChallengeList();
+    setAllList(allData);
+  };
+  React.useEffect(() => {
+    getListCompo();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainArea}>
@@ -19,6 +29,7 @@ export default function ChallengeListPage() {
         </View>
         <View style={styles.ListArea}>
           <ScrollView showsVerticalScrollIndicator={false}>
+            {/* <BigList />
             <BigList />
             <BigList />
             <BigList />
@@ -26,9 +37,25 @@ export default function ChallengeListPage() {
             <BigList />
             <BigList />
             <BigList />
-            <BigList />
-            <BigList />
-            <Text style={styles.getListArea}>더보기</Text>
+            <BigList /> */}
+            {allList.length !== 0 ? (
+              allList
+                .slice(0, 3)
+                .map((data, index) => (
+                  <BigList
+                    key={index}
+                    title={data.challengeName}
+                    user={data.challengeUser}
+                  />
+                ))
+            ) : (
+              <View style={styles.nullList}>
+                <CustomText label="개설된 챌린지가 없어요" size={18} />
+              </View>
+            )}
+            {allList.length !== 0 && (
+              <Text style={styles.getListArea}>더보기</Text>
+            )}
           </ScrollView>
         </View>
       </View>
@@ -68,5 +95,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Pretendard-Bold',
     fontSize: 15,
     color: colors.DARK_GRAY,
+  },
+  nullList: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

@@ -6,6 +6,7 @@ import {
   Pressable,
   Text,
   TextInput,
+  Image,
 } from 'react-native';
 import CustomButtom from '../../Components/Common/CustomButton';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -15,9 +16,108 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {colors} from '../../constants/colors';
 import SmallList from './../../Components/Challenge/SmallList';
 import SlideModal from '../../Components/Common/SlideModal';
+import {
+  getChallengeList,
+  getListType,
+  getMyChallengeList,
+  getMyListType,
+  postCreateChallenge,
+} from '../../api/challenge-api';
+import {Alert} from 'react-native';
+import {getEncryptStorage} from '../../util';
+import {
+  CameraOptions,
+  launchImageLibrary,
+  ImageLibraryOptions,
+} from 'react-native-image-picker';
+import AWS from 'aws-sdk';
+import RNFS from 'react-native-fs';
+import {Buffer} from 'buffer';
+import Config from 'react-native-config';
+
+interface Action {
+  title: string;
+  type: 'capture' | 'library';
+  options: CameraOptions | ImageLibraryOptions;
+}
+
+// AWS S3 설정
+const s3 = new AWS.S3({
+  accessKeyId: Config.AWS_ACCESS_KEY_ID,
+  secretAccessKey: Config.AWS_SECRET_ACCESS_KEY,
+  region: Config.AWS_REGION,
+});
+
+const options: Action = {
+  title: 'Select Image',
+  type: 'library',
+  options: {
+    selectionLimit: 1,
+    mediaType: 'photo',
+    includeBase64: false,
+  },
+};
 
 export default function ChallengeMainPage({navigation}) {
   const [isModal, setIsModal] = React.useState(false);
+  const [myList, setMyList] = React.useState<getMyListType[] | []>([]);
+  const [allList, setAllList] = React.useState<getListType[] | []>([]);
+  const [title, setTitle] = React.useState<string>('');
+  //챌린지 생성 이미지 관련
+  const [imgUrl, setImgUrl] = React.useState('');
+  const [imgConfig, setImgConfig] = React.useState<any>(null);
+
+  const upLoadImgToS3 = async (img: any) => {
+    console.log('upLoadImgToS3', img);
+
+    return new Promise(async (resolve, reject) => {
+      const fileData = await RNFS.readFile(img.assets[0].uri, 'base64');
+      const params = {
+        Key: img.assets[0].fileName,
+        Bucket: Config.AWS_BUCKET,
+        Body: Buffer.from(fileData, 'base64'),
+        ContentType: img?.assets?.[0].type,
+      };
+
+      // S3 버켓에 파일 업로드
+      s3.upload(params, (err: any, data: any) => {
+        if (err) {
+          console.log('업로드 실패', err);
+          reject(err);
+        } else {
+          setImgUrl(data.Location);
+          console.log(`File uploaded successfully. ${data.Location}`);
+          resolve(data.Location);
+        }
+      });
+    });
+  };
+
+  const openImageLibrary = async () => {
+    console.log('ww');
+    const images = await launchImageLibrary(options);
+    if (images.assets) {
+      setImgConfig(images);
+    }
+  };
+
+  const imageUpload = () => {
+    if (title === '') {
+      Alert.alert('챌린지 생성 오류', '챌린지명을 작성해주세요!');
+      return;
+    }
+    Alert.alert('업로드');
+    // 1. S3 업로드
+    upLoadImgToS3(imgConfig);
+    // 2. 업로드 된 이미지 정보 전송
+    postCreateChallenge(title, imgUrl);
+    // 3. 초기화
+    setImgConfig(null);
+    setImgUrl('');
+    setTitle('');
+    // 4. 모달 닫기
+    setIsModal(false);
+  };
 
   const handleOpenModal = () => {
     setIsModal(true);
@@ -25,7 +125,21 @@ export default function ChallengeMainPage({navigation}) {
 
   const handleCloseModal = () => {
     setIsModal(false);
+    setImgConfig(null);
+    setImgUrl('');
+    setTitle('');
   };
+
+  const getListCompo = async () => {
+    const myData = await getMyChallengeList();
+    const allData = await getChallengeList();
+    setMyList(myData);
+    setAllList(allData);
+  };
+  React.useEffect(() => {
+    getListCompo();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainArea}>
@@ -41,14 +155,26 @@ export default function ChallengeMainPage({navigation}) {
             <CustomText label="진행중인 챌린지 목록" size={20} />
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <SmallList isFinish={true} />
+            {/* <SmallList isFinish={true} />
             <SmallList isPhoto={true} />
             <SmallList />
             <SmallList />
             <SmallList />
             <SmallList />
             <SmallList />
-            <SmallList />
+            <SmallList /> */}
+            {myList.length !== 0 ? (
+              myList.map((data, index) => (
+                <SmallList
+                  key={index}
+                  title={data.challengeName}
+                  isPhoto={data.challengeImg}
+                  isFinish={data.isDone}
+                />
+              ))
+            ) : (
+              <CustomText label="진행중인 챌린지가 없어요" />
+            )}
           </ScrollView>
         </View>
         <View style={styles.BottomListArea}>
@@ -59,9 +185,22 @@ export default function ChallengeMainPage({navigation}) {
             </Pressable>
           </View>
           <View>
-            <SmallList onPress={() => navigation.navigate('challenge_feed')} />
+            {/* <SmallList onPress={() => navigation.navigate('challenge_feed')} />
             <SmallList />
-            <SmallList />
+            <SmallList /> */}
+            {allList.length !== 0 ? (
+              allList
+                .slice(0, 3)
+                .map((data, index) => (
+                  <SmallList
+                    key={index}
+                    title={data.challengeName}
+                    isPhoto={data.challengeImg}
+                  />
+                ))
+            ) : (
+              <CustomText label="개설된 챌린지가 없어요" />
+            )}
           </View>
         </View>
       </View>
@@ -70,17 +209,31 @@ export default function ChallengeMainPage({navigation}) {
       </View>
       <SlideModal visible={isModal} onClose={handleCloseModal}>
         <View style={styles.ModalView}>
-          <Pressable style={styles.UploadArea}>
-            <SvgIconAtom name="Camera" style={{margin: 'auto'}} />
-            <Text style={styles.UploadText}>
-              챌린지 방 대표이미지를 공유해볼까요?
-            </Text>
-          </Pressable>
+          {imgConfig !== null ? (
+            <View style={styles.imageContainer}>
+              <Image
+                source={{uri: imgConfig?.assets?.[0].uri}}
+                style={{width: 150, height: 150}}
+              />
+            </View>
+          ) : (
+            <Pressable
+              style={styles.UploadArea}
+              onPress={() => openImageLibrary()}>
+              <SvgIconAtom name="Camera" style={{margin: 'auto'}} />
+              <Text style={styles.UploadText}>
+                챌린지 방 대표이미지를 공유해볼까요?
+              </Text>
+            </Pressable>
+          )}
+
           <TextInput
             style={styles.InputArea}
             placeholder="챌린지 제목을 작성해주세요."
+            value={title}
+            onChangeText={setTitle}
           />
-          <CustomButtom label="챌린지 생성하기" onPress={handleCloseModal} />
+          <CustomButtom label="챌린지 생성하기" onPress={imageUpload} />
         </View>
       </SlideModal>
     </SafeAreaView>
@@ -131,7 +284,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   ModalView: {
-    flex: 1,
     gap: 20,
   },
   UploadArea: {
@@ -147,5 +299,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.WHITE_GRAY,
     borderRadius: 10,
     paddingHorizontal: 10,
+  },
+  imageContainer: {
+    alignItems: 'center',
+    margin: 10,
+    marginVertical: 20,
   },
 });

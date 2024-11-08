@@ -37,7 +37,8 @@ const OkPage = ({route}) => {
       fcmToken,
     });
     console.log('fcmToken', fcmToken);
-    console.log('로그인 성공', result.jwtAccessToken);
+    console.log('로그인 성공 액세스', result.jwtAccessToken);
+    console.log('로그인 성공 리프레시', result.refreshToken);
   };
   return (
     <SafeAreaView style={styles.container}>
