@@ -62,7 +62,7 @@ public class TemperatureApiService {
     };
 
 
-    @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 10, backoff = @Backoff(delay = 1000))
+    @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 10, backoff = @Backoff(delay = 500))
     public CompletableFuture<Integer> callTemperatureApi(WeatherRequestDto weatherRequestDto) {
         System.out.println("try temperature api");
         return CompletableFuture.supplyAsync(() -> {

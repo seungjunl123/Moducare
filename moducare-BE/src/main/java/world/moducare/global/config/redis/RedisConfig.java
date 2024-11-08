@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -62,14 +63,13 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-        RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofHours(1)) // 캐시 유효 시간 설정
-                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())) // 키 직렬화
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer())); // 값 직렬화
+    public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+        RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofHours(1))  // 캐시 데이터 만료 시간 설정 (예: 1시간)
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()));
 
         return RedisCacheManager.builder(redisConnectionFactory)
-                .cacheDefaults(config)
+                .cacheDefaults(cacheConfig)
                 .build();
     }
 }
