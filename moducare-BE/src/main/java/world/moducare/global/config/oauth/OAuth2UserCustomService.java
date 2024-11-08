@@ -100,13 +100,9 @@ public class OAuth2UserCustomService {
         Map<String, Object> additionalInfo = (Map<String, Object>) response.getBody().get("kakao_account");
 
         String email = (String) additionalInfo.get("email");
-        String name = (String) additionalInfo.getOrDefault("profile_nickname", "");
-        String finalName;
-        if (name.equals("")||name==null) {
-            finalName = "자라나라머리머리";
-        } else {
-            finalName = name;
-        }
+        Map<String, Object> profileInfo = (Map<String, Object>) additionalInfo.get("profile");
+        String name = profileInfo != null ? (String) profileInfo.getOrDefault("nickname", "") : "";
+        String finalName = name.isEmpty() ? "자라나라머리머리" : name;
 
         logger.info("Retrieved email: {}, name: {}", email, finalName);
         Member member = memberService.saveOrUpdateMember(email, finalName);
