@@ -3,6 +3,8 @@ package world.moducare.domain.product.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +21,7 @@ import world.moducare.global.config.oauth.CustomOAuth2User;
 @Tag(name = "제품 컨트롤러", description = "추천 제품 관련 API")
 public class ProductController {
 
+    private static final Logger log = LoggerFactory.getLogger(ProductController.class);
     private final MemberService memberService;
     private final ProductService productService;
 
@@ -35,6 +38,7 @@ public class ProductController {
     public ResponseEntity<LatestProductDto> getLatestProduct(@AuthenticationPrincipal CustomOAuth2User principal) {
         Member member = memberService.findById(principal.getId());
         LatestProductDto latestProductDto = productService.findLatestProduct(member);
+        log.info(String.valueOf(latestProductDto==null));
         return ResponseEntity.status(HttpStatus.OK).body(latestProductDto);
     }
 }

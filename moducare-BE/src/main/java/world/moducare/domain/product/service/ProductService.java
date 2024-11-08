@@ -24,6 +24,11 @@ public class ProductService {
     }
 
     public LatestProductDto findLatestProduct(Member member) {
+        if (member == null) {
+            return null; // member가 null이면 바로 null 반환
+        }
+        System.out.println("member found");
+
         LatestProduct latestProduct = latestProductRepository.findByMember(member).orElse(null);
         if (latestProduct == null) {
             return null;
