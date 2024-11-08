@@ -12,7 +12,7 @@ import MainCarousel from '../Components/Carousel/MainCarousel';
 const WINDOW_WIDTH = Dimensions.get('window').width;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 export default function MainPage() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

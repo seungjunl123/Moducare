@@ -26,6 +26,7 @@ export default function ChallengeMainPage({navigation}) {
   const handleCloseModal = () => {
     setIsModal(false);
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.mainArea}>

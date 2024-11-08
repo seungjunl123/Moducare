@@ -1,10 +1,7 @@
-import axios from 'axios';
 import axiosInstance from '../util/axios';
 import Config from 'react-native-config';
 
 const getLineDiaryData = async () => {
-  // const data = await axiosInstance.get('/diaries/line');
-  // return data;
   try {
     const response = await axiosInstance.get(`${Config.API_URL}diaries/line`);
     console.log('이마 리포트 호출 성공 ', response.data);

@@ -7,11 +7,6 @@ import {
   postHairImg,
 } from '../api/report-api';
 
-interface DiaryItem {
-  img: string;
-  regDate: string;
-}
-
 interface ReportItem {
   idx: number;
   date: string;
@@ -25,29 +20,39 @@ export const QueryKey = {
   reportDetail: 'reportDetail',
 };
 
+// 데이터가 없을 경우 더미 데이터
+const DefaultImage = [
+  {
+    img: require('../assets/img/MainCharacter.png'),
+    regDate: '2024-01-04',
+  },
+];
+
 export const useLineDiaryQuery = () => {
-  const {data, error} = useQuery({
+  const {data} = useQuery({
     queryKey: [QueryKey.line],
     queryFn: getLineDiaryData,
-    select: response =>
-      response.data.map((item: DiaryItem) => ({
-        img: {uri: item.img},
-        regDate: item.regDate,
-      })),
+    select: response => {
+      if (response.length === 0) {
+        return DefaultImage;
+      }
+      return response;
+    },
   });
   return {data};
 };
 
 export const useTopDiaryQuery = () => {
-  const {data, error} = useQuery({
+  const {data} = useQuery({
     // data를 구조분해할당으로 받아야 함
     queryKey: [QueryKey.top],
     queryFn: getTopDiaryData,
-    select: response =>
-      response.data.map((item: DiaryItem) => ({
-        img: {uri: item.img},
-        regDate: item.regDate,
-      })),
+    select: response => {
+      if (response.length === 0) {
+        return DefaultImage;
+      }
+      return response;
+    },
   });
   return {data}; // data만 반환하도록 수정
 };
@@ -72,13 +77,19 @@ export const useReportDetailQuery = (id: number) => {
   });
 };
 
-export const usePostHairImgQuery = () => {
+export const usePostHairImgMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (formData: FormData) => postHairImg(formData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: [QueryKey.line]});
-      queryClient.invalidateQueries({queryKey: [QueryKey.top]});
+    mutationFn: ({
+      uploadedUrl,
+      imgType,
+    }: {
+      uploadedUrl: string;
+      imgType: 'line' | 'top';
+    }) => postHairImg(uploadedUrl, imgType),
+    onSuccess: (_, {imgType}) => {
+      // 이미지 타입에 따른 useQuery 업데이트
+      queryClient.invalidateQueries({queryKey: [QueryKey[`${imgType}`]]});
     },
     onError: error => {
       console.log(error);

@@ -16,10 +16,6 @@ const HEIGHT = Dimensions.get('window').height;
 
 export default function ReportPage() {
   const {data: reportData, isLoading: reportLoading} = useReportQuery();
-
-  if (reportLoading) {
-    return <CustomText label="로딩중~" />;
-  }
   const reportList = reportData;
 
   return (
@@ -35,6 +31,11 @@ export default function ReportPage() {
         </View>
       </View>
       <View style={styles.reportList}>
+        {reportLoading && (
+          <View style={styles.reportListEmpty}>
+            <CustomText label="로딩중입니다..." />
+          </View>
+        )}
         {!reportList && (
           <View style={styles.reportListEmpty}>
             <CustomText label="리포트가 아직 작성되지 않았습니다." />
