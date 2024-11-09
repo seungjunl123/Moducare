@@ -1,19 +1,24 @@
+import {setEncryptStorage} from '../util';
 import axiosInstance from '../util/axios';
 
-type createChallengeType = {
-  title: string;
-  challengeImage: string;
-};
-const postCreateChallenge = async ({
-  title,
-  challengeImage,
-}: createChallengeType): Promise<void> => {
-  const {data} = await axiosInstance.post('/challenges', {
-    title,
-    challengeImage,
-  });
+const postCreateChallenge = async (
+  title: string,
+  challengeImage: string,
+): Promise<void> => {
+  console.log('이미지 보내야함', challengeImage);
+  try {
+    const {data} = await axiosInstance.post('challenges', {
+      title,
+      challengeImage,
+    });
 
-  return data;
+    console.log('챌린지 생성 성공', data);
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 type getListType = {
@@ -24,7 +29,7 @@ type getListType = {
 };
 
 const getChallengeList = async (): Promise<getListType[]> => {
-  const {data} = await axiosInstance.get('/challenges');
+  const {data} = await axiosInstance.get('challenges');
 
   return data;
 };
@@ -32,45 +37,59 @@ const getChallengeList = async (): Promise<getListType[]> => {
 type getMyListType = {
   challengeId: number;
   challengeImg: string;
-  challengeName: number;
+  challengeName: string;
   isDone: number;
 };
 
 const getMyChallengeList = async (): Promise<getMyListType[]> => {
-  const {data} = await axiosInstance.get('/my-challenges');
+  try {
+    const {data} = await axiosInstance.get('my-challenges');
 
-  return data;
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 const postJoinChallenge = async (challengeId: number): Promise<void> => {
-  const {data} = await axiosInstance.post(`/my-challenges/${challengeId}/in`);
+  try {
+    const {data} = await axiosInstance.post(`my-challenges/${challengeId}/in`);
 
-  return data;
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 const postOutChallenge = async (challengeId: number): Promise<void> => {
-  const {data} = await axiosInstance.post(`/my-challenges/${challengeId}/out`);
+  const {data} = await axiosInstance.post(`my-challenges/${challengeId}/out`);
 
   return data;
 };
 
-type feedChallengeType = {
-  feedImg: string;
-  content: string;
-};
 const postFeedChallenge = async (
   challengeId: number,
-  {feedImg, content}: feedChallengeType,
+  feedImg: string,
+  content: string,
 ): Promise<void> => {
-  const {data} = await axiosInstance.post(`/challenge-feeds/${challengeId}`, {
-    feedImg,
-    content,
-  });
-
-  return data;
+  console.log('보내야함', feedImg);
+  try {
+    const {data} = await axiosInstance.post(`challenge-feeds/${challengeId}`, {
+      feedImg,
+      content,
+    });
+    setEncryptStorage('isDone', 1);
+    return data;
+  } catch (error) {
+    console.log('에러', error);
+    throw error;
+  }
 };
 
 type FeedType = {
+  feedId: number;
   feedImg: string;
   feedUserName: string;
   content: string;
@@ -80,15 +99,25 @@ type FeedType = {
 };
 
 const getFeed = async (challengeId: number): Promise<FeedType[]> => {
-  const {data} = await axiosInstance.get(`challenge-feeds/${challengeId}`);
+  try {
+    const {data} = await axiosInstance.get(`challenge-feeds/${challengeId}`);
 
-  return data;
+    return data;
+  } catch (error) {
+    console.log('피드가져오기 에러', error);
+    throw error;
+  }
 };
 
-const postLike = async (feedId: number): Promise<number> => {
-  const {data} = await axiosInstance.post(`favorites/${feedId}`);
+const postLike = async (feedId: number, status: number): Promise<number> => {
+  try {
+    const {data} = await axiosInstance.post(`favorites/${feedId}`, {status});
 
-  return data;
+    return data;
+  } catch (error) {
+    console.log('좋아요 에러', error);
+    throw error;
+  }
 };
 
 export {
@@ -101,3 +130,5 @@ export {
   getFeed,
   getMyChallengeList,
 };
+
+export type {FeedType, getListType, getMyListType};

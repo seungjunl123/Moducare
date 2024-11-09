@@ -3,7 +3,11 @@ import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {colors} from '../../constants/colors';
 import SvgIconAtom from './SvgIconAtom';
 
-const FeedJoinNav = () => {
+interface FeedJoinNavProps {
+  onJoin: () => void;
+}
+
+const FeedJoinNav = ({onJoin}: FeedJoinNavProps) => {
   return (
     <View style={styles.container}>
       <Pressable style={[styles.BtnArea, styles.PickArea]}>
@@ -13,7 +17,7 @@ const FeedJoinNav = () => {
         </Text>
       </Pressable>
       <View style={styles.line} />
-      <Pressable style={styles.BtnArea}>
+      <Pressable style={styles.BtnArea} onPress={onJoin}>
         <SvgIconAtom name="Join" />
         <Text style={styles.text}>챌린지 같이하기</Text>
       </Pressable>

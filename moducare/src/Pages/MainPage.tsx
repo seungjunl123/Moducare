@@ -4,15 +4,38 @@ import ItemBox from '../Components/ItemBox/ItemBox';
 import CustomText from '../Components/Common/CustomText';
 import CustomButton from '../Components/Common/CustomButton';
 import {colors} from '../constants/colors';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import SmallList from '../Components/Challenge/SmallList';
 import WeatherInfo from '../Components/Weather/WeatherInfo';
 import MainCarousel from '../Components/Carousel/MainCarousel';
+import {getMyChallengeList, getMyListType} from '../api/challenge-api';
+import {setEncryptStorage} from '../util';
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
 export default function MainPage() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
+  const [myList, setMyList] = React.useState<getMyListType[] | []>([]);
+
+  const handleMoveFeedPage = (data: getMyListType) => {
+    setEncryptStorage('isDone', data.isDone);
+    navigation.navigate('challenge_feed', {
+      id: data.challengeId,
+      title: data.challengeName,
+      type: 'myChallenge',
+    });
+  };
+
+  const getListCompo = async () => {
+    const myData = await getMyChallengeList();
+    setMyList(myData);
+  };
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('qq');
+      getListCompo();
+    }, []),
+  );
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -36,10 +59,22 @@ export default function MainPage() {
           <CustomText label="진행중인 챌린지 정보" size={20} />
           <View style={styles.challengeBox}>
             <View style={styles.challengeBoxItem}>
-              <ScrollView showsVerticalScrollIndicator={false}>
-                <SmallList isFinish={true} />
-                <SmallList isPhoto={true} />
-                <SmallList />
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                nestedScrollEnabled={true}>
+                {myList.length !== 0 ? (
+                  myList.map((data, index) => (
+                    <SmallList
+                      key={index}
+                      title={data.challengeName}
+                      uri={data.challengeImg}
+                      isFinish={data.isDone}
+                      onPress={() => handleMoveFeedPage(data)}
+                    />
+                  ))
+                ) : (
+                  <CustomText label="진행중인 챌린지가 없어요" />
+                )}
               </ScrollView>
             </View>
           </View>
