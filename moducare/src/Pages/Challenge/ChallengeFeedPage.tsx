@@ -1,12 +1,47 @@
-import React from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../constants/colors';
 import FeedNav from '../../Components/Common/FeedNav';
 import FeedJoinNav from '../../Components/Common/FeedJoinNav';
 import FeedItem from '../../Components/Challenge/FeedItem';
+import {FeedType, getFeed, postOutChallenge} from '../../api/challenge-api';
+import CustomText from '../../Components/Common/CustomText';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {getEncryptStorage} from '../../util';
 
-const ChallengeFeedPage = ({navigation}) => {
+const ChallengeFeedPage = ({route}) => {
+  const navigation = useNavigation();
+  const {id, title, type} = route.params;
+  const [feeds, setFeeds] = useState<FeedType[] | []>([]);
+
+  const handleWrite = async () => {
+    const isDone = await getEncryptStorage('isDone');
+    if (isDone === 0) {
+      navigation.navigate('challenge_write', {id});
+    } else {
+      Alert.alert(
+        '오늘 인증 완료',
+        '해당 챌린지 인증을 하셨어요! 내일 다시 해주세요!',
+      );
+    }
+  };
+
+  const handleExit = async () => {
+    await postOutChallenge(id);
+    navigation.goBack();
+  };
+  const getFeeds = async () => {
+    const data = await getFeed(id);
+    setFeeds(data);
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getFeeds();
+    }, []),
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <Text
@@ -14,7 +49,7 @@ const ChallengeFeedPage = ({navigation}) => {
           styles.text,
           {fontFamily: 'Pretendard-Bold', color: colors.BLACK},
         ]}>
-        찬 바람으로 머리말리기
+        {title}
       </Text>
       <Text
         style={[
@@ -23,11 +58,34 @@ const ChallengeFeedPage = ({navigation}) => {
         ]}>
         다른 사람들과 함께 루틴을 지켜봐요!
       </Text>
-      <FeedNav onPress={() => navigation.navigate('challenge_write')} />
-      {/* <FeedJoinNav /> */}
+      {type === 'myChallenge' ? (
+        <FeedNav onPress={handleWrite} onExit={handleExit} />
+      ) : (
+        <FeedJoinNav />
+      )}
       <ScrollView style={styles.FeedList} showsVerticalScrollIndicator={false}>
-        <FeedItem />
-        <FeedItem />
+        {feeds.length !== 0 ? (
+          feeds.map((data, index) => (
+            <FeedItem
+              key={index}
+              feedId={data.feedId}
+              feedUserName={data.feedUserName}
+              content={data.content}
+              feedRegDate={data.feedRegDate}
+              uri={data.feedImg}
+              like={data.like}
+              isLiked={data.isLiked}
+            />
+          ))
+        ) : (
+          <View style={styles.nullList}>
+            <CustomText label="인증 피드가 존재하지 않아요" size={18} />
+            <CustomText
+              label="다른 사람들보다 먼저 인증피드를 올려보세요!"
+              size={18}
+            />
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -44,6 +102,10 @@ const styles = StyleSheet.create({
   },
   FeedList: {
     flex: 1,
+  },
+  nullList: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

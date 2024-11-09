@@ -1,9 +1,11 @@
+import {setEncryptStorage} from '../util';
 import axiosInstance from '../util/axios';
 
 const postCreateChallenge = async (
   title: string,
   challengeImage: string,
 ): Promise<void> => {
+  console.log('이미지 보내야함', challengeImage);
   try {
     const {data} = await axiosInstance.post('challenges', {
       title,
@@ -62,23 +64,27 @@ const postOutChallenge = async (challengeId: number): Promise<void> => {
   return data;
 };
 
-type feedChallengeType = {
-  feedImg: string;
-  content: string;
-};
 const postFeedChallenge = async (
   challengeId: number,
-  {feedImg, content}: feedChallengeType,
+  feedImg: string,
+  content: string,
 ): Promise<void> => {
-  const {data} = await axiosInstance.post(`challenge-feeds/${challengeId}`, {
-    feedImg,
-    content,
-  });
-
-  return data;
+  console.log('보내야함', feedImg);
+  try {
+    const {data} = await axiosInstance.post(`challenge-feeds/${challengeId}`, {
+      feedImg,
+      content,
+    });
+    setEncryptStorage('isDone', 1);
+    return data;
+  } catch (error) {
+    console.log('에러', error);
+    throw error;
+  }
 };
 
 type FeedType = {
+  feedId: number;
   feedImg: string;
   feedUserName: string;
   content: string;
@@ -88,15 +94,25 @@ type FeedType = {
 };
 
 const getFeed = async (challengeId: number): Promise<FeedType[]> => {
-  const {data} = await axiosInstance.get(`challenge-feeds/${challengeId}`);
+  try {
+    const {data} = await axiosInstance.get(`challenge-feeds/${challengeId}`);
 
-  return data;
+    return data;
+  } catch (error) {
+    console.log('피드가져오기 에러', error);
+    throw error;
+  }
 };
 
-const postLike = async (feedId: number): Promise<number> => {
-  const {data} = await axiosInstance.post(`favorites/${feedId}`);
+const postLike = async (feedId: number, status: number): Promise<number> => {
+  try {
+    const {data} = await axiosInstance.post(`favorites/${feedId}`, {status});
 
-  return data;
+    return data;
+  } catch (error) {
+    console.log('좋아요 에러', error);
+    throw error;
+  }
 };
 
 export {
@@ -110,4 +126,4 @@ export {
   getMyChallengeList,
 };
 
-export type {FeedType, feedChallengeType, getListType, getMyListType};
+export type {FeedType, getListType, getMyListType};

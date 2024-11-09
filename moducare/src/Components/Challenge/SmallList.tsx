@@ -4,30 +4,27 @@ import CustomText from '../Common/CustomText';
 import SvgIconAtom from '../Common/SvgIconAtom';
 
 interface ListProps extends PressableProps {
-  isPhoto?: string;
+  uri?: string;
   isFinish?: number;
   title?: string;
-  id?: number;
 }
 
-const SmallList = ({
-  isPhoto = '',
-  isFinish = 0,
-  title,
-  id,
-  ...props
-}: ListProps) => {
+const SmallList = ({uri = '', isFinish = 0, title, ...props}: ListProps) => {
   return (
     <Pressable style={styles.container} {...props}>
       <View style={styles.ListArea}>
-        {isPhoto === '' ? (
-          <SvgIconAtom name="Basic" size={40} />
+        {uri === '' ? (
+          <>
+            <SvgIconAtom name="Basic" size={40} />
+            {isFinish === 1 && (
+              <View style={styles.isFinish}>
+                <SvgIconAtom name="Finish" size={40} />
+              </View>
+            )}
+          </>
         ) : (
           <>
-            <Image
-              style={styles.ImgTest}
-              source={require('../../assets/test.png')}
-            />
+            <Image style={styles.ImgTest} source={{uri}} />
             {isFinish === 1 && (
               <View style={styles.isFinish}>
                 <SvgIconAtom name="Finish" size={40} />

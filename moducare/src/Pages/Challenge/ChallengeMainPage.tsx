@@ -24,7 +24,7 @@ import {
   postCreateChallenge,
 } from '../../api/challenge-api';
 import {Alert} from 'react-native';
-import {getEncryptStorage} from '../../util';
+import {getEncryptStorage, setEncryptStorage} from '../../util';
 import {
   CameraOptions,
   launchImageLibrary,
@@ -34,6 +34,7 @@ import AWS from 'aws-sdk';
 import RNFS from 'react-native-fs';
 import {Buffer} from 'buffer';
 import Config from 'react-native-config';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface Action {
   title: string;
@@ -85,8 +86,9 @@ export default function ChallengeMainPage({navigation}) {
           console.log('업로드 실패', err);
           reject(err);
         } else {
-          setImgUrl(data.Location);
           console.log(`File uploaded successfully. ${data.Location}`);
+          setImgUrl(data.Location);
+          postCreateChallenge(title, data.Location);
           resolve(data.Location);
         }
       });
@@ -101,16 +103,25 @@ export default function ChallengeMainPage({navigation}) {
     }
   };
 
-  const imageUpload = () => {
+  const imageUpload = async () => {
     if (title === '') {
       Alert.alert('챌린지 생성 오류', '챌린지명을 작성해주세요!');
       return;
     }
     Alert.alert('업로드');
     // 1. S3 업로드
-    upLoadImgToS3(imgConfig);
+    if (imgConfig === null) {
+      await postCreateChallenge(title, '');
+      const myData = await getMyChallengeList();
+      setMyList(myData);
+    } else {
+      await upLoadImgToS3(imgConfig);
+      const myData = await getMyChallengeList();
+      setMyList(myData);
+    }
     // 2. 업로드 된 이미지 정보 전송
-    postCreateChallenge(title, imgUrl);
+    // console.log('이미지 url', imgUrl);
+    // await postCreateChallenge(title, imgUrl);
     // 3. 초기화
     setImgConfig(null);
     setImgUrl('');
@@ -130,15 +141,27 @@ export default function ChallengeMainPage({navigation}) {
     setTitle('');
   };
 
+  const handleMoveFeedPage = (data: getMyListType) => {
+    setEncryptStorage('isDone', data.isDone);
+    navigation.navigate('challenge_feed', {
+      id: data.challengeId,
+      title: data.challengeName,
+      type: 'myChallenge',
+    });
+  };
+
   const getListCompo = async () => {
     const myData = await getMyChallengeList();
     const allData = await getChallengeList();
     setMyList(myData);
     setAllList(allData);
   };
-  React.useEffect(() => {
-    getListCompo();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('qq');
+      getListCompo();
+    }, []),
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -155,21 +178,14 @@ export default function ChallengeMainPage({navigation}) {
             <CustomText label="진행중인 챌린지 목록" size={20} />
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {/* <SmallList isFinish={true} />
-            <SmallList isPhoto={true} />
-            <SmallList />
-            <SmallList />
-            <SmallList />
-            <SmallList />
-            <SmallList />
-            <SmallList /> */}
             {myList.length !== 0 ? (
               myList.map((data, index) => (
                 <SmallList
                   key={index}
                   title={data.challengeName}
-                  isPhoto={data.challengeImg}
+                  uri={data.challengeImg}
                   isFinish={data.isDone}
+                  onPress={() => handleMoveFeedPage(data)}
                 />
               ))
             ) : (
@@ -185,19 +201,21 @@ export default function ChallengeMainPage({navigation}) {
             </Pressable>
           </View>
           <View>
-            {/* <SmallList onPress={() => navigation.navigate('challenge_feed')} />
-            <SmallList />
-            <SmallList /> */}
             {allList.length !== 0 ? (
-              allList
-                .slice(0, 3)
-                .map((data, index) => (
-                  <SmallList
-                    key={index}
-                    title={data.challengeName}
-                    isPhoto={data.challengeImg}
-                  />
-                ))
+              allList.slice(0, 3).map((data, index) => (
+                <SmallList
+                  key={index}
+                  title={data.challengeName}
+                  uri={data.challengeImg}
+                  onPress={() =>
+                    navigation.navigate('challenge_feed', {
+                      id: data.challengeId,
+                      title: data.challengeName,
+                      type: 'allChallenge',
+                    })
+                  }
+                />
+              ))
             ) : (
               <CustomText label="개설된 챌린지가 없어요" />
             )}
