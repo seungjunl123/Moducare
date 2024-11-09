@@ -18,7 +18,6 @@ import world.moducare.domain.member.entity.Member;
 public class DiaryService {
     private final DiaryRepository diaryRepository;
 
-
     public void saveDiary(Member member, DiaryRequestDto diaryRequestDto) {
         HeadDiary headDiary = HeadDiary.builder()
                 .member(member)

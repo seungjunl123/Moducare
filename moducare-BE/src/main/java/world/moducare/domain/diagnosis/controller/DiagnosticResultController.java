@@ -53,8 +53,8 @@ public class DiagnosticResultController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "두피진단", description = "두피 사진 진단")
-    public ResponseEntity<?> uploadFile(
+    @Operation(summary = "두피진단", description = "두피 진단 결과")
+    public ResponseEntity<?> saveDiagnosticResult(
         @Parameter(description = "두피 사진파일", required = true) @RequestParam("file") MultipartFile file) {
 
         // 두피이미지 S3 저장
