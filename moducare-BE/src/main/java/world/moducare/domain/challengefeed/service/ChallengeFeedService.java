@@ -56,7 +56,7 @@ public class ChallengeFeedService {
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
-        List<ChallengeFeed> challengeFeed = challengeFeedRepository.findAllByChallengeAndMemberOrderByCreatedAtDesc(challenge, member).orElseThrow(()->new RestApiException(ErrorCode.NOT_FOUND));
+        List<ChallengeFeed> challengeFeed = challengeFeedRepository.findAllByChallengeOrderByCreatedAtDesc(challenge).orElseThrow(()->new RestApiException(ErrorCode.NOT_FOUND));
 
         List<FeedResponseDto> list = new ArrayList<>();
         for(ChallengeFeed feed : challengeFeed){
