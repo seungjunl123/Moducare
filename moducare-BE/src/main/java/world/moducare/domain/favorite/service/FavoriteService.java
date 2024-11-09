@@ -40,6 +40,6 @@ public class FavoriteService {
     }
 
     private void deleteLike(Member member, ChallengeFeed challengeFeed) {
-        favoriteRepository.deleteByMemberAndFeed(member, challengeFeed);
+        favoriteRepository.deleteByMemberIdAndFeedId(member.getId(), challengeFeed.getId());
     }
 }

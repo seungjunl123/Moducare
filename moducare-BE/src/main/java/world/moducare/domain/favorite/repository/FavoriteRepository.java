@@ -13,7 +13,7 @@ public interface FavoriteRepository extends CrudRepository<Favorite, Long> {
 
     boolean existsByFeedAndMember(ChallengeFeed feed, Member member);
 
-    void deleteByMemberAndFeed(Member member, ChallengeFeed feed);
+    void deleteByMemberIdAndFeedId(Long memberId, Long feedId);
 
 }
 
