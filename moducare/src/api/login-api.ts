@@ -1,7 +1,6 @@
-import axios from 'axios';
 import {getEncryptStorage} from '../util';
 import axiosInstance from './../util/axios';
-import Config from 'react-native-config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type RequestMember = {
   name: string;
@@ -31,6 +30,11 @@ const postLogin = async ({
       accessToken,
       fcmToken,
     });
+
+    // 토큰 저장 -> 나중에 인터셉터로 확인
+    await AsyncStorage.setItem('accessToken', data.jwtAccessToken);
+    await AsyncStorage.setItem('refreshToken', data.refreshToken);
+
     return data;
   } catch (error) {
     console.error(error);
@@ -50,34 +54,42 @@ const postRefreshToken = async (): Promise<ResponseAccess> => {
 };
 
 const postLogout = async (fcmToken: string): Promise<void> => {
-  const {data} = await axiosInstance.post(`members/logout`, {fcmToken});
+  try {
+    const {data} = await axiosInstance.post(`/members/logout`, {fcmToken});
 
-  return data;
+    await AsyncStorage.removeItem('accessToken');
+    await AsyncStorage.removeItem('refreshToken');
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 const deleteMember = async (): Promise<void> => {
-  const {data} = await axiosInstance.delete(`members/`);
+  try {
+    const {data} = await axiosInstance.delete(`/members/`);
 
-  return data;
+    await AsyncStorage.removeItem('accessToken');
+    await AsyncStorage.removeItem('refreshToken');
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 const putMember = async (userInfo: RequestMember): Promise<void> => {
   try {
     // axiosInstance로 변경 필요
-    const {data} = await axios.put(
-      `${Config.API_URL}members/modify`,
-      {
-        name: userInfo.name,
-        birth: userInfo.birth,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${Config.ACCESS_TOKEN}`,
-        },
-      },
-    );
+    const {data} = await axiosInstance.put(`/members/modify`, {
+      name: userInfo.name,
+      birth: userInfo.birth,
+    });
 
-    console.log(data);
+    console.log('회원 정보 변경 완료');
     return data;
   } catch (error) {
     console.log(error);
@@ -101,6 +113,11 @@ const postLoginKaKao = async ({
     accessToken,
     fcmToken,
   });
+
+  // 토큰 저장 필요 여부 진영 확인 필요
+  // await AsyncStorage.setItem('accessToken', data.jwtAccessToken);
+  // await AsyncStorage.setItem('refreshToken', data.refreshToken);
+
   console.log('데이터', data);
   return data;
 };

@@ -8,6 +8,7 @@ import pushNoti from './util/pushNoti';
 import notifee, {AuthorizationStatus} from '@notifee/react-native';
 import {setEncryptStorage} from './util';
 import SplashScreen from 'react-native-splash-screen';
+import {setupInterceptors} from './util/headers';
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   // console.log('[Background Remote Message]', remoteMessage);
@@ -33,6 +34,8 @@ export default function App() {
   React.useEffect(() => {
     requestNotificationPermission();
     getFcmToken();
+    // 앱 시작 시 토큰 소지 여부를 인터셉터로 확인
+    setupInterceptors();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       // console.log('[Remote Message] ', JSON.stringify(remoteMessage));
       pushNoti.dispayNoti(remoteMessage);

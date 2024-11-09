@@ -114,7 +114,11 @@ const StackNavigate = () => {
         }}
       />
       <Stack.Screen name="report" component={ReportPage} />
-      <Stack.Screen name="회원 정보 수정" component={EditUserPage} />
+      <Stack.Screen
+        name="회원 정보 수정"
+        component={EditUserPage}
+        options={{title: '회원 정보'}}
+      />
       <Stack.Screen
         name="StressResultPage"
         component={StressResultPage}

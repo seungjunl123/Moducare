@@ -7,17 +7,21 @@ import {handleAirPhrase, handleUvPhrase} from '../../store/useWheaterStore';
 import Geolocation from 'react-native-geolocation-service';
 import {getLocation} from '../../api/weather-api';
 import {useWeatherQuery} from '../../quires/useWheaterQuery';
-
+interface WeatherData {
+  weatherDto: {
+    temperature: number;
+    airCondition: number;
+    uvCondition: number;
+  };
+  gptResponse: string;
+}
 export default function WeatherInfo() {
   const [sido, setSido] = React.useState<string>('');
   const [gugun, setGugun] = React.useState<string>('');
-  // const [weatherData, setWeatherData] = React.useState<
-  //   WeatherDataProps | undefined
-  // >(undefined);
   const {data: weatherData, isLoading} = useWeatherQuery({
     sido,
     gugun,
-  });
+  }) as {data: WeatherData; isLoading: boolean};
 
   React.useEffect(() => {
     if (Platform.OS === 'android') {
@@ -59,31 +63,49 @@ export default function WeatherInfo() {
           <View style={styles.weatherBoxItem}>
             <SvgIconAtom name="Main_temparature" size={70} />
             <CustomText
-              label={`${weatherData?.weatherDto?.temperature || ''}℃`}
+              label={
+                weatherData?.weatherDto?.temperature
+                  ? `${weatherData?.weatherDto?.temperature}℃`
+                  : ''
+              }
               size={20}
             />
           </View>
           <View style={styles.weatherBoxItem}>
             <SvgIconAtom name="Main_air" size={70} />
             <CustomText
-              label={handleAirPhrase(weatherData?.weatherDto?.airCondition)}
+              label={
+                weatherData?.weatherDto?.airCondition
+                  ? handleAirPhrase(weatherData?.weatherDto?.airCondition)
+                  : ''
+              }
               size={20}
             />
           </View>
           <View style={styles.weatherBoxItem}>
             <SvgIconAtom name="Main_UV" size={70} />
             <CustomText
-              label={handleUvPhrase(weatherData?.weatherDto?.uvCondition)}
+              label={
+                weatherData?.weatherDto?.uvCondition
+                  ? handleUvPhrase(weatherData?.weatherDto?.uvCondition)
+                  : ''
+              }
               size={20}
             />
           </View>
         </View>
         <View style={styles.gptResponse}>
-          <CustomText
-            label={weatherData?.gptResponse || '로딩 중...'}
-            size={16}
-            variant="regular"
-          />
+          {isLoading ? (
+            <View style={styles.loading}>
+              <CustomText label="로딩 중...😏" size={24} variant="regular" />
+            </View>
+          ) : (
+            <CustomText
+              label={weatherData?.gptResponse}
+              size={16}
+              variant="regular"
+            />
+          )}
         </View>
       </ItemBox>
     </View>
@@ -106,5 +128,9 @@ const styles = StyleSheet.create({
   },
   gptResponse: {
     margin: 20,
+  },
+  loading: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

@@ -6,7 +6,7 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../constants/colors';
 import MyCarousel from '../../Components/Carousel/CarouselCard';
@@ -15,36 +15,18 @@ import SlideModal from '../../Components/Common/SlideModal';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import CustomText from '../../Components/Common/CustomText';
 import {
-  CameraOptions,
   launchImageLibrary,
   ImageLibraryOptions,
 } from 'react-native-image-picker';
-import useImageStore from '../../store/useImageStore';
-import {
-  useLineDiaryQuery,
-  useTopDiaryQuery,
-} from '../../quires/useReportsQuery';
-import {
-  getLineDiaryData,
-  getTopDiaryData,
-  postHairImg,
-} from '../../api/report-api';
 import AWS from 'aws-sdk';
 import RNFS from 'react-native-fs';
 import {Buffer} from 'buffer';
 import Config from 'react-native-config';
-
-interface DiaryCarouselItem {
-  img: {
-    uri: string;
-  };
-  regDate: string;
-}
-interface Action {
-  title: string;
-  type: 'capture' | 'library';
-  options: CameraOptions | ImageLibraryOptions;
-}
+import {
+  useLineDiaryQuery,
+  usePostHairImgMutation,
+  useTopDiaryQuery,
+} from '../../quires/useReportsQuery';
 
 // AWS S3 설정
 const s3 = new AWS.S3({
@@ -53,44 +35,39 @@ const s3 = new AWS.S3({
   region: Config.AWS_REGION,
 });
 
-// 데이터가 없을 경우 더미 데이터
-const DefaultImage = [
-  {
-    img: require('../../assets/img/MainCharacter.png'),
-    regDate: '2024-01-04',
-  },
-];
-
 const WIDTH = Dimensions.get('window').width;
 
-const options: Action = {
-  title: 'Select Image',
-  type: 'library',
-  options: {
-    selectionLimit: 1,
-    mediaType: 'photo',
-    includeBase64: false,
-  },
+const options: ImageLibraryOptions = {
+  selectionLimit: 1,
+  mediaType: 'photo',
+  includeBase64: false,
 };
 
 export default function DiaryPage() {
-  const [lineDiaryData, setLineDiaryData] = useState<DiaryCarouselItem[]>([]);
-  const [topDiaryData, setTopDiaryData] = useState<DiaryCarouselItem[]>([]);
+  const {data: lineDiaryData} = useLineDiaryQuery();
+  const {data: topDiaryData} = useTopDiaryQuery();
+  const {mutate: postHairImgMutation} = usePostHairImgMutation();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [isLine, setIsLine] = useState(false);
-  const [imgUrl, setImgUrl] = useState('');
-  const [imgType, setImgType] = useState('');
+  const [imgType, setImgType] = useState<'line' | 'top'>();
   const [imgConfig, setImgConfig] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
-  const upLoadImgToS3 = async (img: any) => {
+  const upLoadImgToS3 = async (img: any): Promise<string> => {
     console.log('upLoadImgToS3', img);
 
     return new Promise(async (resolve, reject) => {
+      if (!Config.AWS_BUCKET) {
+        throw new Error('AWS_BUCKET is not defined');
+      }
+
       const fileData = await RNFS.readFile(img.assets[0].uri, 'base64');
+      const timeStamp = new Date().getTime();
+      const originalFileName = img.assets[0].fileName;
+      const fileName = `${timeStamp}-${originalFileName}`;
+
       const params = {
-        Key: img.assets[0].fileName,
+        Key: fileName,
         Bucket: Config.AWS_BUCKET,
         Body: Buffer.from(fileData, 'base64'),
         ContentType: img?.assets?.[0].type,
@@ -102,7 +79,6 @@ export default function DiaryPage() {
           console.log('업로드 실패', err);
           reject(err);
         } else {
-          setImgUrl(data.Location);
           console.log(`File uploaded successfully. ${data.Location}`);
           resolve(data.Location);
         }
@@ -110,7 +86,7 @@ export default function DiaryPage() {
     });
   };
 
-  const openImageLibrary = async (type: string) => {
+  const openImageLibrary = async (type: 'line' | 'top') => {
     const images = await launchImageLibrary(options);
     if (images.assets) {
       setImgConfig(images);
@@ -118,53 +94,31 @@ export default function DiaryPage() {
     }
   };
 
-  const imageUpload = () => {
-    if (!imgConfig?.assets) {
+  const imageUpload = async () => {
+    if (!imgConfig?.assets || !imgType) {
       Alert.alert('사진을 선택해주세요');
       return;
     }
     Alert.alert('업로드');
-    // 1. S3 업로드
-    upLoadImgToS3(imgConfig);
-    // 2. 업로드 된 이미지 정보 전송
-    postHairImg(imgUrl, imgType);
-    // 3. 초기화
-    setImgType('');
-    setImgConfig(null);
-    setImgUrl('');
-    // 4. 모달 닫기
-    setModalVisible(false);
+
+    try {
+      // 1. S3 업로드하고 URL 받아오기
+      const uploadedUrl: string = await upLoadImgToS3(imgConfig);
+
+      // 2. 업로드 된 이미지 정보 전송
+      await postHairImgMutation({uploadedUrl, imgType});
+
+      // 3. 초기화
+      setImgType(undefined);
+      setImgConfig(null);
+
+      // 4. 모달 닫기
+      setModalVisible(false);
+    } catch (error) {
+      console.error('이미지 업로드 실패:', error);
+      Alert.alert('이미지 업로드에 실패했습니다.');
+    }
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const [lineData, topData] = await Promise.all([
-          getLineDiaryData(),
-          getTopDiaryData(),
-        ]);
-
-        setLineDiaryData(lineData.length > 0 ? lineData : DefaultImage);
-        setTopDiaryData(topData.length > 0 ? topData : DefaultImage);
-      } catch (error) {
-        console.error('데이터 로딩 실패:', error);
-        setLineDiaryData(DefaultImage);
-        setTopDiaryData(DefaultImage);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <CustomText label="로딩 중..." />
-      </View>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -207,11 +161,11 @@ export default function DiaryPage() {
       </View>
       <SlideModal visible={modalVisible} onClose={() => setModalVisible(false)}>
         <View>
-          {imgType !== '' ? (
+          {imgConfig ? (
             <View style={styles.imageContainer}>
               <Image
                 source={{uri: imgConfig?.assets?.[0].uri}}
-                style={{width: 150, height: 150}}
+                style={styles.image}
               />
             </View>
           ) : (
@@ -313,5 +267,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 10,
     marginVertical: 20,
+  },
+  image: {
+    width: 150,
+    height: 150,
   },
 });

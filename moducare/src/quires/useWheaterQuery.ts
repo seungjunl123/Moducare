@@ -17,6 +17,7 @@ export const useWeatherQuery = (
     queryKey: [WEATHER_QUERY_KEY, params.sido, params.gugun],
     queryFn: () => postWeather(params.sido, params.gugun),
     enabled: Boolean(params.sido && params.gugun),
+    staleTime: 1000 * 60 * 5,
     ...options,
   });
 

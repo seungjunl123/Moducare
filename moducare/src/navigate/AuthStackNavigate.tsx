@@ -10,7 +10,7 @@ import BottomNavBar from '../Components/Navigation/BottomNavBar';
 const AuthStackNavigate = () => {
   const Stack = createStackNavigator();
   return (
-    <Stack.Navigator initialRouteName="login">
+    <Stack.Navigator initialRouteName="splash">
       <Stack.Screen
         name="splash"
         component={SplashPage}
