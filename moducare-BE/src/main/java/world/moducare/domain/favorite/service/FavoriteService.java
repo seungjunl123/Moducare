@@ -18,9 +18,11 @@ public class FavoriteService {
     private final ChallengeFeedRepository challengeFeedRepository;
     private final FavoriteRepository favoriteRepository;
 
+    @Transactional
     public void likeFeed(Member member, Long feedId, LikeRequestDto requestDto) {
-        ChallengeFeed challengeFeed = challengeFeedRepository.findById(feedId).orElseThrow(()-> new RestApiException(ErrorCode.NOT_FOUND));
-        switch (requestDto.getStatus()){
+        ChallengeFeed challengeFeed = challengeFeedRepository.findById(feedId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+        switch (requestDto.getStatus()) {
             case 0:
                 addLike(member, challengeFeed);
                 break;
@@ -31,6 +33,7 @@ public class FavoriteService {
                 throw new RestApiException(ErrorCode.CONFLICT);
         }
     }
+
 
     private void addLike(Member member, ChallengeFeed challengeFeed) {
         Favorite favorite = Favorite.builder()
