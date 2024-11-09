@@ -63,7 +63,7 @@ function useAuth() {
   const loginMutation = useLogin();
   const refreshTokenQuery = useGetRefreshToken();
   const isLogin = refreshTokenQuery.isSuccess;
-
+  console.log('로그인상태', isLogin);
   return {loginMutation, refreshTokenQuery, isLogin};
 }
 

@@ -7,8 +7,10 @@ import axios from 'axios';
 import Config from 'react-native-config';
 import {getEncryptStorage} from '../util';
 import {postLogin} from '../api/login-api';
+import useAuth from '../hook/useAuth';
 
 const OkPage = ({route}) => {
+  const {loginMutation} = useAuth();
   const {code} = route.params;
   console.log('도착', code);
 
@@ -31,7 +33,12 @@ const OkPage = ({route}) => {
     console.log('response.data', response.data);
 
     const accessToken = response.data.access_token;
-    const result = await postLogin({
+    // const result = await postLogin({
+    //   registerId: 'kakao',
+    //   accessToken,
+    //   fcmToken,
+    // });
+    loginMutation.mutate({
       registerId: 'kakao',
       accessToken,
       fcmToken,
