@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 public class FeedResponseDto {
+    private Long feedId;
     private String feedImg;
     private String feedUserName;
     private String content;
