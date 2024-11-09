@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {View, StyleSheet, ScrollView, Text} from 'react-native';
+import {View, StyleSheet, ScrollView, Text, Alert} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomText from '../../Components/Common/CustomText';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
@@ -9,6 +9,15 @@ import {getChallengeList, getListType} from '../../api/challenge-api';
 
 export default function ChallengeListPage() {
   const [allList, setAllList] = React.useState<getListType[] | []>([]);
+  const [page, setPage] = React.useState(10);
+
+  const handlePage = () => {
+    if (allList.length >= page) {
+      setPage(page + 10);
+    } else {
+      Alert.alert('챌린지 리스트', '마지막 페이지 입니다.');
+    }
+  };
   const getListCompo = async () => {
     const allData = await getChallengeList();
     setAllList(allData);
@@ -29,18 +38,9 @@ export default function ChallengeListPage() {
         </View>
         <View style={styles.ListArea}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {/* <BigList />
-            <BigList />
-            <BigList />
-            <BigList />
-            <BigList />
-            <BigList />
-            <BigList />
-            <BigList />
-            <BigList /> */}
             {allList.length !== 0 ? (
               allList
-                .slice(0, 3)
+                .slice(0, page)
                 .map((data, index) => (
                   <BigList
                     key={index}
@@ -54,7 +54,9 @@ export default function ChallengeListPage() {
               </View>
             )}
             {allList.length !== 0 && (
-              <Text style={styles.getListArea}>더보기</Text>
+              <Text style={styles.getListArea} onPress={handlePage}>
+                더보기
+              </Text>
             )}
           </ScrollView>
         </View>

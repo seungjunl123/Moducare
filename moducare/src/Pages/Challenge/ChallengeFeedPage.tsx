@@ -5,7 +5,12 @@ import {colors} from '../../constants/colors';
 import FeedNav from '../../Components/Common/FeedNav';
 import FeedJoinNav from '../../Components/Common/FeedJoinNav';
 import FeedItem from '../../Components/Challenge/FeedItem';
-import {FeedType, getFeed, postOutChallenge} from '../../api/challenge-api';
+import {
+  FeedType,
+  getFeed,
+  postJoinChallenge,
+  postOutChallenge,
+} from '../../api/challenge-api';
 import CustomText from '../../Components/Common/CustomText';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {getEncryptStorage} from '../../util';
@@ -13,6 +18,7 @@ import {getEncryptStorage} from '../../util';
 const ChallengeFeedPage = ({route}) => {
   const navigation = useNavigation();
   const {id, title, type} = route.params;
+  const [isType, setIsType] = useState(type);
   const [feeds, setFeeds] = useState<FeedType[] | []>([]);
 
   const handleWrite = async () => {
@@ -30,6 +36,10 @@ const ChallengeFeedPage = ({route}) => {
   const handleExit = async () => {
     await postOutChallenge(id);
     navigation.goBack();
+  };
+  const handleJoin = async () => {
+    await postJoinChallenge(id);
+    setIsType('myChallenge');
   };
   const getFeeds = async () => {
     const data = await getFeed(id);
@@ -58,10 +68,10 @@ const ChallengeFeedPage = ({route}) => {
         ]}>
         다른 사람들과 함께 루틴을 지켜봐요!
       </Text>
-      {type === 'myChallenge' ? (
+      {isType === 'myChallenge' ? (
         <FeedNav onPress={handleWrite} onExit={handleExit} />
       ) : (
-        <FeedJoinNav />
+        <FeedJoinNav onJoin={handleJoin} />
       )}
       <ScrollView style={styles.FeedList} showsVerticalScrollIndicator={false}>
         {feeds.length !== 0 ? (

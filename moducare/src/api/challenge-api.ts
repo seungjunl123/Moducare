@@ -53,9 +53,14 @@ const getMyChallengeList = async (): Promise<getMyListType[]> => {
 };
 
 const postJoinChallenge = async (challengeId: number): Promise<void> => {
-  const {data} = await axiosInstance.post(`my-challenges/${challengeId}/in`);
+  try {
+    const {data} = await axiosInstance.post(`my-challenges/${challengeId}/in`);
 
-  return data;
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 const postOutChallenge = async (challengeId: number): Promise<void> => {
