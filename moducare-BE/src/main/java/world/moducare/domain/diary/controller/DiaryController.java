@@ -4,9 +4,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import world.moducare.domain.diary.dto.DiaryRequestDto;
 import world.moducare.domain.diary.dto.DiaryResponseDto;
 import world.moducare.domain.diary.service.DiaryService;
@@ -15,6 +17,7 @@ import world.moducare.domain.member.service.MemberService;
 import world.moducare.global.config.oauth.CustomOAuth2User;
 
 import java.util.List;
+import world.moducare.global.s3.S3Service;
 
 @RequiredArgsConstructor
 @RestController
@@ -24,11 +27,19 @@ public class DiaryController {
 
     private final MemberService memberService;
     private final DiaryService diaryService;
+    private final S3Service s3Service;
 
-    @PostMapping("")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "머리 다이어리 저장", description = "이마 라인이나 정수리 사진을 저장")
-    public ResponseEntity<?> saveLatestProduct(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody DiaryRequestDto diaryRequestDto) {
+    public ResponseEntity<?> saveLatestProduct(@AuthenticationPrincipal CustomOAuth2User principal,
+        @RequestParam("file") MultipartFile file,
+        @RequestParam("type") String type) {
+
         Member member = memberService.findById(principal.getId());
+
+        String fileUrl = s3Service.uploadImage(file);
+        DiaryRequestDto diaryRequestDto = new DiaryRequestDto(fileUrl, type);
+
         diaryService.saveDiary(member, diaryRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body("머리 다이어리 저장 완료");
     }
