@@ -2,6 +2,7 @@ package world.moducare.domain.favorite.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import world.moducare.domain.challengefeed.entity.ChallengeFeed;
 import world.moducare.domain.challengefeed.repository.ChallengeFeedRepository;
 import world.moducare.domain.favorite.dto.LikeRequestDto;
@@ -39,7 +40,8 @@ public class FavoriteService {
         favoriteRepository.save(favorite);
     }
 
-    private void deleteLike(Member member, ChallengeFeed challengeFeed) {
+    @Transactional
+    public void deleteLike(Member member, ChallengeFeed challengeFeed) {
         favoriteRepository.deleteByMemberIdAndFeedId(member.getId(), challengeFeed.getId());
     }
 }
