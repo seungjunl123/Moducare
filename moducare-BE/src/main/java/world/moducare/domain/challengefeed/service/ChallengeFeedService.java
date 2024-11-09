@@ -64,6 +64,7 @@ public class ChallengeFeedService {
             boolean exists = favoriteRepository.existsByFeedAndMember(feed, member);
 
             FeedResponseDto responseDto = FeedResponseDto.builder()
+                    .feedId(feed.getId())
                     .feedImg(feed.getImage())
                     .feedUserName(feed.getMember().getName())
                     .content(feed.getContent())
