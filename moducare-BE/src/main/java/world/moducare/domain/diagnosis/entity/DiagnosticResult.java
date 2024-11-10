@@ -2,6 +2,7 @@ package world.moducare.domain.diagnosis.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -14,6 +15,7 @@ import java.time.ZonedDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "diagnostic_result")
 public class DiagnosticResult {
     @Id
@@ -47,6 +49,9 @@ public class DiagnosticResult {
 
     @Column(name = "comparison", nullable = false)
     private int comparison;
+
+    @Column(name = "average", nullable = false)
+    private int average;
 
     @Column(name = "result", nullable = false, columnDefinition = "TEXT")
     private String result;
