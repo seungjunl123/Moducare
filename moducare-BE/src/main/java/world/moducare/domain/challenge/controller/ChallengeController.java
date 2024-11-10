@@ -32,15 +32,17 @@ public class ChallengeController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary="챌린지 생성 API")
     public ResponseEntity<Void> makeChallenge(@AuthenticationPrincipal CustomOAuth2User principal,
-                                              @RequestParam("title") String title,
-                                              @RequestParam(value = "file", required = false) MultipartFile file) {
+                                              @ModelAttribute ChallengeRequestDto requestDto) {
 
         Member member = memberService.findById(principal.getId());
 
         // 파일이 있는 경우 업로드, 없으면 null
-        String fileUrl = (file != null && !file.isEmpty()) ? s3Service.uploadImage(file) : null;
+        String fileUrl = null;
 
-        challengeService.saveChallenge(member, fileUrl, title);
+        if (requestDto.getFile() != null && !requestDto.getFile().isEmpty()) {
+            fileUrl = s3Service.uploadImage(requestDto.getFile());
+        }
+        challengeService.saveChallenge(member, fileUrl, requestDto.getTitle());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
