@@ -2,7 +2,6 @@ package world.moducare.domain.challenge.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import world.moducare.domain.challenge.dto.ChallengeRequestDto;
 import world.moducare.domain.challenge.dto.ChallengeResponseDto;
 import world.moducare.domain.challenge.entity.Challenge;
 import world.moducare.domain.challenge.repository.ChallengeRepository;

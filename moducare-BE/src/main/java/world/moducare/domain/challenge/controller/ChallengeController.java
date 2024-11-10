@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import world.moducare.domain.challenge.dto.ChallengeRequestDto;
 import world.moducare.domain.challenge.dto.ChallengeResponseDto;
 import world.moducare.domain.challenge.service.ChallengeService;
 import world.moducare.domain.member.entity.Member;
@@ -32,17 +31,15 @@ public class ChallengeController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary="챌린지 생성 API")
     public ResponseEntity<Void> makeChallenge(@AuthenticationPrincipal CustomOAuth2User principal,
-                                              @ModelAttribute ChallengeRequestDto requestDto) {
+                                              @RequestParam("title") String title,
+                                              @RequestParam(value = "file", required = false) MultipartFile file) {
 
         Member member = memberService.findById(principal.getId());
 
         // 파일이 있는 경우 업로드, 없으면 null
-        String fileUrl = null;
+        String fileUrl = (file != null && !file.isEmpty()) ? s3Service.uploadImage(file) : null;
 
-        if (requestDto.getFile() != null && !requestDto.getFile().isEmpty()) {
-            fileUrl = s3Service.uploadImage(requestDto.getFile());
-        }
-        challengeService.saveChallenge(member, fileUrl, requestDto.getTitle());
+        challengeService.saveChallenge(member, fileUrl, title);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
