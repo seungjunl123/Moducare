@@ -21,11 +21,11 @@ public class ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final MyChallengeRepository myChallengeRepository;
 
-    public void saveChallenge(Member member, ChallengeRequestDto requestDto) {
+    public void saveChallenge(Member member, String fileUrl, String title) {
 
         Challenge challenge = Challenge.builder()
-                .title(requestDto.getTitle())
-                .image(requestDto.getChallengeImage())
+                .title(title)
+                .image(fileUrl) // file 없을 경우 null 이 들어갈 수 있음
                 .build();
 
         challengeRepository.save(challenge);
