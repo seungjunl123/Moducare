@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import world.moducare.domain.challenge.entity.Challenge;
 import world.moducare.domain.challenge.repository.ChallengeRepository;
-import world.moducare.domain.challengefeed.dto.FeedRequestDto;
 import world.moducare.domain.challengefeed.dto.FeedResponseDto;
 import world.moducare.domain.challengefeed.entity.ChallengeFeed;
 import world.moducare.domain.challengefeed.repository.ChallengeFeedRepository;
@@ -28,7 +27,7 @@ public class ChallengeFeedService {
     private final ChallengeRepository challengeRepository;
     private final FavoriteRepository favoriteRepository;
 
-    public void saveFeed(Member member, Long challengeId, FeedRequestDto requestDto) {
+    public void saveFeed(Member member, Long challengeId, String content, String fileUrl) {
 
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
@@ -43,8 +42,8 @@ public class ChallengeFeedService {
 
         // 중복이 아니라면 ChallengeFeed 생성 및 저장
         ChallengeFeed challengeFeed = ChallengeFeed.builder()
-                .image(requestDto.getFeedImg())
-                .content(requestDto.getContent())
+                .image(fileUrl)
+                .content(content)
                 .member(member)
                 .challenge(challenge)
                 .build();
