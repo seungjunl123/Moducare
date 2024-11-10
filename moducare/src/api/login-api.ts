@@ -48,7 +48,7 @@ type ResponseAccess = {
 
 const postRefreshToken = async (): Promise<ResponseAccess> => {
   const refreshToken = await getEncryptStorage('refreshToken');
-  const {data} = await axiosInstance.post(`/tokens/refresh`, {refreshToken});
+  const {data} = await axiosInstance.post(`tokens/refresh`, {refreshToken});
 
   return data;
 };
@@ -109,7 +109,7 @@ const postLoginKaKao = async ({
   accessToken,
   fcmToken,
 }: socialLoginType): Promise<socialResponse> => {
-  const {data} = await axiosInstance.post(`/member/social/kakao`, {
+  const {data} = await axiosInstance.post(`member/social/kakao`, {
     accessToken,
     fcmToken,
   });

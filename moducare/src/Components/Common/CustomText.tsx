@@ -4,7 +4,7 @@ import {colors} from '../../constants/colors';
 // import {colors} from '../../constants/colors';
 
 interface CustomTextProps extends TextProps {
-  label: string;
+  label: string | undefined;
   variant?: 'bold' | 'regular';
   size?: number;
   color?: string;

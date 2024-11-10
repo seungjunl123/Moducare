@@ -1,20 +1,68 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import CustomText from '../Common/CustomText';
 import {colors} from '../../constants/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {postLike} from '../../api/challenge-api';
 
-const FeedItem = () => {
+interface FeedType {
+  feedId: number;
+  uri: string;
+  feedUserName: string;
+  content: string;
+  feedRegDate: string;
+  like: number;
+  isLiked: number;
+}
+const FeedItem = ({
+  feedId,
+  uri,
+  feedUserName,
+  content,
+  feedRegDate,
+  like,
+  isLiked,
+}: FeedType) => {
+  const [love, setLove] = useState(isLiked);
+  const [count, setCount] = useState(like);
+
+  const handleLike = async () => {
+    console.log('좋아요');
+    await postLike(feedId, 0);
+    setCount(count + 1);
+    console.log(count);
+    setLove(1);
+  };
+
+  const handleUnLike = async () => {
+    console.log('안좋아요');
+    await postLike(feedId, 1);
+    setCount(count - 1);
+    setLove(0);
+  };
   return (
     <View style={styles.container}>
-      <CustomText label="오진영" size={20} />
-      <Text style={styles.dateText}>24. 10. 26.</Text>
-      <Image style={styles.imgArea} source={require('../../assets/test.png')} />
-      <Text style={styles.Content}>헤헤헤</Text>
+      <CustomText label={feedUserName} size={20} />
+      <Text style={styles.dateText}>{feedRegDate}</Text>
+      <Image style={styles.imgArea} source={{uri}} />
+      <Text style={styles.Content}>{content}</Text>
       <View style={styles.likeArea}>
-        <AntDesign name="heart" size={25} color={'red'} />
-        <AntDesign name="hearto" size={25} color={'red'} />
-        <CustomText label="0" size={20} variant="regular" />
+        {love === 0 ? (
+          <AntDesign
+            name="hearto"
+            size={25}
+            color={'red'}
+            onPress={handleLike}
+          />
+        ) : (
+          <AntDesign
+            name="heart"
+            size={25}
+            color={'red'}
+            onPress={handleUnLike}
+          />
+        )}
+        <CustomText label={count.toString()} size={20} variant="regular" />
       </View>
     </View>
   );
@@ -37,6 +85,8 @@ const styles = StyleSheet.create({
   },
   imgArea: {
     width: '100%',
+    height: 300,
+    marginHorizontal: 'auto',
     resizeMode: 'cover',
     borderRadius: 15,
   },

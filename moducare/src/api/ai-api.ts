@@ -12,7 +12,7 @@ type ResponseAiDiagnosis = {
 const postAiDiagnosis = async (
   imgSrc: string,
 ): Promise<ResponseAiDiagnosis> => {
-  const {data} = await axiosInstance.post(`/diagnosis`, {
+  const {data} = await axiosInstance.post(`diagnosis`, {
     imgSrc,
   });
 
@@ -28,7 +28,7 @@ type ResponsePick = {
 };
 
 const getPick = async (headType: number): Promise<ResponsePick> => {
-  const {data} = await axiosInstance.get(`/elasticSearch/recommend`, {
+  const {data} = await axiosInstance.get(`elasticSearch/recommend`, {
     headType,
   });
 

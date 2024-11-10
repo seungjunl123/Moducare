@@ -1,12 +1,29 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {Alert, Pressable, StyleSheet, Text, View} from 'react-native';
 import {colors} from '../../constants/colors';
 import SvgIconAtom from './SvgIconAtom';
 
 interface FeedNavProps {
   onPress: () => void;
+  onExit: () => void;
 }
-const FeedNav = ({onPress}: FeedNavProps) => {
+const FeedNav = ({onPress, onExit}: FeedNavProps) => {
+  const handleExit = () => {
+    Alert.alert(
+      '챌린지를 나가시겠습니까?',
+      '챌린지 인원이 없을 경우 챌린지는 소멸합니다.',
+      [
+        {
+          text: '나가기',
+          onPress: onExit,
+        },
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+      ],
+    );
+  };
   return (
     <View style={styles.container}>
       <Pressable style={[styles.BtnArea, styles.PickArea]}>
@@ -19,7 +36,7 @@ const FeedNav = ({onPress}: FeedNavProps) => {
         <Text style={styles.text}>인증하기</Text>
       </Pressable>
       <View style={styles.line} />
-      <Pressable style={styles.BtnArea}>
+      <Pressable style={styles.BtnArea} onPress={handleExit}>
         <SvgIconAtom name="Exit" />
         <Text style={styles.text}>나가기</Text>
       </Pressable>
