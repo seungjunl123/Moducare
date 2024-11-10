@@ -2,6 +2,10 @@ package world.moducare.domain.diagnosis.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import world.moducare.domain.api.gpt.GptService;
+import world.moducare.domain.api.gpt.PromptService;
+import world.moducare.domain.diagnosis.dto.AiResultDto;
+import world.moducare.domain.diagnosis.dto.DiagnosisRequestDto;
 import world.moducare.domain.diagnosis.dto.DiagnosisResponseDto;
 import world.moducare.domain.diagnosis.dto.DiagnosticResultDto;
 import world.moducare.domain.diagnosis.entity.DiagnosticResult;
@@ -20,6 +24,8 @@ import java.util.Locale;
 @Service
 public class DiagnosticResultService {
     private final DiagnosticResultRepository diagnosticResultRepository;
+    private final GptService gptService;
+    private final PromptService promptService;
 
     public List<DiagnosisResponseDto> getDiagnosticList(Member member) {
         List<DiagnosticResult> results = diagnosticResultRepository.findAllByMemberOrderByCreatedAtDesc(member).orElse(null);
@@ -64,5 +70,56 @@ public class DiagnosticResultService {
     public static String formatToCustomString(ZonedDateTime zonedDateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm:ss", Locale.KOREAN);
         return zonedDateTime.format(formatter);
+    }
+
+    public DiagnosisRequestDto diagnoseByAI(Member member, AiResultDto aiResultDto, String url) {
+        int average = diagnosticResultRepository.findLatestAverageByMember(member).orElse(-1);
+        int comparison;
+        if (average == -1)
+            comparison = 3;
+        else {
+            int difference = (int) Math.round(aiResultDto.calculateAverage() - average);
+            switch (difference) {
+                case 0:
+                    comparison = 2; // 이전 결과 유지
+                    break;
+                case 1, 2, 3, 4, 5: // 차이가 양수인 경우 (이전보다 좋지 않음)
+                    comparison = 0;
+                    break;
+                default: // 음수인 경우 (이전보다 좋음)
+                    comparison = 1;
+                    break;
+            }
+        }
+
+        String prompt = promptService.makeDiagnosisPrompt(aiResultDto, comparison);
+        String advice = gptService.chat(prompt);
+
+        DiagnosticResult diagnosticResult = DiagnosticResult.builder()
+                .image(url)
+                .advice(advice)
+                .hairLoss(aiResultDto.getResult()[0])
+                .dandruff(aiResultDto.getResult()[1])
+                .inflammatory(aiResultDto.getResult()[2])
+                .erythema(aiResultDto.getResult()[3])
+                .sebum(aiResultDto.getResult()[4])
+                .deadSkin(aiResultDto.getResult()[5])
+                .comparison(comparison)
+                .average(average)
+                .result(aiResultDto.headTypeToString())
+                .member(member)
+                .build();
+
+        diagnosticResultRepository.save(diagnosticResult);
+
+        // TODO: 시간형식 확인하기
+        return DiagnosisRequestDto.builder()
+                .img(url)
+                .result(aiResultDto.getResult())
+                .headType(aiResultDto.getHeadType())
+                .comparison(comparison)
+                .manageComment(advice)
+                .date(String.valueOf(diagnosticResult.getCreatedAt()))
+                .build();
     }
 }
