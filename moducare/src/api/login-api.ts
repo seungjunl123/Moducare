@@ -15,6 +15,9 @@ type RequestLogin = {
 interface ResponseLogin {
   jwtAccessToken: string;
   refreshToken: string;
+  name: string;
+  email: string;
+  birth: string;
 }
 
 const postLogin = async ({
@@ -55,24 +58,24 @@ const postRefreshToken = async (): Promise<ResponseAccess> => {
 
 const postLogout = async (fcmToken: string): Promise<void> => {
   try {
-    const {data} = await axiosInstance.post(`/members/logout`, {fcmToken});
+    const {data} = await axiosInstance.post(`members/logout`, {fcmToken});
 
-    await AsyncStorage.removeItem('accessToken');
-    await AsyncStorage.removeItem('refreshToken');
+    // await AsyncStorage.removeItem('accessToken');
+    // await AsyncStorage.removeItem('refreshToken');
 
     return data;
   } catch (error) {
-    console.error(error);
+    console.error('로그아웃 실패', error);
     throw error;
   }
 };
 
 const deleteMember = async (): Promise<void> => {
   try {
-    const {data} = await axiosInstance.delete(`/members/`);
+    const {data} = await axiosInstance.delete(`members/`);
 
-    await AsyncStorage.removeItem('accessToken');
-    await AsyncStorage.removeItem('refreshToken');
+    // await AsyncStorage.removeItem('accessToken');
+    // await AsyncStorage.removeItem('refreshToken');
 
     return data;
   } catch (error) {
