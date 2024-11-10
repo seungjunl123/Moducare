@@ -43,11 +43,6 @@ export default function App() {
     return unsubscribe;
   }, []);
 
-  React.useEffect(() => {
-    // 앱이 준비되면 스플래시 화면을 숨깁니다
-    SplashScreen.hide();
-  }, []);
-
   return (
     <QueryClientProvider client={queryClinet}>
       <NavigationContainer>

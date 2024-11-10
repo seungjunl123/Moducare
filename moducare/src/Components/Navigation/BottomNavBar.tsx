@@ -24,6 +24,7 @@ import useAuthStore from '../../store/useAuthStore';
 import AuthStackNavigate from '../../navigate/AuthStackNavigate';
 import {deleteMember, postLogout} from '../../api/login-api';
 import {getEncryptStorage} from '../../util';
+import useAuth from '../../hook/useAuth';
 
 const Tab = createBottomTabNavigator();
 
@@ -65,35 +66,42 @@ function CustomTabBarButton() {
     );
   const navigation = useNavigation<any>();
   const [moreOpen, setMoreOpen] = useState(false);
+  const {delUserMutation} = useAuth();
   const withdrawUser = async (): Promise<void> => {
     console.log('회원 탈퇴 시작');
-    await deleteMember();
+    // await deleteMember();
+    delUserMutation.mutate();
   };
-  const logout = async (): Promise<void> => {
-    try {
-      // 네이버 로그아웃 -> 전체 로그아웃으로 변경 필요
-      // 카카오 상태관리도 그냥 초기아웃 하면 되나?
-      await NaverLogin.logout();
-      await Promise.all([
-        setNaverLoginSuccess(undefined),
-        setNaverLoginFailure(undefined),
-        setIsLoggedIn(false),
-      ]);
-      setMoreOpen(false);
+  // const logout = async (): Promise<void> => {
+  //   try {
+  //     // 네이버 로그아웃 -> 전체 로그아웃으로 변경 필요
+  //     // 카카오 상태관리도 그냥 초기아웃 하면 되나?
+  //     await NaverLogin.logout();
+  //     await Promise.all([
+  //       setNaverLoginSuccess(undefined),
+  //       setNaverLoginFailure(undefined),
+  //       setIsLoggedIn(false),
+  //     ]);
+  //     setMoreOpen(false);
 
-      // 로그아웃 상태 백엔드 전달
-      const fcmToken = await getEncryptStorage('fcmToken');
-      await postLogout(fcmToken);
+  //     // 로그아웃 상태 백엔드 전달
+  //     const fcmToken = await getEncryptStorage('fcmToken');
+  //     await postLogout(fcmToken);
 
-      console.log('로그아웃 완료');
-      // 로그인 화면으로 복귀.
-      setTimeout(() => {
-        console.log('로그인 화면으로 복귀');
-        navigation.navigate('AuthStack');
-      }, 100);
-    } catch (e) {
-      console.error(e);
-    }
+  //     console.log('로그아웃 완료');
+  //     // 로그인 화면으로 복귀.
+  //     setTimeout(() => {
+  //       console.log('로그인 화면으로 복귀');
+  //       navigation.navigate('AuthStack');
+  //     }, 100);
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // };
+  const {logoutMutation} = useAuth();
+  const logout = async () => {
+    const fcmToken = await getEncryptStorage('fcmToken');
+    logoutMutation.mutate(fcmToken);
   };
   return (
     <>
@@ -180,7 +188,7 @@ export default function BottomNavBar({navigation}: {navigation: any}) {
           tabBarButton: () => CustomTabBarButton(),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="AuthStack"
         component={AuthStackNavigate}
         options={{
@@ -189,7 +197,7 @@ export default function BottomNavBar({navigation}: {navigation: any}) {
             display: 'none',
           },
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 }
