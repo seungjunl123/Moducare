@@ -5,19 +5,31 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {colors} from '../../constants/colors';
 import CustomText from '../../Components/Common/CustomText';
 import ItemBox from '../../Components/ItemBox/ItemBox';
 import {useReportQuery, ReportItem} from '../../quires/useReportsQuery';
 import {Dimensions} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
+import {getEncryptStorage} from '../../util';
 
 const HEIGHT = Dimensions.get('window').height;
 
 export default function ReportPage() {
   const {data: reportData, isLoading: reportLoading} = useReportQuery();
   const reportList = reportData;
+  const [user, setUser] = useState('사용자');
 
+  const getUser = async () => {
+    const {name} = await getEncryptStorage('info');
+    setUser(name);
+  };
+  useFocusEffect(
+    useCallback(() => {
+      getUser();
+    }, []),
+  );
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
@@ -26,7 +38,7 @@ export default function ReportPage() {
           style={styles.reportIcon}
         />
         <View>
-          <CustomText label="사용자님의" size={20} />
+          <CustomText label={`${user} 님의`} size={20} />
           <CustomText label="두피 리포트 입니다." size={20} />
         </View>
       </View>
