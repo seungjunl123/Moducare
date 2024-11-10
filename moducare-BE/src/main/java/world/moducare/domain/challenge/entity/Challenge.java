@@ -32,7 +32,7 @@ public class Challenge {
     @ColumnDefault(value = "1")
     private int headCount = 1;
 
-    @Column(name = "img_src", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "img_src", columnDefinition = "TEXT")
     private String image;
 
     @CreatedDate

@@ -2,7 +2,6 @@ package world.moducare.domain.challenge.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import world.moducare.domain.challenge.dto.ChallengeRequestDto;
 import world.moducare.domain.challenge.dto.ChallengeResponseDto;
 import world.moducare.domain.challenge.entity.Challenge;
 import world.moducare.domain.challenge.repository.ChallengeRepository;
@@ -21,11 +20,11 @@ public class ChallengeService {
     private final ChallengeRepository challengeRepository;
     private final MyChallengeRepository myChallengeRepository;
 
-    public void saveChallenge(Member member, ChallengeRequestDto requestDto) {
+    public void saveChallenge(Member member, String fileUrl, String title) {
 
         Challenge challenge = Challenge.builder()
-                .title(requestDto.getTitle())
-                .image(requestDto.getChallengeImage())
+                .title(title)
+                .image(fileUrl) // file 없을 경우 null 이 들어갈 수 있음
                 .build();
 
         challengeRepository.save(challenge);
