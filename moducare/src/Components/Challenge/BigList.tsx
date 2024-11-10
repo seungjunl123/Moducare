@@ -12,28 +12,20 @@ import SvgIconAtom from '../Common/SvgIconAtom';
 import {colors} from '../../constants/colors';
 
 interface ListProps extends PressableProps {
-  isPhoto?: boolean;
+  uri?: string;
   title?: string;
   user?: number;
 }
 
-const BigList = ({
-  isPhoto = false,
-  title = '',
-  user = 0,
-  ...props
-}: ListProps) => {
+const BigList = ({uri, title = '', user = 0, ...props}: ListProps) => {
   return (
     <>
       <Pressable style={styles.container} {...props}>
-        {isPhoto ? (
+        {uri === null ? (
           <SvgIconAtom name="Basic" size={80} />
         ) : (
           <>
-            <Image
-              style={styles.ImgArea}
-              source={require('../../assets/test.png')}
-            />
+            <Image style={styles.ImgArea} source={{uri}} />
           </>
         )}
         <View style={styles.detailArea}>
