@@ -48,7 +48,7 @@ const LoginPage = ({navigation}) => {
         registerId: 'naver',
       });
       setIsLoggedIn(true);
-      navigation.navigate('bottomNavigate');
+      // navigation.navigate('bottomNavigate');
     } else {
       console.log('네이버 로그인 실패', failureResponse);
     }
