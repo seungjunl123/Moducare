@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import world.moducare.domain.api.dto.WeatherRequestDto;
 import world.moducare.domain.api.dto.WeatherResponseDto;
 import world.moducare.domain.api.dto.WeatherResultResponseDto;
-import world.moducare.domain.api.externalApi.gpt.GptService;
+import world.moducare.domain.api.gpt.GptService;
 import world.moducare.domain.api.service.EnvironmentalDataService;
-import world.moducare.domain.api.service.PromptService;
+import world.moducare.domain.api.gpt.PromptService;
 
 @RestController
 @RequestMapping("/weather")

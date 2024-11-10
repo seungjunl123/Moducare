@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import world.moducare.domain.diagnosis.dto.AiResultDto;
+import world.moducare.domain.diagnosis.dto.DiagnosisRequestDto;
 import world.moducare.domain.diagnosis.dto.DiagnosisResponseDto;
 import world.moducare.domain.diagnosis.dto.DiagnosticResultDto;
 import world.moducare.domain.diagnosis.service.DiagnosticResultService;
@@ -55,14 +57,18 @@ public class DiagnosticResultController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "두피진단", description = "두피 진단 결과")
     public ResponseEntity<?> saveDiagnosticResult(
-        @Parameter(description = "두피 사진파일", required = true) @RequestParam("file") MultipartFile file) {
+        @Parameter(description = "두피 사진파일", required = true) @RequestParam("file") MultipartFile file
+        , @AuthenticationPrincipal CustomOAuth2User user) {
 
         // 두피이미지 S3 저장
         String url = s3Service.uploadImage(file);
         if (url != null) {
-            //AI 요청 및 db 저장 로직
-
-            return ResponseEntity.status(HttpStatus.CREATED).body("두피 진단 완료");
+            // ai에 사진 보내서 결과 받기
+            // 탈모,비듬, 염증, 홍반, 피지, 각질 결과값 배열과 headType 받기
+            // TODO: ai 연결하기
+            AiResultDto aiResultDto = new AiResultDto(new int[]{3,1,0,2,1,0}, 7);
+            DiagnosisRequestDto diagnosisRequestDto = diagnosticResultService.diagnoseByAI(user.getMember(), aiResultDto, url);
+            return ResponseEntity.status(HttpStatus.CREATED).body(diagnosisRequestDto);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미지 업로드에 문제가 발생했습니다.");
     }

@@ -1,4 +1,4 @@
-package world.moducare.domain.api.externalApi.gpt;
+package world.moducare.domain.api.gpt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import world.moducare.domain.api.dto.ChatGPTRequestDTO;
 import world.moducare.domain.api.dto.ChatGPTResponseDTO;
-import world.moducare.domain.api.dto.WeatherResponseDto;
 
 @Service
 public class GptService {
