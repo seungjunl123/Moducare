@@ -16,7 +16,10 @@ import useAuth from '../hook/useAuth';
 
 initializeKakaoSDK('585639d392d8089816cb2f337aea44d9');
 
-const LoginPage = ({navigation}) => {
+const LoginPage = ({navigation}: {navigation: any}) => {
+  const {setIsLoggedIn} = useAuthStore(
+    state => state as {setIsLoggedIn: (value: boolean) => void},
+  );
   const {loginMutation} = useAuth();
   const [userInfo, setUserInfo] = useState(null);
   const handleKakaoLogin = () => {
@@ -45,7 +48,8 @@ const LoginPage = ({navigation}) => {
         accessToken: successResponse.accessToken,
         registerId: 'naver',
       });
-      navigation.navigate('bottomNavigate');
+      setIsLoggedIn(true);
+      // navigation.navigate('bottomNavigate');
     } else {
       console.log('네이버 로그인 실패', failureResponse);
     }

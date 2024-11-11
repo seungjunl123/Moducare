@@ -1,15 +1,12 @@
+import {NullCheckBoxList} from 'aws-sdk/clients/glue';
 import {setEncryptStorage} from '../util';
 import axiosInstance from '../util/axios';
 
-const postCreateChallenge = async (
-  title: string,
-  challengeImage: string,
-): Promise<void> => {
-  console.log('이미지 보내야함', challengeImage);
+const postCreateChallenge = async (file?: FormData): Promise<void> => {
+  console.log('이미지 보내야함', file);
   try {
-    const {data} = await axiosInstance.post('challenges', {
-      title,
-      challengeImage,
+    const {data} = await axiosInstance.post(`challenges`, file, {
+      headers: {'Content-Type': 'multipart/form-data'},
     });
 
     console.log('챌린지 생성 성공', data);
@@ -71,15 +68,16 @@ const postOutChallenge = async (challengeId: number): Promise<void> => {
 
 const postFeedChallenge = async (
   challengeId: number,
-  feedImg: string,
-  content: string,
+  file: FormData,
 ): Promise<void> => {
-  console.log('보내야함', feedImg);
   try {
-    const {data} = await axiosInstance.post(`challenge-feeds/${challengeId}`, {
-      feedImg,
-      content,
-    });
+    const {data} = await axiosInstance.post(
+      `challenge-feeds/${challengeId}`,
+      file,
+      {
+        headers: {'Content-Type': 'multipart/form-data'},
+      },
+    );
     setEncryptStorage('isDone', 1);
     return data;
   } catch (error) {

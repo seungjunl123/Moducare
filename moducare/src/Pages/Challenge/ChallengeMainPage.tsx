@@ -24,30 +24,20 @@ import {
   postCreateChallenge,
 } from '../../api/challenge-api';
 import {Alert} from 'react-native';
-import {getEncryptStorage, setEncryptStorage} from '../../util';
+import {setEncryptStorage} from '../../util';
 import {
   CameraOptions,
   launchImageLibrary,
   ImageLibraryOptions,
 } from 'react-native-image-picker';
-import AWS from 'aws-sdk';
-import RNFS from 'react-native-fs';
-import {Buffer} from 'buffer';
-import Config from 'react-native-config';
 import {useFocusEffect} from '@react-navigation/native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 interface Action {
   title: string;
   type: 'capture' | 'library';
   options: CameraOptions | ImageLibraryOptions;
 }
-
-// AWS S3 설정
-const s3 = new AWS.S3({
-  accessKeyId: Config.AWS_ACCESS_KEY_ID,
-  secretAccessKey: Config.AWS_SECRET_ACCESS_KEY,
-  region: Config.AWS_REGION,
-});
 
 const options: Action = {
   title: 'Select Image',
@@ -65,35 +55,7 @@ export default function ChallengeMainPage({navigation}) {
   const [allList, setAllList] = React.useState<getListType[] | []>([]);
   const [title, setTitle] = React.useState<string>('');
   //챌린지 생성 이미지 관련
-  const [imgUrl, setImgUrl] = React.useState('');
   const [imgConfig, setImgConfig] = React.useState<any>(null);
-
-  const upLoadImgToS3 = async (img: any) => {
-    console.log('upLoadImgToS3', img);
-
-    return new Promise(async (resolve, reject) => {
-      const fileData = await RNFS.readFile(img.assets[0].uri, 'base64');
-      const params = {
-        Key: img.assets[0].fileName,
-        Bucket: Config.AWS_BUCKET,
-        Body: Buffer.from(fileData, 'base64'),
-        ContentType: img?.assets?.[0].type,
-      };
-
-      // S3 버켓에 파일 업로드
-      s3.upload(params, (err: any, data: any) => {
-        if (err) {
-          console.log('업로드 실패', err);
-          reject(err);
-        } else {
-          console.log(`File uploaded successfully. ${data.Location}`);
-          setImgUrl(data.Location);
-          postCreateChallenge(title, data.Location);
-          resolve(data.Location);
-        }
-      });
-    });
-  };
 
   const openImageLibrary = async () => {
     console.log('ww');
@@ -109,24 +71,39 @@ export default function ChallengeMainPage({navigation}) {
       return;
     }
     Alert.alert('업로드');
+
     // 1. S3 업로드
     if (imgConfig === null) {
-      await postCreateChallenge(title, '');
+      const formData = new FormData();
+      formData.append('title', title);
+      await postCreateChallenge(formData);
+      // await postCreateChallenge(title, '');
       const myData = await getMyChallengeList();
       setMyList(myData);
     } else {
-      await upLoadImgToS3(imgConfig);
+      // await upLoadImgToS3(imgConfig);
+      const file = imgConfig.assets[0];
+      const uri = file.uri; // 이미지 URI
+      const fileName = file.fileName; // 이미지 파일명
+      const type = file.type; // 이미지 타입
+
+      // FormData 생성
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('file', {
+        uri: uri,
+        type: type,
+        name: fileName,
+      });
+
+      await postCreateChallenge(formData);
       const myData = await getMyChallengeList();
       setMyList(myData);
     }
-    // 2. 업로드 된 이미지 정보 전송
-    // console.log('이미지 url', imgUrl);
-    // await postCreateChallenge(title, imgUrl);
-    // 3. 초기화
+    // 2. 초기화
     setImgConfig(null);
-    setImgUrl('');
     setTitle('');
-    // 4. 모달 닫기
+    // 3. 모달 닫기
     setIsModal(false);
   };
 
@@ -137,7 +114,6 @@ export default function ChallengeMainPage({navigation}) {
   const handleCloseModal = () => {
     setIsModal(false);
     setImgConfig(null);
-    setImgUrl('');
     setTitle('');
   };
 
@@ -148,6 +124,10 @@ export default function ChallengeMainPage({navigation}) {
       title: data.challengeName,
       type: 'myChallenge',
     });
+  };
+
+  const handleImgDelete = () => {
+    setImgConfig(null);
   };
 
   const getListCompo = async () => {
@@ -229,6 +209,9 @@ export default function ChallengeMainPage({navigation}) {
         <View style={styles.ModalView}>
           {imgConfig !== null ? (
             <View style={styles.imageContainer}>
+              <Pressable style={styles.closeBtn} onPress={handleImgDelete}>
+                <FontAwesome name="close" size={20} color={'#ffffff'} />
+              </Pressable>
               <Image
                 source={{uri: imgConfig?.assets?.[0].uri}}
                 style={{width: 150, height: 150}}
@@ -319,8 +302,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   imageContainer: {
+    position: 'relative',
     alignItems: 'center',
     margin: 10,
     marginVertical: 20,
+  },
+  closeBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.MAIN,
+    position: 'absolute',
+    right: 0,
+    margin: 5,
+    zIndex: 1000,
   },
 });

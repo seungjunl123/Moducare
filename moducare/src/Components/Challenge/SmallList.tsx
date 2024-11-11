@@ -13,7 +13,7 @@ const SmallList = ({uri = '', isFinish = 0, title, ...props}: ListProps) => {
   return (
     <Pressable style={styles.container} {...props}>
       <View style={styles.ListArea}>
-        {uri === '' ? (
+        {uri === null ? (
           <>
             <SvgIconAtom name="Basic" size={40} />
             {isFinish === 1 && (

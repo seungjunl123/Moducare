@@ -7,7 +7,7 @@ import {colors} from '../../constants/colors';
 import BigList from '../../Components/Challenge/BigList';
 import {getChallengeList, getListType} from '../../api/challenge-api';
 
-export default function ChallengeListPage() {
+export default function ChallengeListPage({navigation}) {
   const [allList, setAllList] = React.useState<getListType[] | []>([]);
   const [page, setPage] = React.useState(10);
 
@@ -39,15 +39,21 @@ export default function ChallengeListPage() {
         <View style={styles.ListArea}>
           <ScrollView showsVerticalScrollIndicator={false}>
             {allList.length !== 0 ? (
-              allList
-                .slice(0, page)
-                .map((data, index) => (
-                  <BigList
-                    key={index}
-                    title={data.challengeName}
-                    user={data.challengeUser}
-                  />
-                ))
+              allList.slice(0, page).map((data, index) => (
+                <BigList
+                  key={index}
+                  title={data.challengeName}
+                  user={data.challengeUser}
+                  uri={data.challengeImg}
+                  onPress={() =>
+                    navigation.navigate('challenge_feed', {
+                      id: data.challengeId,
+                      title: data.challengeName,
+                      type: 'allChallenge',
+                    })
+                  }
+                />
+              ))
             ) : (
               <View style={styles.nullList}>
                 <CustomText label="개설된 챌린지가 없어요" size={18} />

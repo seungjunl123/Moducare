@@ -18,10 +18,6 @@ import {
   launchImageLibrary,
   ImageLibraryOptions,
 } from 'react-native-image-picker';
-import AWS from 'aws-sdk';
-import RNFS from 'react-native-fs';
-import {Buffer} from 'buffer';
-import Config from 'react-native-config';
 import {postFeedChallenge} from '../../api/challenge-api';
 import {View} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -32,13 +28,6 @@ interface Action {
   type: 'capture' | 'library';
   options: CameraOptions | ImageLibraryOptions;
 }
-
-// AWS S3 설정
-const s3 = new AWS.S3({
-  accessKeyId: Config.AWS_ACCESS_KEY_ID,
-  secretAccessKey: Config.AWS_SECRET_ACCESS_KEY,
-  region: Config.AWS_REGION,
-});
 
 const options: Action = {
   title: 'Select Image',
@@ -56,39 +45,9 @@ const ChallengeWritePage = ({route}) => {
   const navigation = useNavigation();
   const {id} = route.params;
   const [content, setContent] = React.useState<string>('');
-  //챌린지 생성 이미지 관련
-  const [imgUrl, setImgUrl] = React.useState('');
   const [imgConfig, setImgConfig] = React.useState<any>(null);
 
-  const upLoadImgToS3 = async (img: any) => {
-    console.log('upLoadImgToS3', img);
-
-    return new Promise(async (resolve, reject) => {
-      const fileData = await RNFS.readFile(img.assets[0].uri, 'base64');
-      const params = {
-        Key: img.assets[0].fileName,
-        Bucket: Config.AWS_BUCKET,
-        Body: Buffer.from(fileData, 'base64'),
-        ContentType: img?.assets?.[0].type,
-      };
-
-      // S3 버켓에 파일 업로드
-      s3.upload(params, (err: any, data: any) => {
-        if (err) {
-          console.log('업로드 실패', err);
-          reject(err);
-        } else {
-          setImgUrl(data.Location);
-          console.log(`File uploaded successfully. ${data.Location}`);
-          postFeedChallenge(id, data.Location, content);
-          resolve(data.Location);
-        }
-      });
-    });
-  };
-
   const openImageLibrary = async () => {
-    console.log('ww');
     const images = await launchImageLibrary(options);
     if (images.assets) {
       setImgConfig(images);
@@ -101,22 +60,28 @@ const ChallengeWritePage = ({route}) => {
       return;
     }
     Alert.alert('업로드');
-    // 1. S3 업로드
-    await upLoadImgToS3(imgConfig);
-    // 2. 업로드 된 이미지 정보 전송
-    // console.log('이미지 url', imgUrl);
-    // await postFeedChallenge(id, {imgUrl, content});
-    // 3. 초기화
+    const file = imgConfig.assets[0];
+    const uri = file.uri; // 이미지 URI
+    const fileName = file.fileName; // 이미지 파일명
+    const type = file.type; // 이미지 타입
+    const formData = new FormData();
+    formData.append('content', content);
+    formData.append('file', {
+      uri: uri,
+      type: type,
+      name: fileName,
+    });
+
+    await postFeedChallenge(id, formData);
+    // 초기화
     setImgConfig(null);
-    setImgUrl('');
     setContent('');
-    // 4. 페이지 전환
+    // 페이지 전환
     navigation.goBack();
   };
 
   const handleImgDelete = () => {
     setImgConfig(null);
-    setImgUrl('');
   };
 
   return (

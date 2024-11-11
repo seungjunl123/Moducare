@@ -11,11 +11,11 @@ const AuthStackNavigate = () => {
   const Stack = createStackNavigator();
   return (
     <Stack.Navigator initialRouteName="login">
-      <Stack.Screen
+      {/* <Stack.Screen
         name="splash"
         component={SplashPage}
         options={{headerShown: false, animationEnabled: false}}
-      />
+      /> */}
       <Stack.Screen
         name="login"
         component={LoginPage}
@@ -36,11 +36,11 @@ const AuthStackNavigate = () => {
         component={NaverLoginButton}
         options={{headerShown: false, animationEnabled: true}}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="bottomNavigate"
         component={BottomNavBar}
         options={{headerShown: false, animationEnabled: false}}
-      />
+      /> */}
     </Stack.Navigator>
   );
 };
