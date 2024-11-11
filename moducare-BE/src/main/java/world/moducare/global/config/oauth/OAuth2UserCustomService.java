@@ -40,25 +40,19 @@ public class OAuth2UserCustomService {
         }
     }
 
-    private CustomOAuth2User loadGoogleUser(String accessToken) {
-        logger.info("Fetching user information from endpoint: {}", "https://www.googleapis.com/oauth2/v3/userinfo");
+    private CustomOAuth2User loadGoogleUser(String idToken) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accessToken);
+        headers.setBearerAuth(idToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Map> response = restTemplate.exchange("https://www.googleapis.com/oauth2/v3/userinfo", HttpMethod.GET, entity, Map.class);
+        ResponseEntity<Map> response = restTemplate.exchange("https://oauth2.googleapis.com/tokeninfo?id_token=", HttpMethod.GET, entity, Map.class);
 
         Map<String, Object> responseBody = response.getBody();
         Map<String, Object> userAttributes = (Map<String, Object>) responseBody.get("response");
         String email = (String) userAttributes.get("email");
         String name = (String) userAttributes.getOrDefault("name", "자라나라머리머리");
-        String finalName;
-        if (name.equals("")||name==null) {
-            finalName = "자라나라머리머리";
-        } else {
-            finalName = name;
-        }
+        String finalName = name.isEmpty() ? "자라나라머리머리" : name;
 
         logger.info("Retrieved email: {}, name: {}", email, finalName);
         Member member = memberService.saveOrUpdateMember(email, finalName);
@@ -78,12 +72,7 @@ public class OAuth2UserCustomService {
 
         String email = (String) userAttributes.get("email");
         String name = (String) userAttributes.getOrDefault("name", "자라나라머리머리");
-        String finalName;
-        if (name.equals("")||name==null) {
-            finalName = "자라나라머리머리";
-        } else {
-            finalName = name;
-        }
+        String finalName = name.isEmpty() ? "자라나라머리머리" : name;
 
         logger.info("Retrieved email: {}, name: {}", email, finalName);
         Member member = memberService.saveOrUpdateMember(email, finalName);
