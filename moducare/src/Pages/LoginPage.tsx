@@ -9,11 +9,8 @@ import {getEncryptStorage} from '../util';
 import {getProfile} from '@react-native-seoul/kakao-login';
 import {initializeKakaoSDK} from '@react-native-kakao/core';
 import {login} from '@react-native-kakao/user';
-import {
-  GoogleSignin,
-  isErrorWithCode,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
 import Config from 'react-native-config';
 import useAuth from '../hook/useAuth';
 
@@ -21,10 +18,8 @@ initializeKakaoSDK('585639d392d8089816cb2f337aea44d9');
 
 const LoginPage = ({navigation}) => {
   const {loginMutation} = useAuth();
-
   const [userInfo, setUserInfo] = useState(null);
   const handleKakaoLogin = () => {
-    console.log('ee');
     login().then(console.log).catch(console.log);
   };
 
@@ -56,43 +51,29 @@ const LoginPage = ({navigation}) => {
     }
   };
   useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: Config.Google_CLIENT_ID as string,
-      offlineAccess: true,
-    });
+    console.log('Config.Google_CLIENT_ID : ', Config.Google_CLIENT_ID);
+    const googleSigninConfigure = () => {
+      GoogleSignin.configure({
+        webClientId: Config.Google_CLIENT_ID as string,
+      });
+    };
+    googleSigninConfigure();
   }, []);
 
   const onGoogleLogin = async () => {
-    console.log('구글 로그인');
+    await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true})
+      .then(res => console.log('hasPlayServices', res))
+      .catch(err => console.log('hasPlayServices', err));
     try {
-      await GoogleSignin.hasPlayServices();
-      console.log('signIn 시작');
       const userInfo = await GoogleSignin.signIn();
-
-      if (userInfo) {
-        // read user's info
-        console.log(userInfo);
-        navigation.navigate('bottomNavigate');
-      } else {
-        console.log('userInfo 없음');
-      }
-    } catch (error) {
-      if (isErrorWithCode(error)) {
-        switch (error.code) {
-          case statusCodes.IN_PROGRESS:
-            // operation (eg. sign in) already in progress
-            break;
-          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-            // Android only, play services not available or outdated
-            break;
-          default:
-            console.log('구글 로그인 코드 에러', error);
-          // some other error happened
-        }
-      } else {
-        console.log('구글 로그인 에러', error);
-        // an error that's not related to google sign in occurred
-      }
+      console.log('userInfo : ', userInfo.data);
+      const googleCredential = auth.GoogleAuthProvider.credential(
+        userInfo.data.idToken,
+      );
+      const res = await auth().signInWithCredential(googleCredential);
+      console.log('res : ', res);
+    } catch (error: any) {
+      console.log('Message', error.message);
     }
   };
 
