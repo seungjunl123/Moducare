@@ -41,18 +41,20 @@ public class OAuth2UserCustomService {
     }
 
     private CustomOAuth2User loadGoogleUser(String idToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(idToken);
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<Map> response = restTemplate.exchange("https://oauth2.googleapis.com/tokeninfo?id_token=", HttpMethod.GET, entity, Map.class);
+        String url = "https://oauth2.googleapis.com/tokeninfo?id_token=" + idToken;
 
-        Map<String, Object> responseBody = response.getBody();
-        Map<String, Object> userAttributes = (Map<String, Object>) responseBody.get("response");
+        ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
+        Map<String, Object> userAttributes = response.getBody();
+
+        if (userAttributes == null || userAttributes.containsKey("error")) {
+            logger.error("Invalid ID token or unable to retrieve user information.");
+            throw new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST);
+        }
+
         String email = (String) userAttributes.get("email");
         String name = (String) userAttributes.getOrDefault("name", "자라나라머리머리");
-        String finalName = name.isEmpty() ? "자라나라머리머리" : name;
+        String finalName = (name == null || name.isEmpty()) ? "자라나라머리머리" : name;
 
         logger.info("Retrieved email: {}, name: {}", email, finalName);
         Member member = memberService.saveOrUpdateMember(email, finalName);
