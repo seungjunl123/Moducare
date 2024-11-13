@@ -13,8 +13,6 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 
 @Configuration
 public class ElasticsearchConfig {
-    @Value("${CONTAINER}")
-    private String containerName;
 
     @Bean
     public ElasticsearchClient elasticsearchClient() {
