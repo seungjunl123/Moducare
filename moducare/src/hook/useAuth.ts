@@ -45,6 +45,7 @@ const useLogin = (mutationOptions?: UseMutationCustomOptions) => {
 };
 
 const useGetRefreshToken = () => {
+  console.log('리프레시 토큰 쿼리 머ㅝ야????');
   const {isSuccess, data, isError, isPending} = useQuery({
     queryKey: ['auth', 'getAccessToken'],
     queryFn: postRefreshToken,
@@ -107,6 +108,7 @@ function useAuth() {
   const delUserMutation = useDelUser();
   const isLoginLoading = refreshTokenQuery.isPending;
   console.log('로그인상태', isLogin);
+  console.log('로그인로딩', isLoginLoading);
   return {
     loginMutation,
     refreshTokenQuery,

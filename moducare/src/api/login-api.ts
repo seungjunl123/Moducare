@@ -44,10 +44,21 @@ type ResponseAccess = {
 };
 
 const postRefreshToken = async (): Promise<ResponseAccess> => {
-  const refreshToken = await getEncryptStorage('refreshToken');
-  const {data} = await axiosInstance.post('tokens/refresh', {refreshToken});
+  try {
+    const refreshToken = await getEncryptStorage('refreshToken');
 
-  return data;
+    if (!refreshToken) {
+      console.log('리프레시 토큰이 없습니다.');
+      throw new Error('리프레시 토큰이 없습니다.');
+    }
+    console.log('리프레시 토큰 있어요', refreshToken);
+    const {data} = await axiosInstance.post('tokens/refresh', {refreshToken});
+    console.log('리프레시 토큰 받아오기 성공', data);
+    return data;
+  } catch (error) {
+    console.error('리프레시 토큰 에러', error);
+    throw error;
+  }
 };
 
 const postLogout = async (fcmToken: string): Promise<void> => {
