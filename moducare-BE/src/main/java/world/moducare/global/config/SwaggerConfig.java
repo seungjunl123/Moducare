@@ -12,9 +12,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
-    @Value("${BASE_URL}")
-    private String BASE_URL;
-
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
