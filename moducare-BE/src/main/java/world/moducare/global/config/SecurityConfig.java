@@ -65,7 +65,7 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
                         new AntPathRequestMatcher("/members/login/**"),
                         new AntPathRequestMatcher("/tokens/refresh"),
                         new AntPathRequestMatcher("/members/logout"),
-                        new AntPathRequestMatcher("/product/index"),
+                        new AntPathRequestMatcher("/weather"),
                         new AntPathRequestMatcher("/product/recommend"),
                         new AntPathRequestMatcher("/swagger-ui.html"),  // Swagger UI 경로 추가
                         new AntPathRequestMatcher("/v3/api-docs/**")  // OpenAPI 문서 경로 추가

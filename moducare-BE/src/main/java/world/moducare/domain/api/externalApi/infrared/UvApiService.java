@@ -37,7 +37,7 @@ public class UvApiService {
     private final RegionCodeRepository regionCodeRepository;
 
 //    @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 5, backoff = @Backoff(delay = 500))
-    @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 10, backoff = @Backoff(delay = 500))
+    @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 10, backoff = @Backoff(delay = 100))
     public CompletableFuture<Integer> callUvApi(WeatherRequestDto weatherRequestDto) {
         System.out.println("try uv");
         return CompletableFuture.supplyAsync(() -> {
