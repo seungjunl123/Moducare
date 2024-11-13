@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
-  Dimensions,
   Image,
   SafeAreaView,
   ScrollView,
@@ -15,106 +14,36 @@ import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import {BarChart} from 'react-native-gifted-charts';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import {RootStackParamList} from '../../navigate/StackNavigate';
-import {RouteProp} from '@react-navigation/native';
+import {
+  NavigationProp,
+  RouteProp,
+  useNavigation,
+} from '@react-navigation/native';
 import {useReportDetailQuery} from '../../quires/useReportsQuery';
+import {graphData, getHeadType, getComparisonText} from './resultClass';
 
 const DiagnosisResult = ({
   route,
 }: {
   route: RouteProp<RootStackParamList, 'aiResult'>;
 }) => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const {type, id, diagnosisResult} = route.params;
   const {data: diagnosisData} = useReportDetailQuery(id ?? 0, {
     enabled: type === 'report',
   });
   const resultData = type === 'diagnosis' ? diagnosisResult : diagnosisData;
+  const data = graphData(resultData.result);
+  const headType = getHeadType(resultData.headType);
+  const comparisonText = getComparisonText(resultData.comparison);
 
   const careText: string = `첫째, 두피를 깨끗하게 유지하려면 적어도 주 2-3회 샴푸로 세척해줘야 해요. 둘째, 너무 뜨거운 물보다는 미지근한 물을 사용하는 게 좋아요. 셋째, 각질 제거를  위해 주 1회 스크럽이나 두피 마스크를 사용해보세요.\n
 또한, 두피도 보습이 필요하니까 두피 전용 오일이나 세럼을 사용해 보습해주는 게 좋고요. 건강한 모발을 위해 균형 잡힌 식사를 하고, 스트레스는 운동이나 명상으로 관리해보세요. 자외선 차단도 잊지 말고, 마지막으로 두피 마사지를 통해 혈액순환을 촉진해주면 도움이 됩니다.`;
-
-  const HEIGHT = Dimensions.get('window').height;
-  const WIDTH = Dimensions.get('window').width;
-  const chartData = [{value: 100}, {value: 50}];
-  const labelTextStyle = {
-    fontSize: 12,
-    fontWeight: 500,
-    color: '#888',
-  };
 
   const yAxisTextStyle = {
     fontSize: 12,
     color: '#888',
   };
-  const data = [
-    {
-      value: resultData.result[0],
-      label: '탈모',
-      labelTextStyle: labelTextStyle,
-    },
-    {
-      value: resultData.result[1],
-      label: '비듬',
-      labelTextStyle: labelTextStyle,
-    },
-    {
-      value: resultData.result[2],
-      label: '염증',
-      labelTextStyle: labelTextStyle,
-    },
-    {
-      value: resultData.result[3],
-      label: '홍반',
-      labelTextStyle: labelTextStyle,
-    },
-    {
-      value: resultData.result[4],
-      label: '피지',
-      labelTextStyle: labelTextStyle,
-    },
-    {
-      value: resultData.result[5],
-      label: '각질',
-      labelTextStyle: labelTextStyle,
-    },
-  ];
-
-  const headType = (() => {
-    switch (resultData.headType) {
-      case 0:
-        return '정상';
-      case 1:
-        return '건성 두피';
-      case 2:
-        return '지성 두피';
-      case 3:
-        return '민감성 두피';
-      case 4:
-        return '지루성 두피';
-      case 5:
-        return '염증성 두피';
-      case 6:
-        return '비듬성 두피';
-      case 7:
-        return '탈모';
-      default:
-        return '데이터 이상!';
-    }
-  })();
-
-  const comparisonText = (() => {
-    switch (resultData.headType) {
-      case 0:
-        return '두피가 나빠지고 있어요!';
-      case 1:
-        return '두피가 좋아졌어요!';
-      case 2:
-        return '두피 상태를 유지 중이에요!';
-      case 3:
-        return '두피를 잘 가꾸어 보도록 해요!';
-      default:
-        return '데이터 이상!';
-    }
-  })();
 
   // pdf
   const [pdfPath, setPdfPath] = useState('');
@@ -123,13 +52,171 @@ const DiagnosisResult = ({
     <head>
       <style>
         body { font-family: Arial, sans-serif; }
-        h1 { color: #4CAF50; }
-        p { font-size: 16px; }
+        p { font-size: 15px; }
+		h2 {
+          display : flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 40px;
+        }
+        h3{
+         font-size: 30px;   
+        }
+        h4 {
+          font-size: 20px;
+        }
+        span {
+          color : #946038;
+        }
+
+        #paper {
+  			width: 21cm;
+  			min-height: 29.7cm;
+  			padding: 1.5cm 1.5cm 2cm 1.5cm;
+		}
+        #pictureContainer {
+  			display: flex;  /* Flexbox 사용 */
+  			justify-content: center; /* 양쪽 정렬 */
+  			align-items: center; /* 세로 중앙 정렬 */
+            gap: 20px;
+		}
+        img {
+          border-radius : 10px;
+          width : 400px;
+        }
+        
+        #pictureContainer div {
+          display : flex;
+          flex-direction : column;
+          align-items: center;
+        }
+        
+        #pictureContainer div {
+          display : flex;
+          flex-direction : center;
+          align-items: center;
+        }
+  		#result-graph {
+  		 display: flex;
+  		 flex-direction: row; /* 가로 방향 정렬 */
+  		 justify-content: center; /* 중앙 정렬 */
+  		 align-items: flex-end; /* 아래쪽 정렬 (막대 그래프처럼 보이도록) */
+  		 gap: 50px; /* 막대 사이의 간격 */
+		}
+  		#result-graph .gb {
+  		 display: flex;
+  		 flex-direction: column;
+  		 align-items: center;
+		}        
+		#result-graph .bar {
+ 	 	 width: 30px;
+  		 background-color: #72635A; /* 막대 기본 색상 */
+  		 border-radius: 5px;
+		}
+        #recommend-text {
+  		 display: flex;
+         flex-direction: column; /* 가로 방향 정렬 */
+  		 align-items: center;
+         justify-content:center;
+        }
+        
       </style>
     </head>
     <body>
-      <h1>PDF 생성 예시</h1>
-      <p>이것은 간단한 HTML 템플릿을 사용하여 생성된 PDF입니다.</p>
+      <div id='paper'>
+		<h2>
+          ModuCare 두피 진단 결과지
+      </h2>
+      <div id="pictureContainer">
+        <div>
+          <h4>
+            제공된 두피 사진
+          </h4>
+           <img class="picture" src="https://moducare.s3.ap-northeast-2.amazonaws.com/eb042bcb-95a6-48de-b7e4-ef783f4d5b0e.png" alt="...">
+        </div>
+        <div>
+       	  <h4>
+            건강한 두피 사진
+          </h4>
+          <img class="picture" src="https://moducare.s3.ap-northeast-2.amazonaws.com/eb042bcb-95a6-48de-b7e4-ef783f4d5b0e.png" alt="...">
+        </div>
+      </div>
+      <div id="pictureContainer">
+          <h4>AI 두피 진단 결과 <span>정상</span>입니다.</h4>
+      </div>
+      <div id="result-graph"> 
+        <div class="gb">
+          <div>
+           30
+          </div>
+          <div class="bar tm" style="height: 150px;"></div>
+          <h5>
+            탈모
+          </h5>
+        </div>
+        <div class="gb">
+          <div>
+           34
+          </div>
+          <div class="bar bd" style="height: 180px;"></div>
+          <h5>
+            비듬
+          </h5>
+        </div>
+        <div class="gb">
+          <div>
+           26 
+          </div>
+          <div class="bar yj" style="height: 120px;"></div>
+          <h5>
+            염증
+          </h5>
+        </div>
+        <div class="gb">
+          <div>
+           26 
+          </div>
+          <div class="bar hb" style="height: 120px;"></div>
+          <h5>
+            홍반
+          </h5>
+        </div>
+        <div class="gb">
+          <div>
+           14 
+          </div>
+          <div class="bar pj" style="height: 50px;"></div>
+          <h5>
+            피지
+          </h5>
+        </div>
+        <div class="gb">
+          <div>
+           36 
+          </div>
+          <div class="bar gj" style="height: 200px;"></div>
+          <h5>
+            각질
+          </h5>
+        </div>
+      </div>
+      <div class="RecommendContainer">
+        <h4>
+          MODU가 관찰한 두피 결과
+        </h4>
+        <h3>
+		 최근  검사에 비해 <span>두피가 좋아졌어요!!</span>
+        </h3>
+        <div id="recommend-text">
+           	<img class="picture" src="https://moducare.s3.ap-northeast-2.amazonaws.com/eb042bcb-95a6-48de-b7e4-ef783f4d5b0e.png" alt="...">
+          	<h4>
+첫째, 두피를 깨끗하게 유지하려면 적어도 주 2-3회 샴푸로 세척해줘야 해요. 둘째, 너무 뜨거운 물보다는 미지근한 물을 사용하는 게 좋아요. 셋째, 각질 제거를  위해 주 1회 스크럽이나 두피 마스크를 사용해보세요.
+              <br>
+또한, 두피도 보습이 필요하니까 두피 전용 오일이나 세럼을 사용해 보습해주는 게 좋고요. 건강한 모발을 위해 균형 잡힌 식사를 하고, 스트레스는 운동이나 명상으로 관리해보세요. 자외선 차단도 잊지 말고, 마지막으로 두피 마사지를 통해 혈액순환을 촉진해주면 도움이 됩니다.
+            </h4>
+        </div>
+      </div>
+      </div>
     </body>
   </html>
 `;
@@ -222,7 +309,12 @@ const DiagnosisResult = ({
         <View style={styles.BtnArea}>
           <CustomButtom
             label="나에게 맞는 샴푸 확인하기"
-            onPress={() => navigation.navigate('aiPick')}
+            onPress={() =>
+              navigation.navigate('aiPick', {
+                type: resultData.headType,
+                result: resultData.result,
+              })
+            }
           />
           <CustomButtom label="두피 검진 문서 생성" onPress={generatePDF} />
           <CustomButtom

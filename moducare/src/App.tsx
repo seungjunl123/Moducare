@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import RootNavigate from './navigate/RootNavigate';
 import {QueryClientProvider} from '@tanstack/react-query';
 import queryClinet from './util/queryClient';

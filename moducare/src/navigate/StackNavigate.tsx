@@ -25,6 +25,10 @@ type RootStackParamList = {
   bottomNavigate: undefined;
   main: undefined;
   ai: undefined;
+  aiPick: {
+    type: number;
+    result: number[];
+  };
   challenge_feed: {
     id: number;
     title: string;

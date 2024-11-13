@@ -16,8 +16,12 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import useAuthStore from '../store/useAuthStore';
 
 const useLogin = (mutationOptions?: UseMutationCustomOptions) => {
-  const {setIsLoggedIn} = useAuthStore(
-    state => state as {setIsLoggedIn: (value: boolean) => void},
+  const {setIsLoggedIn, setUser} = useAuthStore(
+    state =>
+      state as {
+        setIsLoggedIn: (value: boolean) => void;
+        setUser: (value: string) => void;
+      },
   );
   useEffect(() => {
     // 네이버 로그인 초기화
@@ -40,6 +44,7 @@ const useLogin = (mutationOptions?: UseMutationCustomOptions) => {
       setEncryptStorage('refreshToken', refreshToken);
       setEncryptStorage('info', {name, birth, email});
       setHeader('Authorization', `Bearer ${jwtAccessToken}`);
+      setUser(name);
       setIsLoggedIn(true);
     },
     onSettled: () => {
@@ -53,7 +58,6 @@ const useLogin = (mutationOptions?: UseMutationCustomOptions) => {
 };
 
 const useGetRefreshToken = () => {
-  console.log('리프레시 토큰 쿼리 머ㅝ야????');
   const {isSuccess, data, isError, isPending} = useQuery({
     queryKey: ['auth', 'getAccessToken'],
     queryFn: postRefreshToken,
@@ -80,12 +84,22 @@ const useGetRefreshToken = () => {
 };
 
 const useLogout = (mutationOptions?: UseMutationCustomOptions) => {
+  const {setIsLoggedIn, setUser} = useAuthStore(
+    state =>
+      state as {
+        setIsLoggedIn: (value: boolean) => void;
+        setUser: (value: string) => void;
+      },
+  );
+
   return useMutation({
     mutationFn: postLogout,
     onSuccess: () => {
       removeHeader('Authorization');
       removeEncryptStorage('refreshToken');
       removeEncryptStorage('info');
+      setUser('사용자');
+      setIsLoggedIn(false);
     },
     onSettled: () => {
       queryClinet.invalidateQueries({queryKey: ['auth']});
