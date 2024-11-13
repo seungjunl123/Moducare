@@ -1,5 +1,8 @@
 package world.moducare.domain.product.service;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.CountRequest;
+import co.elastic.clients.elasticsearch.core.CountResponse;
 import lombok.RequiredArgsConstructor;
 import world.moducare.domain.product.dto.RecommendDto;
 import world.moducare.domain.product.entity.ElasticProduct;
@@ -27,12 +30,26 @@ public class RecommendationService {
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
 
+    @Autowired
+    private ElasticsearchClient elasticsearchClient;
+
+    public long getDocumentCount(String indexName) {
+        try {
+            CountRequest countRequest = CountRequest.of(r -> r.index(indexName));
+            CountResponse countResponse = elasticsearchClient.count(countRequest);
+            return countResponse.count();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
     /**
      * 사용자 임베딩을 기반으로 제품 추천 목록을 반환하는 메소드
      * @param userEmbedding 사용자 임베딩 벡터
      * @return 추천 제품 리스트
      */
     public List<RecommendDto> recommendProducts(float[] userEmbedding) {
+        System.out.println(Arrays.toString(userEmbedding));
         // Elasticsearch에 전달할 파라미터로 사용하기 위해 임베딩 벡터를 JsonData 형식으로 변환
         Map<String, JsonData> params = new HashMap<>();
         params.put("query_vector", JsonData.of(userEmbedding));
