@@ -99,45 +99,4 @@ public class OAuth2UserCustomService {
         Member member = memberService.saveOrUpdateMember(email, finalName);
         return new CustomOAuth2User(member);
     }
-
-//    private CustomOAuth2User retrieveUser(Map<String, Object> userAttributes) {
-//
-//        if (userAttributes.containsKey("error")) {
-//            logger.warn("No user information found in response.");
-//            throw new RestApiException(ErrorCode.CONFLICT);
-//        }
-//
-//        String email = (String) userAttributes.get("email");
-//        String name = (String) userAttributes.getOrDefault("name", "자라나라머리머리");
-//        String finalName;
-//        if (name.equals("")||name==null) {
-//            finalName = "자라나라머리머리";
-//        } else {
-//            finalName = name;
-//        }
-//
-//        logger.info("Retrieved email: {}, name: {}", email, finalName);
-//        Member member = memberService.saveOrUpdateMember(email, finalName);
-//        return new CustomOAuth2User(member);
-//    }
-//
-//    private Map<String, Object> parseAttributes(ResponseEntity<Map> response, String registerId) {
-//        logger.info("Parsing attributes from response");
-//        Map<String, Object> responseBody = response.getBody();
-//        if (responseBody == null || !responseBody.containsKey("response")) {
-//            logger.error("Failed to retrieve response body or 'response' key missing");
-//            throw new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST);
-//        }
-//        switch (registerId) {
-//            case "naver":
-//                return (Map<String, Object>) responseBody.get("response");
-//            case "kakao":
-//                return (Map<String, Object>) responseBody.get("kakao_account");
-//            case "google":
-//                return (Map<String, Object>) responseBody.get("response");
-//            default:
-//                logger.error("response provider {} not found", registerId);
-//                throw new RestApiException(ErrorCode.NOT_FOUND);
-//        }
-//    }
 }
