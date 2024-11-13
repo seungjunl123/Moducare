@@ -24,7 +24,7 @@ const displayNotification = async message => {
   if (message.data.deepLink) {
     // 알림 클릭 시 딥링크 URL을 열기
     console.log('클릭', message.data.deepLink);
-    Linking.openURL(message.data.deepLink);
+    // Linking.openURL(message.data.deepLink);
   }
 };
 

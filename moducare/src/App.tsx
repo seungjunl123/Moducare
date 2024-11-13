@@ -5,7 +5,7 @@ import {QueryClientProvider} from '@tanstack/react-query';
 import queryClinet from './util/queryClient';
 import messaging from '@react-native-firebase/messaging';
 import pushNoti from './util/pushNoti';
-import notifee, {AuthorizationStatus} from '@notifee/react-native';
+import notifee, {AuthorizationStatus, EventType} from '@notifee/react-native';
 import {setEncryptStorage} from './util';
 import {Linking} from 'react-native';
 
@@ -66,6 +66,31 @@ export default function App() {
     });
 
     return unsubscribe;
+  }, []);
+
+  React.useEffect(() => {
+    return notifee.onForegroundEvent(({type, detail}) => {
+      switch (type) {
+        case EventType.DISMISSED:
+          console.log('dismissed');
+          break;
+        case EventType.PRESS:
+          console.log('press');
+          Linking.openURL('moducare://챌린지');
+          break;
+      }
+    });
+  }, []);
+
+  React.useEffect(() => {
+    (async () => {
+      const initialNotification = await notifee.getInitialNotification();
+      if (initialNotification) {
+        const {data} = initialNotification.notification;
+        if (!data || !data.deepLinkUrl) return;
+        await Linking.openURL('moducare://챌린지');
+      }
+    })();
   }, []);
 
   return (
