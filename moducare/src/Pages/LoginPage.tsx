@@ -1,32 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import React from 'react';
+import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import SvgIconAtom from '../Components/Common/SvgIconAtom';
 import {colors} from '../constants/colors';
 import NaverLogin, {NaverLoginResponse} from '@react-native-seoul/naver-login';
 import useAuthStore from '../store/useAuthStore';
 import {getEncryptStorage} from '../util';
-import {getProfile} from '@react-native-seoul/kakao-login';
 import {initializeKakaoSDK} from '@react-native-kakao/core';
-import {login} from '@react-native-kakao/user';
-import {
-  GoogleSignin,
-  isErrorWithCode,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
-import Config from 'react-native-config';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import useAuth from '../hook/useAuth';
 
 initializeKakaoSDK('585639d392d8089816cb2f337aea44d9');
 
-const LoginPage = ({navigation}) => {
+const LoginPage = ({navigation}: {navigation: any}) => {
   const {loginMutation} = useAuth();
-
-  const [userInfo, setUserInfo] = useState(null);
-  const handleKakaoLogin = () => {
-    console.log('ee');
-    login().then(console.log).catch(console.log);
-  };
 
   const {setNaverLoginSuccess, setNaverLoginFailure} = useAuthStore(
     state =>
@@ -50,57 +37,31 @@ const LoginPage = ({navigation}) => {
         accessToken: successResponse.accessToken,
         registerId: 'naver',
       });
-      navigation.navigate('bottomNavigate');
     } else {
       console.log('네이버 로그인 실패', failureResponse);
     }
   };
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: Config.Google_CLIENT_ID as string,
-      offlineAccess: true,
-    });
-  }, []);
 
   const onGoogleLogin = async () => {
-    console.log('구글 로그인');
+    await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true})
+      .then(res => console.log('hasPlayServices', res))
+      .catch(err => console.log('hasPlayServices', err));
     try {
-      await GoogleSignin.hasPlayServices();
-      console.log('signIn 시작');
       const userInfo = await GoogleSignin.signIn();
-
-      if (userInfo) {
-        // read user's info
-        console.log(userInfo);
-        navigation.navigate('bottomNavigate');
-      } else {
-        console.log('userInfo 없음');
+      const fcmToken = await getEncryptStorage('fcmToken');
+      if (userInfo?.data?.idToken && fcmToken) {
+        const accessToken = userInfo.data.idToken;
+        loginMutation.mutate({
+          fcmToken,
+          accessToken,
+          registerId: 'google',
+        });
       }
-    } catch (error) {
-      if (isErrorWithCode(error)) {
-        switch (error.code) {
-          case statusCodes.IN_PROGRESS:
-            // operation (eg. sign in) already in progress
-            break;
-          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-            // Android only, play services not available or outdated
-            break;
-          default:
-            console.log('구글 로그인 코드 에러', error);
-          // some other error happened
-        }
-      } else {
-        console.log('구글 로그인 에러', error);
-        // an error that's not related to google sign in occurred
-      }
+    } catch (error: any) {
+      console.log('Message', error.message);
     }
   };
 
-  const getUserInfo = async accessToken => {
-    const user = await getProfile();
-    console.log('사용자 정보', user);
-    return user;
-  };
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -114,18 +75,28 @@ const LoginPage = ({navigation}) => {
               <Text style={styles.kakaoText}>카카오 로그인</Text>
               <View />
             </Pressable>
-            <Pressable
+            {/* <Pressable
               style={[styles.btn, styles.naver]}
               onPress={() => navigation.navigate('naverLogin')}>
+              <SvgIconAtom name="Naver" />
+              <Text style={styles.naverText}>네이버 로그인 테스트</Text>
+              <View />
+            </Pressable> */}
+            <Pressable
+              style={[styles.btn, styles.naver]}
+              onPress={onNaverLogin}>
               <SvgIconAtom name="Naver" />
               <Text style={styles.naverText}>네이버 로그인</Text>
               <View />
             </Pressable>
             <Pressable
-              style={[styles.btn, styles.naver]}
-              onPress={onNaverLogin}>
-              <SvgIconAtom name="Naver" />
-              <Text style={styles.naverText}>네이버 로그인 테스트</Text>
+              style={[styles.btn, styles.google]}
+              onPress={onGoogleLogin}>
+              <Image
+                style={styles.googleImg}
+                source={require('../assets/img/Google.png')}
+              />
+              <Text style={styles.googleText}>구글 로그인</Text>
               <View />
             </Pressable>
             <Pressable
@@ -189,7 +160,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#03C75A',
   },
   google: {
-    backgroundColor: '#4285F4',
+    borderColor: '#4285F4',
+    borderWidth: 1,
+    alignItems: 'center',
+    gap: 20,
+    backgroundColor: colors.WHITE,
+  },
+  googleImg: {
+    width: 25,
+    height: 25,
+  },
+  googleText: {
+    fontSize: 15,
+    fontFamily: 'Pretendard-Bold',
+    color: colors.BLACK,
+    alignSelf: 'center',
   },
   ImgArea: {
     position: 'relative',

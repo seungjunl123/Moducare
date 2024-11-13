@@ -1,5 +1,10 @@
 import {useMutation, useQuery} from '@tanstack/react-query';
-import {postLogin, postRefreshToken} from '../api/login-api';
+import {
+  deleteMember,
+  postLogin,
+  postLogout,
+  postRefreshToken,
+} from '../api/login-api';
 import {removeEncryptStorage, setEncryptStorage} from '../util';
 import {removeHeader, setHeader} from '../util/headers';
 import {UseMutationCustomOptions} from '../types/common';
@@ -29,9 +34,11 @@ const useLogin = (mutationOptions?: UseMutationCustomOptions) => {
   return useMutation({
     mutationFn: postLogin,
     onSuccess: data => {
-      const {jwtAccessToken, refreshToken} = data;
+      const {jwtAccessToken, refreshToken, name, birth, email} = data;
+      console.log('정보', {name, birth, email});
       console.log('jwtAccessToken', jwtAccessToken);
       setEncryptStorage('refreshToken', refreshToken);
+      setEncryptStorage('info', {name, birth, email});
       setHeader('Authorization', `Bearer ${jwtAccessToken}`);
       setIsLoggedIn(true);
     },
@@ -46,7 +53,8 @@ const useLogin = (mutationOptions?: UseMutationCustomOptions) => {
 };
 
 const useGetRefreshToken = () => {
-  const {isSuccess, data, isError} = useQuery({
+  console.log('리프레시 토큰 쿼리 머ㅝ야????');
+  const {isSuccess, data, isError, isPending} = useQuery({
     queryKey: ['auth', 'getAccessToken'],
     queryFn: postRefreshToken,
     staleTime: 1000 * 60 * 30 - 1000 * 60 * 3,
@@ -68,15 +76,55 @@ const useGetRefreshToken = () => {
     }
   }, [isError]);
 
-  return {isSuccess, isError};
+  return {isSuccess, isError, isPending};
+};
+
+const useLogout = (mutationOptions?: UseMutationCustomOptions) => {
+  return useMutation({
+    mutationFn: postLogout,
+    onSuccess: () => {
+      removeHeader('Authorization');
+      removeEncryptStorage('refreshToken');
+      removeEncryptStorage('info');
+    },
+    onSettled: () => {
+      queryClinet.invalidateQueries({queryKey: ['auth']});
+    },
+    ...mutationOptions,
+  });
+};
+
+const useDelUser = () => {
+  return useMutation({
+    mutationFn: deleteMember,
+    onSuccess: () => {
+      removeHeader('Authorization');
+      removeEncryptStorage('refreshToken');
+      removeEncryptStorage('info');
+    },
+    onSettled: () => {
+      queryClinet.invalidateQueries({queryKey: ['auth']});
+    },
+  });
 };
 
 function useAuth() {
   const loginMutation = useLogin();
   const refreshTokenQuery = useGetRefreshToken();
   const isLogin = refreshTokenQuery.isSuccess;
+  const logoutMutation = useLogout();
+  const delUserMutation = useDelUser();
+  const isLoginLoading = refreshTokenQuery.isPending;
   console.log('로그인상태', isLogin);
-  return {loginMutation, refreshTokenQuery, isLogin};
+  console.log('로그인로딩', isLoginLoading);
+  return {
+    loginMutation,
+    refreshTokenQuery,
+    isLogin,
+    logoutMutation,
+    delUserMutation,
+    isLoginLoading,
+  };
 }
 
 export default useAuth;

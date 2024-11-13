@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {View, StyleSheet, TextInput, Pressable, Text} from 'react-native';
 import CustomText from '../../Components/Common/CustomText';
@@ -7,10 +7,16 @@ import {Dimensions} from 'react-native';
 import CustomButton from '../../Components/Common/CustomButton';
 import Feather from 'react-native-vector-icons/Feather';
 import CalenderModal from '../../Components/CalenderModal/CalenderModal';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {putMember} from '../../api/login-api';
+import {getEncryptStorage, setEncryptStorage} from '../../util';
 const WIDTH = Dimensions.get('window').width;
 
+type userInfo = {
+  name: string;
+  birth: string;
+  email: string;
+};
 export default function EditUserPage() {
   const navigation = useNavigation();
   const date = new Date();
@@ -21,8 +27,33 @@ export default function EditUserPage() {
   const [userName, setUserName] = useState('');
   const onPressSave = () => {
     putMember({name: userName, birth: selectedDate});
+    setEncryptStorage('info', {
+      name: userName,
+      birth: selectedDate,
+      email: Info?.email,
+    });
     navigation.goBack();
   };
+
+  const [Info, setInfo] = useState<userInfo>();
+  const getInfo = async () => {
+    const {name, birth, email} = await getEncryptStorage('info');
+    name && setUserName(name);
+    // birth && setb
+    setInfo({
+      ...Info,
+      name,
+      birth,
+      email,
+    });
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      console.log('?');
+      getInfo();
+    }, []),
+  );
 
   return (
     <SafeAreaView style={styles.container}>

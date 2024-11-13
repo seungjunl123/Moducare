@@ -7,11 +7,35 @@ import messaging from '@react-native-firebase/messaging';
 import pushNoti from './util/pushNoti';
 import notifee, {AuthorizationStatus} from '@notifee/react-native';
 import {setEncryptStorage} from './util';
-import SplashScreen from 'react-native-splash-screen';
-import {setupInterceptors} from './util/headers';
+import {Linking} from 'react-native';
+
+const DEEPLINK_PREFIX_URL = ['moducare://'];
+
+const deepLinksConfig = {
+  screens: {
+    MainPage: 'main',
+    bottomNavigate: {
+      screens: {
+        챌린지: '챌린지',
+      },
+    },
+    ai: 'ai',
+  },
+};
+
+const linking = {
+  prefixes: DEEPLINK_PREFIX_URL,
+  config: deepLinksConfig,
+  async getInitialURL() {
+    const url = await Linking.getInitialURL();
+    if (url != null) {
+      return url;
+    }
+  },
+};
 
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-  // console.log('[Background Remote Message]', remoteMessage);
+  console.log('[Background Remote Message]', remoteMessage);
   pushNoti.dispayNoti(remoteMessage);
 });
 
@@ -23,7 +47,9 @@ export default function App() {
     // 권한 상태는 settings.authorizationStatus로 확인할 수 있다
     if (settings.authorizationStatus >= AuthorizationStatus.DENIED) {
       return true;
-    } else return false;
+    } else {
+      return false;
+    }
   };
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
@@ -38,17 +64,13 @@ export default function App() {
       // console.log('[Remote Message] ', JSON.stringify(remoteMessage));
       pushNoti.dispayNoti(remoteMessage);
     });
-    return unsubscribe;
-  }, []);
 
-  React.useEffect(() => {
-    // 앱이 준비되면 스플래시 화면을 숨깁니다
-    SplashScreen.hide();
+    return unsubscribe;
   }, []);
 
   return (
     <QueryClientProvider client={queryClinet}>
-      <NavigationContainer>
+      <NavigationContainer linking={linking}>
         <RootNavigate />
       </NavigationContainer>
     </QueryClientProvider>
