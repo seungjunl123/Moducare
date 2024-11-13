@@ -1,18 +1,17 @@
 package world.moducare.domain.product.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import world.moducare.domain.member.entity.Member;
 import world.moducare.domain.product.dto.LatestProductDto;
 import world.moducare.domain.product.entity.LatestProduct;
 import world.moducare.domain.product.repository.LatestProductRepository;
 
+@RequiredArgsConstructor
 @Service
 public class ProductService {
-    private final LatestProductRepository latestProductRepository;
 
-    public ProductService(LatestProductRepository latestProductRepository) {
-        this.latestProductRepository = latestProductRepository;
-    }
+    private final LatestProductRepository latestProductRepository;
 
     public void saveLatestProduct(Member member, LatestProductDto latestProductDto) {
         LatestProduct latestProduct = LatestProduct.builder()

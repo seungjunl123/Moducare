@@ -64,4 +64,21 @@ public class PromptService {
         return prompt.toString();
     }
 
+    public String makeRecommendPrompt(String diagnosisText) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("현재 두피 진단결과는 ")
+                .append(diagnosisText)
+                .append("입니다.\n");
+
+        prompt.append("이 진단결과에 맞는 두피 관리 제품의 기능을 추천해 주세요. ");
+
+        if (diagnosisText.contains("정상")) {
+            prompt.append("두피가 건강한 상태이므로 모든 종류의 제품 기능을 사용할 수 있습니다. 아무 기능이나 제시해 주세요.");
+        } else {
+            prompt.append("아래 진단결과에 맞는 제품의 기능을 단어만 제공해 주세요. 예를 들어, '탈모'가 포함되어 있다면 '탈모 케어', '비듬'이 포함되어 있다면 '두피 관리', '홍반'이 포함되어 있다면 '진정','저자극' 등과 같은 방식으로 제품 기능 단어만 제시해 주세요. 진단 결과 호전에 도움이 되는 성분을 제시해도 좋습니다.");
+        }
+
+        return prompt.toString();
+    }
+
 }
