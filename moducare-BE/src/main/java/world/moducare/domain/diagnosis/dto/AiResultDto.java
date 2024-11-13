@@ -20,6 +20,25 @@ public class AiResultDto {
     }
 
     // 탈모,비듬, 염증, 홍반, 피지, 각질
+    public String valueOfResult(int index) {
+        switch (index) {
+            case 0:
+                return "탈모";
+            case 1:
+                return "비듬";
+            case 2:
+                return "염증";
+            case 3:
+                return "홍반";
+            case 4:
+                return "피지";
+            case 5:
+                return "각질";
+            default:
+                return "알 수 없음"; // 혹시 모를 예외 상황을 위한 기본값
+        }
+    }
+
     public String resultToString(int index) {
         switch (result[index]) {
             case 0:
