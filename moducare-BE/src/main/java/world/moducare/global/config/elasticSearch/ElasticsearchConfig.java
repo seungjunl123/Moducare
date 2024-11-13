@@ -17,7 +17,7 @@ public class ElasticsearchConfig {
     @Bean
     public ElasticsearchClient elasticsearchClient() {
         RestClient restClient = RestClient.builder(
-                new HttpHost("127.0.0.1", 9200, "http")
+                new HttpHost("k11b203.p.ssafy.io", 9200, "http")
 //                new HttpHost("localhost", 9200, "http")
         ).build();
 
