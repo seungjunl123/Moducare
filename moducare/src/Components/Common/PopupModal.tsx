@@ -1,112 +1,85 @@
-import React, {createContext, useContext, useState} from 'react';
-import {Modal, StyleSheet, Dimensions, Pressable, View} from 'react-native';
-import GestureRecognizer from 'react-native-swipe-gestures';
-import CustomButton from './CustomButton';
+import React from 'react';
+import {Modal, View, StyleSheet} from 'react-native';
 import CustomText from './CustomText';
+import LottieView from 'lottie-react-native';
+import {confirmMark, Alert, Loading} from '../../assets/lottie';
 
-// Context 생성
-interface AlertContextType {
-  showAlert: (message: string) => void;
-  closeAlert: () => void;
-}
+import CustomButton from './CustomButton';
 
 interface PopupModalProps {
   visible: boolean;
   onClose: () => void;
-  children: React.ReactNode;
+  content: string;
+  option: 'Alert' | 'confirmMark' | 'Loading';
+  callback?: () => void;
 }
 
-const AlertContext = createContext<AlertContextType | undefined>(undefined);
+const PopupModal = ({visible, onClose, content, option}: PopupModalProps) => {
+  const lottieSource =
+    option === 'Alert'
+      ? Alert
+      : option === 'confirmMark'
+      ? confirmMark
+      : Loading;
 
-const HEIGHT = Dimensions.get('window').height;
-// Provider 컴포넌트
-export function AlertProvider({children}: {children: React.ReactNode}) {
-  const [alertModal, setAlertModal] = useState({
-    visible: false,
-    message: '',
-  });
-
-  const showAlert = (message: string) => {
-    setAlertModal({
-      visible: true,
-      message,
-    });
-  };
-
-  const closeAlert = () => {
-    setAlertModal({
-      visible: false,
-      message: '',
-    });
+  const handleClose = () => {
+    onClose();
   };
 
   return (
-    <AlertContext.Provider value={{showAlert, closeAlert}}>
-      {children}
-      <PopupModal visible={alertModal.visible} onClose={closeAlert}>
-        <View style={styles.alertContainer}>
-          <CustomText label={alertModal.message} size={16} />
-          <CustomButton
-            label="확인"
-            variant="filled"
-            size="small"
-            onPress={closeAlert}
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+      // 모달이 전체 화면을 덮을 수 있도록 설정
+      statusBarTranslucent>
+      <View style={styles.overlay}>
+        <View style={styles.modalContainer}>
+          <LottieView
+            source={lottieSource}
+            autoPlay
+            loop={false}
+            style={styles.confirmMark}
           />
+          <CustomText label={content} />
+          <CustomButton label="확인" onPress={handleClose} size="small" />
         </View>
-      </PopupModal>
-    </AlertContext.Provider>
+      </View>
+    </Modal>
   );
-}
-
-// 커스텀 훅
-export function useAlert() {
-  const context = useContext(AlertContext);
-  if (!context) {
-    throw new Error('useAlert must be used within an AlertProvider');
-  }
-  return context;
-}
-
-export default function PopupModal({
-  visible,
-  onClose,
-  children,
-}: PopupModalProps) {
-  return (
-    <View style={styles.overlay}>
-      <Modal
-        visible={visible}
-        transparent
-        animationType="fade"
-        onRequestClose={onClose}>
-        <GestureRecognizer onSwipeDown={onClose}>
-          <Pressable
-            style={styles.modalContainer}
-            onPress={e => e.stopPropagation()}>
-            {children}
-          </Pressable>
-        </GestureRecognizer>
-      </Modal>
-    </View>
-  );
-}
+};
 
 const styles = StyleSheet.create({
   overlay: {
+    flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
-    alignSelf: 'center',
+    alignItems: 'center',
   },
   modalContainer: {
-    backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 15,
-    paddingBottom: 30,
-  },
-  alertContainer: {
+    justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
     gap: 20,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 20,
+    width: '80%',
+    maxWidth: 500,
+    // 그림자 효과
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  confirmMark: {
+    width: 60,
+    height: 60,
   },
 });
+
+export default PopupModal;

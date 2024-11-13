@@ -32,6 +32,8 @@ import {
 } from 'react-native-image-picker';
 import {useFocusEffect} from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import PopupModal from '../../Components/Common/PopupModal';
+import {usePopup} from '../../hook/usePopup';
 
 interface Action {
   title: string;
@@ -56,6 +58,7 @@ export default function ChallengeMainPage({navigation}) {
   const [title, setTitle] = React.useState<string>('');
   //챌린지 생성 이미지 관련
   const [imgConfig, setImgConfig] = React.useState<any>(null);
+  const {visible, option, content, showPopup, hidePopup} = usePopup();
 
   const openImageLibrary = async () => {
     console.log('ww');
@@ -67,38 +70,46 @@ export default function ChallengeMainPage({navigation}) {
 
   const imageUpload = async () => {
     if (title === '') {
-      Alert.alert('챌린지 생성 오류', '챌린지명을 작성해주세요!');
+      showPopup({option: 'Alert', content: '챌린지명을 작성해주세요!'});
       return;
     }
-    Alert.alert('업로드');
 
-    // 1. S3 업로드
-    if (imgConfig === null) {
-      const formData = new FormData();
-      formData.append('title', title);
-      await postCreateChallenge(formData);
-      // await postCreateChallenge(title, '');
-      const myData = await getMyChallengeList();
-      setMyList(myData);
-    } else {
-      // await upLoadImgToS3(imgConfig);
-      const file = imgConfig.assets[0];
-      const uri = file.uri; // 이미지 URI
-      const fileName = file.fileName; // 이미지 파일명
-      const type = file.type; // 이미지 타입
+    try {
+      showPopup({option: 'Loading', content: '챌린지 생성 중입니다...'});
+      // 1. S3 업로드
+      if (imgConfig === null) {
+        const formData = new FormData();
+        formData.append('title', title);
+        await postCreateChallenge(formData);
+        // await postCreateChallenge(title, '');
+        const myData = await getMyChallengeList();
+        setMyList(myData);
+      } else {
+        // await upLoadImgToS3(imgConfig);
+        const file = imgConfig.assets[0];
+        const uri = file.uri; // 이미지 URI
+        const fileName = file.fileName; // 이미지 파일명
+        const type = file.type; // 이미지 타입
 
-      // FormData 생성
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('file', {
-        uri: uri,
-        type: type,
-        name: fileName,
+        // FormData 생성
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('file', {
+          uri: uri,
+          type: type,
+          name: fileName,
+        });
+
+        await postCreateChallenge(formData);
+        const myData = await getMyChallengeList();
+        setMyList(myData);
+      }
+      showPopup({
+        option: 'confirmMark',
+        content: '챌린지 생성 완료!',
       });
-
-      await postCreateChallenge(formData);
-      const myData = await getMyChallengeList();
-      setMyList(myData);
+    } catch (error) {
+      showPopup({option: 'Alert', content: '챌린지 생성에 실패했습니다!'});
     }
     // 2. 초기화
     setImgConfig(null);
@@ -237,6 +248,12 @@ export default function ChallengeMainPage({navigation}) {
           <CustomButtom label="챌린지 생성하기" onPress={imageUpload} />
         </View>
       </SlideModal>
+      <PopupModal
+        visible={visible}
+        option={option}
+        onClose={hidePopup}
+        content={content}
+      />
     </SafeAreaView>
   );
 }
