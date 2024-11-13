@@ -75,13 +75,6 @@ const LoginPage = ({navigation}: {navigation: any}) => {
               <Text style={styles.kakaoText}>카카오 로그인</Text>
               <View />
             </Pressable>
-            {/* <Pressable
-              style={[styles.btn, styles.naver]}
-              onPress={() => navigation.navigate('naverLogin')}>
-              <SvgIconAtom name="Naver" />
-              <Text style={styles.naverText}>네이버 로그인 테스트</Text>
-              <View />
-            </Pressable> */}
             <Pressable
               style={[styles.btn, styles.naver]}
               onPress={onNaverLogin}>
