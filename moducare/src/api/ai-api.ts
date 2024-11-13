@@ -1,4 +1,3 @@
-import {getEncryptStorage} from '../util';
 import axiosInstance from './../util/axios';
 
 type ResponseAiDiagnosis = {
@@ -33,11 +32,19 @@ type ResponsePick = {
   productType: string[];
 };
 
-const getPick = async (headType: number): Promise<ResponsePick[]> => {
+const getPick = async (
+  headType: number,
+  result: number[],
+): Promise<ResponsePick[]> => {
   try {
     const {data} = await axiosInstance.get(`elasticSearch/recommend`, {
-      headType,
+      params: {
+        headType,
+        result,
+      },
     });
+
+    console.log('추천 데이터', data);
 
     return data;
   } catch (error) {

@@ -1,5 +1,4 @@
 import axiosInstance from '../util/axios';
-import Config from 'react-native-config';
 
 const getLineDiaryData = async () => {
   try {

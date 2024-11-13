@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   Image,
+  Linking,
   Pressable,
   PressableProps,
   StyleSheet,
@@ -8,40 +9,51 @@ import {
   View,
 } from 'react-native';
 import CustomText from '../Common/CustomText';
-import SvgIconAtom from '../Common/SvgIconAtom';
 import {colors} from '../../constants/colors';
 
 interface ListProps extends PressableProps {
-  isPhoto?: boolean;
+  productImg?: string;
+  productName: string;
+  link: string;
+  price: number;
+  productType: string[];
 }
 
-const CareItem = ({isPhoto = false, ...props}: ListProps) => {
+const CareItem = ({
+  productImg,
+  productName,
+  link,
+  price,
+  productType,
+  ...props
+}: ListProps) => {
   return (
     <>
-      <Pressable style={styles.container} {...props}>
-        {isPhoto ? (
+      <Pressable
+        style={styles.container}
+        {...props}
+        onPress={() => {
+          Linking.openURL(link);
+        }}>
+        {productImg ? (
+          <Image style={styles.ImgArea} source={{uri: productImg}} />
+        ) : (
           <Image
             style={styles.ImgArea}
             source={require('../../assets/test.png')}
           />
-        ) : (
-          <>
-            <Image
-              style={styles.ImgArea}
-              source={require('../../assets/test.png')}
-            />
-          </>
         )}
         <View style={styles.detailArea}>
           <View>
-            <Text style={styles.subText}>
-              산뜻한 타입 지성 모발용 샴푸 500g
-            </Text>
-            <CustomText label="아모스 녹차실감" size={15} />
+            <CustomText label={productName} size={15} />
           </View>
-          <CustomText label="23,500원" size={13} variant={'regular'} />
+          <CustomText
+            label={`${price.toLocaleString()}원`}
+            size={13}
+            variant={'regular'}
+          />
           <View style={styles.subArea}>
-            <Text style={styles.subAreaText}>트러블 케어, 각질케어</Text>
+            <Text style={styles.subAreaText}>{productType.join(', ')}</Text>
           </View>
         </View>
       </Pressable>

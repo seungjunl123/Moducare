@@ -48,7 +48,6 @@ const postRefreshToken = async (): Promise<ResponseAccess> => {
     const refreshToken = await getEncryptStorage('refreshToken');
 
     if (!refreshToken) {
-      console.log('리프레시 토큰이 없습니다.');
       throw new Error('리프레시 토큰이 없습니다.');
     }
     console.log('리프레시 토큰 있어요', refreshToken);

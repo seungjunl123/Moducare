@@ -5,16 +5,16 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React from 'react';
 import {colors} from '../../constants/colors';
 import CustomText from '../../Components/Common/CustomText';
 import ItemBox from '../../Components/ItemBox/ItemBox';
 import {useReportQuery, ReportItem} from '../../quires/useReportsQuery';
 import {Dimensions} from 'react-native';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {getEncryptStorage} from '../../util';
+import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../navigate/StackNavigate';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import useAuthStore from '../../store/useAuthStore';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -23,17 +23,8 @@ export default function ReportPage() {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {data: reportData, isLoading: reportLoading} = useReportQuery();
   const reportList = reportData;
-  const [user, setUser] = useState('사용자');
+  const {user} = useAuthStore();
 
-  const getUser = async () => {
-    const {name} = await getEncryptStorage('info');
-    setUser(name);
-  };
-  useFocusEffect(
-    useCallback(() => {
-      getUser();
-    }, []),
-  );
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>

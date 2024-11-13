@@ -5,7 +5,6 @@ import {
   PERMISSIONS,
   Permission,
   RESULTS,
-  request,
 } from 'react-native-permissions';
 import {alerts} from '../constants';
 
