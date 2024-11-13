@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../constants/colors';
 import FeedNav from '../../Components/Common/FeedNav';
@@ -20,6 +20,8 @@ import {
 import {getEncryptStorage} from '../../util';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../navigate/StackNavigate';
+import {usePopup} from '../../hook/usePopup';
+import PopupModal from '../../Components/Common/PopupModal';
 
 const ChallengeFeedPage = ({
   route,
@@ -31,16 +33,17 @@ const ChallengeFeedPage = ({
   const {id, title, type} = route.params;
   const [isType, setIsType] = useState(type);
   const [feeds, setFeeds] = useState<FeedType[] | []>([]);
+  const {visible, option, content, showPopup, hidePopup} = usePopup();
 
   const handleWrite = async () => {
     const isDone = await getEncryptStorage('isDone');
     if (isDone === 0) {
       navigation.navigate('challenge_write', {id});
     } else {
-      Alert.alert(
-        '오늘 인증 완료',
-        '해당 챌린지 인증을 하셨어요! 내일 다시 해주세요!',
-      );
+      showPopup({
+        option: 'Alert',
+        content: '사진 등록 완료! \n 내일 다시 해주세요!',
+      });
     }
   };
 
@@ -108,6 +111,12 @@ const ChallengeFeedPage = ({
           </View>
         )}
       </ScrollView>
+      <PopupModal
+        visible={visible}
+        option={option}
+        onClose={hidePopup}
+        content={content}
+      />
     </SafeAreaView>
   );
 };

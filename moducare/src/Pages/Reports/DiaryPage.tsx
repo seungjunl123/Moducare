@@ -6,7 +6,7 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../constants/colors';
 import MyCarousel from '../../Components/Carousel/CarouselCard';
@@ -23,7 +23,8 @@ import {
   usePostHairImgMutation,
   useTopDiaryQuery,
 } from '../../quires/useReportsQuery';
-import PopupModal, {useAlert} from '../../Components/Common/PopupModal';
+import PopupModal from '../../Components/Common/PopupModal';
+import {usePopup} from '../../hook/usePopup';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -36,13 +37,20 @@ const options: ImageLibraryOptions = {
 export default function DiaryPage() {
   const {data: lineDiaryData} = useLineDiaryQuery();
   const {data: topDiaryData} = useTopDiaryQuery();
-  const {mutate: postHairImgMutation} = usePostHairImgMutation();
-  const {showAlert} = useAlert();
+  const {mutate: postHairImgMutation, isPending} = usePostHairImgMutation();
 
   const [modalVisible, setModalVisible] = useState(false);
+  const {visible, option, content, showPopup, hidePopup} = usePopup();
+
   const [isLine, setIsLine] = useState(false);
   const [imgType, setImgType] = useState<'line' | 'top'>();
   const [imgConfig, setImgConfig] = useState<any>(null);
+
+  useEffect(() => {
+    if (isPending) {
+      showPopup({option: 'Loading', content: '사진을 업로드 중입니다...'});
+    }
+  }, [isPending]);
 
   const openImageLibrary = async (type: 'line' | 'top') => {
     const images = await launchImageLibrary(options);
@@ -52,9 +60,21 @@ export default function DiaryPage() {
     }
   };
 
+  const openSelectPopup = () => {
+    showPopup({option: 'Alert', content: '사진을 등록해주세요!'});
+  };
+
+  const openUploadPopup = () => {
+    showPopup({option: 'confirmMark', content: '사진이 등록되었습니다!'});
+  };
+
+  const openErrorPopup = () => {
+    showPopup({option: 'Alert', content: '사진 업로드에 실패했습니다!'});
+  };
+
   const imageUpload = async () => {
     if (!imgConfig?.assets || !imgType) {
-      showAlert('사진을 선택해주세요');
+      openSelectPopup();
       return;
     }
 
@@ -68,17 +88,24 @@ export default function DiaryPage() {
       });
 
       // 2. 업로드 된 이미지 정보 전송
-      await postHairImgMutation({formData, imgType});
-
-      // 3. 초기화
-      setImgType(undefined);
-      setImgConfig(null);
-      showAlert('사진이 업로드 되었습니다.');
-      // 4. 모달 닫기
-      setModalVisible(false);
+      await postHairImgMutation(
+        {formData, imgType},
+        {
+          onSuccess: () => {
+            // 3. 초기화
+            setImgType(undefined);
+            setImgConfig(null);
+            openUploadPopup();
+            // 4. 모달 닫기
+            setModalVisible(false);
+          },
+          onError: () => {
+            openErrorPopup();
+          },
+        },
+      );
     } catch (error) {
-      console.error('이미지 업로드 실패:', error);
-      showAlert('이미지 업로드에 실패했습니다.');
+      openErrorPopup();
     }
   };
 
@@ -165,9 +192,12 @@ export default function DiaryPage() {
           </View>
         </View>
       </SlideModal>
-      <PopupModal visible={alertModal.visible} onClose={closeAlert}>
-        <CustomText label={alertModal.message} />
-      </PopupModal>
+      <PopupModal
+        visible={visible}
+        option={option}
+        onClose={hidePopup}
+        content={content}
+      />
       <View style={styles.bottomSpace} />
     </SafeAreaView>
   );

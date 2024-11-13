@@ -1,19 +1,15 @@
 import * as React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  Alert,
-  Pressable,
-} from 'react-native';
+import {View, Text, StyleSheet, SafeAreaView, Pressable} from 'react-native';
 import CustomButtom from '../../Components/Common/CustomButton';
 import CustomText from '../../Components/Common/CustomText';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import {colors} from '../../constants/colors';
 import {useFocusEffect} from '@react-navigation/native';
+import {usePopup} from '../../hook/usePopup';
+import PopupModal from '../../Components/Common/PopupModal';
 
 export default function DiagnosisPage({navigation}) {
+  const {visible, option, content, showPopup, hidePopup} = usePopup();
   const [product, setProduct] = React.useState<string>('');
 
   const handlePress = (device: string) => {
@@ -82,10 +78,18 @@ export default function DiagnosisPage({navigation}) {
           <CustomButtom
             label="두피 촬영하기"
             variant="outlined"
-            onPress={() => Alert.alert('촬영 기기를 선택해주세요.')}
+            onPress={() =>
+              showPopup({option: 'Alert', content: '촬영 기기를 선택해주세요.'})
+            }
           />
         )}
       </View>
+      <PopupModal
+        visible={visible}
+        onClose={hidePopup}
+        content={content}
+        option={option}
+      />
     </SafeAreaView>
   );
 }

@@ -1,13 +1,16 @@
 import * as React from 'react';
-import {View, StyleSheet, ScrollView, Text, Alert} from 'react-native';
+import {View, StyleSheet, ScrollView, Text} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomText from '../../Components/Common/CustomText';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import {colors} from '../../constants/colors';
 import BigList from '../../Components/Challenge/BigList';
 import {getChallengeList, getListType} from '../../api/challenge-api';
+import {usePopup} from '../../hook/usePopup';
+import PopupModal from '../../Components/Common/PopupModal';
 
 export default function ChallengeListPage({navigation}) {
+  const {visible, option, content, showPopup, hidePopup} = usePopup();
   const [allList, setAllList] = React.useState<getListType[] | []>([]);
   const [page, setPage] = React.useState(10);
 
@@ -15,7 +18,7 @@ export default function ChallengeListPage({navigation}) {
     if (allList.length >= page) {
       setPage(page + 10);
     } else {
-      Alert.alert('챌린지 리스트', '마지막 페이지 입니다.');
+      showPopup({option: 'Alert', content: '마지막 페이지 입니다.'});
     }
   };
   const getListCompo = async () => {
@@ -67,6 +70,12 @@ export default function ChallengeListPage({navigation}) {
           </ScrollView>
         </View>
       </View>
+      <PopupModal
+        visible={visible}
+        onClose={hidePopup}
+        content={content}
+        option={option}
+      />
     </SafeAreaView>
   );
 }
