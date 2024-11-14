@@ -7,11 +7,13 @@ import usePermission from '../../hook/usePermission';
 import {useNavigation} from '@react-navigation/native';
 import {Camera, useCameraDevice} from 'react-native-vision-camera';
 import CustomButtom from '../../Components/Common/CustomButton';
-import {postAiDiagnosis, ResponseAiDiagnosis} from '../../api/ai-api';
+import {ResponseAiDiagnosis} from '../../api/ai-api';
 import {usePopup} from '../../hook/usePopup';
 import PopupModal from '../../Components/Common/PopupModal';
+import {useAiDiagnosisMutation} from '../../quires/useReportsQuery';
 
 const DiagnosisCamera = () => {
+  const {mutateAsync} = useAiDiagnosisMutation();
   const navigation = useNavigation();
   usePermission('CAM');
   const {visible, option, content, showPopup, hidePopup} = usePopup();
@@ -49,7 +51,7 @@ const DiagnosisCamera = () => {
     });
     try {
       console.log('시작하기');
-      const res = await postAiDiagnosis(formData);
+      const res = await mutateAsync(formData);
       setRes(res);
       if (res.comparison) {
         showPopup({

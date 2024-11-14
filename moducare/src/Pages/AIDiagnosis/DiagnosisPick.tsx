@@ -4,7 +4,6 @@ import {colors} from '../../constants/colors';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import CustomText from '../../Components/Common/CustomText';
 import CareItem from '../../Components/AI/CareItem';
-import useAuthStore from '../../store/useAuthStore';
 import {useProductListQuery} from '../../quires/useProductQuery';
 import {RootStackParamList} from '../../navigate/StackNavigate';
 import {RouteProp, useFocusEffect} from '@react-navigation/native';
