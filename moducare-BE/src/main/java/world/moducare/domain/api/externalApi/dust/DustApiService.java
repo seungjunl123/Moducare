@@ -106,4 +106,40 @@ public class DustApiService {
     }
 
 
+    public int callDustApiSync(WeatherRequestDto weatherRequestDto) {
+        try {
+            // 요청 파라미터 설정
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(API_URL)
+                    .queryParam("serviceKey", DUST_KEY)
+                    .queryParam("returnType", "json")
+                    .queryParam("numOfRows", "100")
+                    .queryParam("pageNo", "1")
+                    .queryParam("sidoName", weatherRequestDto.getSido())
+                    .queryParam("ver", "1.3");
+
+            // 특정 파라미터만 인코딩 설정
+            UriComponents uriComponents = uriBuilder.build()
+                    .expand()
+                    .encode(Charset.forName("UTF-8"));
+
+            // URI 생성 시 인코딩되지 않은 serviceKey를 포함
+            URI uri = URI.create(uriComponents.toUriString().replace(
+                    "serviceKey=" + URLEncoder.encode(DUST_KEY, "UTF-8"),
+                    "serviceKey=" + DUST_KEY));
+
+            // API 호출
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
+
+            // JSON 응답 확인 및 데이터 파싱
+            if (response.getBody() == null || response.getBody().isEmpty()) {
+                throw new DataNotFoundException("Empty JSON response");
+            }
+
+            return parseDustValue(response.getBody());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new DataNotFoundException("Data not found for the requested station");
+        }
+    }
 }

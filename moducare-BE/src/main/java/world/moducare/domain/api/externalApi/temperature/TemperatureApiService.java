@@ -234,4 +234,55 @@ public class TemperatureApiService {
 
         return String.format("%02d00", fcstHour); // 포맷팅된 fcstTime 반환
     }
+
+    public int callTemperatureApiSync(WeatherRequestDto weatherRequestDto) {
+        try {
+            int index = REGION_MAP.get(weatherRequestDto.getSido());
+            String nx = regions[index][0];
+            String ny = regions[index][1];
+
+            // 현재 시각에서 10분을 뺀 adjustedNow 계산
+            LocalDateTime adjustedNow = LocalDateTime.now().minusMinutes(10);
+
+            // API 호출을 위한 파라미터 설정
+            String baseDate = getBaseDate(adjustedNow);
+            String baseTime = getBaseTime(adjustedNow);
+
+            // 요청 파라미터 설정
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(API_URL)
+                    .queryParam("serviceKey", TEMPERATURE_KEY)
+                    .queryParam("pageNo", "1")
+                    .queryParam("numOfRows", 1000)
+                    .queryParam("dataType", "JSON")
+                    .queryParam("base_date", baseDate)
+                    .queryParam("base_time", baseTime)
+                    .queryParam("nx", nx)
+                    .queryParam("ny", ny);
+
+            UriComponents uriComponents = uriBuilder.build()
+                    .expand()
+                    .encode(Charset.forName("UTF-8"));
+
+            // URI 생성 시 인코딩되지 않은 serviceKey를 포함
+            URI uri = URI.create(uriComponents.toUriString().replace(
+                    "serviceKey=" + URLEncoder.encode(TEMPERATURE_KEY, "UTF-8"),
+                    "serviceKey=" + TEMPERATURE_KEY));
+
+
+            // API 호출
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
+
+            // JSON 응답 확인 및 데이터 파싱
+            if (response.getBody() == null || response.getBody().isEmpty()) {
+                throw new DataNotFoundException("Empty JSON response");
+            }
+
+            // 응답 데이터 파싱하여 기온 추출
+            return parseTemperature(response.getBody(), adjustedNow);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new DataNotFoundException("Data not found for the requested station");
+        }
+    }
 }
