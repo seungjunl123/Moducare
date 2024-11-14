@@ -37,11 +37,9 @@ const getPick = async (
   result: number[],
 ): Promise<ResponsePick[]> => {
   try {
-    const {data} = await axiosInstance.get(`elasticSearch/recommend`, {
-      params: {
-        headType,
-        result,
-      },
+    const {data} = await axiosInstance.post(`product/recommend`, {
+      result,
+      headType,
     });
 
     console.log('추천 데이터', data);
