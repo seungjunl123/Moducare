@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -11,7 +11,7 @@ import {colors} from '../../constants/colors';
 import CustomButtom from '../../Components/Common/CustomButton';
 import CustomText from '../../Components/Common/CustomText';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
-import {BarChart} from 'react-native-gifted-charts';
+import {BarChart, barDataItem} from 'react-native-gifted-charts';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import {RootStackParamList} from '../../navigate/StackNavigate';
 import {
@@ -21,6 +21,7 @@ import {
 } from '@react-navigation/native';
 import {useReportDetailQuery} from '../../quires/useReportsQuery';
 import {graphData, getHeadType, getComparisonText} from './resultClass';
+import {ResponseAiDiagnosis} from '../../api/ai-api';
 
 const DiagnosisResult = ({
   route,
@@ -32,10 +33,11 @@ const DiagnosisResult = ({
   const {data: diagnosisData} = useReportDetailQuery(id ?? 0, {
     enabled: type === 'report',
   });
-  const resultData = type === 'diagnosis' ? diagnosisResult : diagnosisData;
-  const data = graphData(resultData.result);
-  const headType = getHeadType(resultData.headType);
-  const comparisonText = getComparisonText(resultData.comparison);
+  // const resultData = type === 'diagnosis' ? diagnosisResult : diagnosisData;
+  const [resultData, setResultData] = useState<ResponseAiDiagnosis>();
+  const [data, setData] = useState<number[]>([]);
+  const [headType, setHeadType] = useState<number>(0);
+  const [comparisonText, setComparisonText] = useState<number>(0);
 
   const careText: string = `첫째, 두피를 깨끗하게 유지하려면 적어도 주 2-3회 샴푸로 세척해줘야 해요. 둘째, 너무 뜨거운 물보다는 미지근한 물을 사용하는 게 좋아요. 셋째, 각질 제거를  위해 주 1회 스크럽이나 두피 마스크를 사용해보세요.\n
 또한, 두피도 보습이 필요하니까 두피 전용 오일이나 세럼을 사용해 보습해주는 게 좋고요. 건강한 모발을 위해 균형 잡힌 식사를 하고, 스트레스는 운동이나 명상으로 관리해보세요. 자외선 차단도 잊지 말고, 마지막으로 두피 마사지를 통해 혈액순환을 촉진해주면 도움이 됩니다.`;
@@ -47,6 +49,29 @@ const DiagnosisResult = ({
 
   // pdf
   const [pdfPath, setPdfPath] = useState('');
+
+  useEffect(() => {
+    if (type === 'diagnosis') {
+      setResultData(diagnosisResult);
+    } else {
+      setResultData(diagnosisData);
+    }
+  }, [type, diagnosisResult, diagnosisData]);
+
+  useEffect(() => {
+    if (!resultData) return;
+
+    const formattedData =
+      resultData.result?.map(value => ({
+        value,
+        frontColor: colors.MAIN,
+      })) || [];
+
+    setData(formattedData);
+    setHeadType(resultData.headType);
+    setComparisonText(resultData.comparison);
+  }, [resultData]);
+
   const htmlContent = `
   <html>
     <head>
@@ -247,7 +272,7 @@ const DiagnosisResult = ({
         <View style={styles.photoArea}>
           <View style={styles.photoDetailArea}>
             <CustomText label="제공된 두피 사진" size={20} />
-            <Image style={styles.photo} source={{uri: resultData.img}} />
+            <Image style={styles.photo} source={{uri: resultData?.img}} />
           </View>
           <View style={styles.photoDetailArea}>
             <CustomText label="건강한 두피 사진" size={20} />
@@ -260,7 +285,8 @@ const DiagnosisResult = ({
         <View style={{alignItems: 'center', marginBottom: 20}}>
           <Text style={styles.checkText}>
             AI 두피 진단 결과
-            <Text style={styles.checkResult}> {headType}</Text> 입니다.
+            <Text style={styles.checkResult}> {getHeadType(headType)} </Text>
+            입니다.
           </Text>
         </View>
         <CustomText label={'두피 상세 분석'} size={16} />
@@ -289,13 +315,9 @@ const DiagnosisResult = ({
         </View>
         <View style={styles.checkArea}>
           <View style={{width: '100%'}}>
-            <CustomText label="MODU가 관찰한 두피 결과" size={20} />
-            <Text
-              style={styles.checkText}
-              // 이거 맨 처음 나오는 데이터에 따라 넣을지 말지 고민해야될듯
-            >
-              최근 검사에 비해
-              <Text style={styles.checkResult}> {comparisonText}</Text>
+            <CustomText label="MODU가 관찰한 최근 두피 검사 결과" size={20} />
+            <Text style={styles.checkResult}>
+              {getComparisonText(comparisonText)}
             </Text>
           </View>
           <SvgIconAtom name="Good" />
@@ -303,7 +325,7 @@ const DiagnosisResult = ({
         <View style={styles.careArea}>
           <CustomText label="MODU가 추천하는 관리비결" size={20} />
           <Text style={styles.careText}>
-            {resultData.manageComment || careText}
+            {resultData?.manageComment || careText}
           </Text>
         </View>
         <View style={styles.BtnArea}>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Modal,
   StyleSheet,
@@ -12,6 +12,7 @@ import {colors} from '../../constants/colors';
 import YearPicker from './YearPicker';
 import CustomText from '../Common/CustomText';
 import Feather from 'react-native-vector-icons/Feather';
+import {getEncryptStorage} from '../../util/encryptedStorage';
 
 interface CalenderModalProps {
   visible: boolean;
@@ -58,6 +59,23 @@ const CalenderModal = ({
       new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1),
     );
   };
+
+  // useEffect 추가
+  useEffect(() => {
+    const initializeDate = async () => {
+      try {
+        const info = await getEncryptStorage('info');
+        if (info) {
+          console.log(info);
+          setCurrentMonth(new Date(info.birth)); // info.date가 날짜 문자열이라고 가정
+        }
+      } catch (error) {
+        console.error('날짜 정보를 가져오는데 실패했습니다:', error);
+      }
+    };
+
+    initializeDate();
+  }, []);
   const generateMatrix = () => {
     const matrix: any[] = [];
     matrix[0] = daysOfWeek;
