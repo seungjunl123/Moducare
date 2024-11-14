@@ -25,19 +25,19 @@
 //    @Autowired
 //    private RecommendationService recommendationService;
 //
-//
-//    @Autowired
-//    private UserDiagnosisService userDiagnosisService;
 //    @Autowired
 //    private ElasticProductService elasticProductService;
+//
 //    @Autowired
 //    private CrawledProductService crawledProductService;
+//
 //    @Autowired
 //    private EmbeddingService embeddingService;
 //
+//
 //    @BeforeEach
 //    public void setUp() throws Exception {
-//        // 테스트용 인덱스에 데이터 인덱싱
+//        // 새로운 인덱스에 데이터 인덱싱
 //        elasticProductService.indexProductsFromMySQL();
 //    }
 //
@@ -57,7 +57,7 @@
 //        // SQL 쿼리 방식으로 추천 결과 가져오기
 //        long startTime = System.currentTimeMillis();
 //
-//        List<CrawledProduct> sqlRecommendations = crawledProductService.getRandomProductsByKeyword("저자극",10);
+//        List<CrawledProduct> sqlRecommendations = crawledProductService.getRandomProductsByKeyword("저자극",100);
 //        List<RecommendDto> recommendDtoList = new ArrayList<>();
 //        for (CrawledProduct sqlRecommendation : sqlRecommendations) {
 //            String[] typeText =
@@ -84,7 +84,7 @@
 //
 //        // 최소 1개의 추천이 있어야 합니다.
 //        System.out.println("검색결과 수: "+recommendDtoList.size());
-//        assertTrue(recommendDtoList.size()==10);
+//        assertTrue(recommendDtoList.size()==100);
 //    }
 //
 //    /**
@@ -105,6 +105,6 @@
 //
 //        // 최소 1개의 추천이 있어야 합니다.
 //        System.out.println("검색결과 수: "+elasticsearchRecommendations.size());
-//        assertTrue(elasticsearchRecommendations.size()==10);
+//        assertTrue(elasticsearchRecommendations.size()==100);
 //    }
 //}

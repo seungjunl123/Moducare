@@ -3,22 +3,19 @@ package world.moducare.domain.product.service;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.CountRequest;
 import co.elastic.clients.elasticsearch.core.CountResponse;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import world.moducare.domain.product.dto.RecommendDto;
-import world.moducare.domain.product.entity.ElasticProduct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
-import org.springframework.data.elasticsearch.core.SearchHit;
-import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.stereotype.Service;
-import co.elastic.clients.elasticsearch._types.Script;
-import co.elastic.clients.elasticsearch._types.SortOptions;
-import co.elastic.clients.elasticsearch._types.SortOrder;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch._types.query_dsl.ScriptScoreQuery;
-import co.elastic.clients.json.JsonData;
+import org.apache.http.HttpHost;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.RestClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.util.EntityUtils;
+
 
 import java.util.*;
 
@@ -49,65 +46,83 @@ public class RecommendationService {
      * @return 추천 제품 리스트
      */
     public List<RecommendDto> recommendProducts(float[] userEmbedding) {
-        System.out.println(Arrays.toString(userEmbedding));
-        // Elasticsearch에 전달할 파라미터로 사용하기 위해 임베딩 벡터를 JsonData 형식으로 변환
-        Map<String, JsonData> params = new HashMap<>();
-        params.put("query_vector", JsonData.of(userEmbedding));
-
-        // Elasticsearch에서 코사인 유사도를 계산하기 위한 스크립트 설정
-        Script script = Script.of(s -> s
-                .inline(i -> i
-                        .lang("painless") // 스크립트 언어로 "painless" 사용
-                        .source("cosineSimilarity(params.query_vector, 'descriptionVector') + 1.0") // 코사인 유사도를 계산하는 스크립트
-                        .params(params) // 쿼리 벡터를 파라미터로 전달
-                )
-        );
-
-        // 모든 문서에 대해 스크립트 점수를 계산하도록 ScriptScoreQuery 설정
-        Query scriptScoreQuery = ScriptScoreQuery.of(ssq -> ssq
-                .query(q -> q.matchAll(m -> m)) // 모든 문서에 대해 쿼리 실행
-                .script(script) // 코사인 유사도 스크립트 적용
-        )._toQuery();
-
-        // 검색 결과를 코사인 유사도 기준으로 내림차순 정렬하기 위한 정렬 옵션 설정
-        SortOptions sortOptions = SortOptions.of(so -> so
-                .score(s -> s.order(SortOrder.Desc)) // 스크립트 점수(score)로 내림차순 정렬
-        );
-
-        // 쿼리 빌더를 사용하여 쿼리를 구성, 첫 페이지에서 최대 100개의 결과를 반환하도록 설정
-        NativeQueryBuilder queryBuilder = new NativeQueryBuilder()
-                .withQuery(scriptScoreQuery) // 스크립트 쿼리 추가
-                .withPageable(PageRequest.of(0, 100)) // 페이지당 최대 100개 결과
-                .withSort(sortOptions); // 정렬 옵션 추가
-
-        // Elasticsearch에서 쿼리 실행 후 검색 결과 획득
-        SearchHits<ElasticProduct> searchHits = elasticsearchTemplate.search(queryBuilder.build(), ElasticProduct.class);
-
-        // 추천 제품 목록을 저장할 리스트 생성
-        List<RecommendDto> recommendDtoList = new ArrayList<>();
-
-        // 검색 결과의 각 제품에 대해 정보를 추출하여 RecommendDto에 저장
-        for (SearchHit<ElasticProduct> hit : searchHits) {
-            ElasticProduct product = hit.getContent();
-
-            String[] typeText =
-                    ((product.get세부제품특징() == null ? "" : product.get세부제품특징().trim()+ ", ") +
-                            (product.get주요제품특징() == null ? "" : product.get주요제품특징().trim()+ ", ") +
-                            (product.get모발타입() == null ? "" : product.get모발타입().trim()+ ", ") +
-                            (product.get두피타입() == null ? "" : product.get두피타입().trim()+ ", ") +
-                            (product.get헤어타입() == null ? "" : product.get헤어타입().trim())).split(", ");
-
-            RecommendDto recommendDto = RecommendDto.builder()
-                    .productImg(product.get제품_이미지())
-                    .productName(product.get제품명())
-                    .link(product.get제품_링크())
-                    .price(product.get가격())
-                    .productType(typeText)
+        try {
+            // RestClient 생성
+            RestClient restClient = RestClient.builder(
+                    new HttpHost("k11b203.p.ssafy.io", 9200, "http"))
+//                            new HttpHost("localhost", 9200, "http"))
                     .build();
 
-            recommendDtoList.add(recommendDto);
-        }
+            // 사용자 임베딩을 JSON 배열로 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            String queryVector = objectMapper.writeValueAsString(userEmbedding);
 
-        return recommendDtoList;
+            // k-NN 쿼리 JSON 작성
+            String jsonQuery = "{\n" +
+                    "  \"size\": 100,\n" +
+                    "  \"knn\": {\n" +
+                    "    \"field\": \"descriptionVector\",\n" +
+                    "    \"query_vector\": " + queryVector + ",\n" +
+                    "    \"k\": 100,\n" +
+                    "    \"num_candidates\": 1000\n" +
+                    "  }\n" +
+                    "}";
+
+            // 검색 요청 생성
+            Request request = new Request("POST", "/elastic_products/_search");
+            request.setJsonEntity(jsonQuery);
+
+            // 검색 요청 실행
+            Response response = restClient.performRequest(request);
+
+            // 응답 처리
+            String responseBody = EntityUtils.toString(response.getEntity());
+
+            // 응답 JSON 파싱하여 RecommendDto 리스트 생성
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonNode = mapper.readTree(responseBody);
+            List<RecommendDto> recommendDtoList = new ArrayList<>();
+
+            for (JsonNode hit : jsonNode.get("hits").get("hits")) {
+                JsonNode source = hit.get("_source");
+
+                // 각 필드 추출
+                String 제품명 = source.get("제품명").asText();
+                String 가격 = source.get("가격").asText();
+                String 제품_이미지 = source.get("제품_이미지").asText();
+                String 제품_링크 = source.get("제품_링크").asText();
+                String 세부제품특징 = source.has("세부제품특징") ? source.get("세부제품특징").asText("") : "";
+                String 주요제품특징 = source.has("주요제품특징") ? source.get("주요제품특징").asText("") : "";
+                String 헤어타입 = source.has("헤어타입") ? source.get("헤어타입").asText("") : "";
+                String 두피타입 = source.has("두피타입") ? source.get("두피타입").asText("") : "";
+                String 모발타입 = source.has("모발타입") ? source.get("모발타입").asText("") : "";
+
+                String[] typeText =
+                        ((세부제품특징.isEmpty() ? "" : 세부제품특징.trim() + ", ") +
+                                (주요제품특징.isEmpty() ? "" : 주요제품특징.trim() + ", ") +
+                                (모발타입.isEmpty() ? "" : 모발타입.trim() + ", ") +
+                                (두피타입.isEmpty() ? "" : 두피타입.trim() + ", ") +
+                                (헤어타입.isEmpty() ? "" : 헤어타입.trim())).split(", ");
+
+                RecommendDto recommendDto = RecommendDto.builder()
+                        .productImg(제품_이미지)
+                        .productName(제품명)
+                        .link(제품_링크)
+                        .price(가격)
+                        .productType(typeText)
+                        .build();
+
+                recommendDtoList.add(recommendDto);
+            }
+
+            restClient.close();
+
+            // RecommendDto 리스트 반환
+            return recommendDtoList;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
     }
 }
