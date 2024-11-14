@@ -82,17 +82,6 @@ export default function App() {
     });
   }, []);
 
-  React.useEffect(() => {
-    (async () => {
-      const initialNotification = await notifee.getInitialNotification();
-      if (initialNotification) {
-        const {data} = initialNotification.notification;
-        if (!data || !data.deepLinkUrl) return;
-        await Linking.openURL('moducare://챌린지');
-      }
-    })();
-  }, []);
-
   return (
     <QueryClientProvider client={queryClinet}>
       <NavigationContainer linking={linking}>
