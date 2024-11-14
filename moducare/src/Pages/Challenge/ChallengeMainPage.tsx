@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   BottomListArea: {
-    flex: 0.36,
+    flex: 0.42,
     elevation: 4,
     borderRadius: 10,
     backgroundColor: '#fff',

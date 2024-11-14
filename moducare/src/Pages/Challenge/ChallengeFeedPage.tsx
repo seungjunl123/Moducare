@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../constants/colors';
 import FeedNav from '../../Components/Common/FeedNav';
@@ -22,6 +22,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../navigate/StackNavigate';
 import {usePopup} from '../../hook/usePopup';
 import PopupModal from '../../Components/Common/PopupModal';
+import useGetFeeds from '../../hook/useGetFeeds';
 
 const ChallengeFeedPage = ({
   route,
@@ -55,16 +56,37 @@ const ChallengeFeedPage = ({
     await postJoinChallenge(id);
     setIsType('myChallenge');
   };
-  const getFeeds = async () => {
-    const data = await getFeed(id);
-    setFeeds(data);
+  // const getFeeds = async () => {
+  //   const data = await getFeed(id);
+  //   setFeeds(data);
+  // };
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     getFeeds();
+  //   }, []),
+  // );
+
+  const {
+    data: posts,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+  } = useGetFeeds(id);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await refetch;
+    setIsRefreshing(false);
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      getFeeds();
-    }, []),
-  );
+  const handleEndReached = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -87,7 +109,7 @@ const ChallengeFeedPage = ({
       ) : (
         <FeedJoinNav onJoin={handleJoin} />
       )}
-      <ScrollView style={styles.FeedList} showsVerticalScrollIndicator={false}>
+      {/* <ScrollView style={styles.FeedList} showsVerticalScrollIndicator={false}>
         {feeds.length !== 0 ? (
           feeds.map((data, index) => (
             <FeedItem
@@ -110,7 +132,41 @@ const ChallengeFeedPage = ({
             />
           </View>
         )}
-      </ScrollView>
+      </ScrollView> */}
+      {posts?.pages.flat().length !== 0 ? (
+        <FlatList
+          data={posts?.pages.flat()}
+          // style={styles.FeedList}
+          renderItem={({item}) => (
+            <FeedItem
+              feedId={item.feedId}
+              feedUserName={item.feedUserName}
+              content={item.content}
+              feedRegDate={item.feedRegDate}
+              uri={item.feedImg}
+              like={item.like}
+              isLiked={item.isLiked}
+            />
+          )}
+          keyExtractor={item => String(item.feedId)}
+          numColumns={1}
+          contentContainerStyle={styles.FeedList}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.5}
+          refreshing={isRefreshing}
+          onRefresh={handleRefresh}
+          scrollIndicatorInsets={{right: 1}}
+          indicatorStyle="black"
+        />
+      ) : (
+        <View style={styles.nullList}>
+          <CustomText label="인증 피드가 존재하지 않아요" size={18} />
+          <CustomText
+            label="다른 사람들보다 먼저 인증피드를 올려보세요!"
+            size={18}
+          />
+        </View>
+      )}
       <PopupModal
         visible={visible}
         option={option}
