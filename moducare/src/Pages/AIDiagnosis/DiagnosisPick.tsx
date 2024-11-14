@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, View, Text} from 'react-native';
 import {colors} from '../../constants/colors';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
@@ -7,18 +7,34 @@ import CareItem from '../../Components/AI/CareItem';
 import useAuthStore from '../../store/useAuthStore';
 import {useProductListQuery} from '../../quires/useProductQuery';
 import {RootStackParamList} from '../../navigate/StackNavigate';
-import {RouteProp} from '@react-navigation/native';
+import {RouteProp, useFocusEffect} from '@react-navigation/native';
+import {getEncryptStorage} from '../../util';
 
 const DiagnosisPick = ({
   route,
 }: {
   route: RouteProp<RootStackParamList, 'aiPick'>;
 }) => {
-  const {user} = useAuthStore();
+  const [userName, setUserName] = useState('');
   const {type, result} = route.params;
   const {data: recommendDataList} = useProductListQuery(type, result);
 
   const [page, setPage] = React.useState(10);
+
+  const getInfo = async () => {
+    try {
+      const {name, birth, email} = await getEncryptStorage('info');
+      name && setUserName(name);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getInfo();
+    }, []),
+  );
   const handlePage = () => {
     if (recommendDataList && recommendDataList?.length >= page) {
       setPage(page + 10);
@@ -33,7 +49,7 @@ const DiagnosisPick = ({
         <View style={styles.topArea}>
           <SvgIconAtom name={'CareItem'} />
           <View>
-            <CustomText size={20} label={`${user}님의 두피에 맞는`} />
+            <CustomText size={20} label={`${userName}님의 두피에 맞는`} />
             <CustomText size={20} label="상품들을 소개시켜 드릴게요." />
           </View>
         </View>
