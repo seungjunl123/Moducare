@@ -10,6 +10,8 @@ import CalenderModal from '../../Components/CalenderModal/CalenderModal';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {putMember} from '../../api/login-api';
 import {getEncryptStorage, setEncryptStorage} from '../../util';
+import PopupModal from '../../Components/Common/PopupModal';
+import {usePopup} from '../../hook/usePopup';
 const WIDTH = Dimensions.get('window').width;
 
 type userInfo = {
@@ -20,38 +22,46 @@ type userInfo = {
 export default function EditUserPage() {
   const navigation = useNavigation();
   const date = new Date();
+  const {visible, option, content, showPopup, hidePopup} = usePopup();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(
     `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
   );
   const [userName, setUserName] = useState('');
-  const onPressSave = () => {
-    putMember({name: userName, birth: selectedDate});
-    setEncryptStorage('info', {
-      name: userName,
-      birth: selectedDate,
-      email: Info?.email,
-    });
-    navigation.goBack();
+  const onPressSave = async () => {
+    const res = await putMember({name: userName, birth: selectedDate});
+    if (res === 'Account modification successful') {
+      setEncryptStorage('info', {
+        name: userName,
+        birth: selectedDate,
+        email: Info?.email,
+      });
+      showPopup({option: 'confirmMark', content: '수정되었습니다!'});
+    }
   };
 
   const [Info, setInfo] = useState<userInfo>();
   const getInfo = async () => {
-    const {name, birth, email} = await getEncryptStorage('info');
-    name && setUserName(name);
-    // birth && setb
-    setInfo({
-      ...Info,
-      name,
-      birth,
-      email,
-    });
+    try {
+      const {name, birth, email} = await getEncryptStorage('info');
+      name && setUserName(name);
+      birth && setSelectedDate(birth);
+      // birth && setb
+      setInfo({
+        ...Info,
+        name,
+        birth,
+        email,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useFocusEffect(
     useCallback(() => {
-      console.log('?');
       getInfo();
+      console.log(' info', Info);
     }, []),
   );
 
@@ -103,6 +113,15 @@ export default function EditUserPage() {
         </Pressable>
       </CalenderModal>
       <View style={styles.bottom} />
+      <PopupModal
+        visible={visible}
+        option={option}
+        onClose={() => {
+          hidePopup();
+          navigation.goBack();
+        }}
+        content={content}
+      />
     </SafeAreaView>
   );
 }
