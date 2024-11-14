@@ -2,6 +2,8 @@ package world.moducare.domain.challengefeed.service;
 
 import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import world.moducare.domain.challenge.entity.Challenge;
 import world.moducare.domain.challenge.repository.ChallengeRepository;
@@ -19,6 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -56,10 +59,11 @@ public class ChallengeFeedService {
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
-        List<ChallengeFeed> challengeFeed = challengeFeedRepository.findAllByChallengeOrderByCreatedAtDesc(challenge).orElseThrow(()->new RestApiException(ErrorCode.NOT_FOUND));
+        Pageable pageable = PageRequest.of(0, 100); // 첫 번째 페이지에서 최대 100개만 가져옴
+        List<ChallengeFeed> challengeFeeds = challengeFeedRepository.findAllByChallengeOrderByCreatedAtDesc(challenge, pageable).orElse(null);
 
         List<FeedResponseDto> list = new ArrayList<>();
-        for(ChallengeFeed feed : challengeFeed){
+        for(ChallengeFeed feed : challengeFeeds){
             int likeCnt = favoriteRepository.countByFeed(feed);
             boolean exists = favoriteRepository.existsByFeedAndMember(feed, member);
 
