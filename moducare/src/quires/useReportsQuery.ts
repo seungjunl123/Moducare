@@ -6,9 +6,9 @@ import {
   getTopDiaryData,
   postHairImg,
 } from '../api/report-api';
-
+import {postAiDiagnosis} from '../api/ai-api';
 interface ReportItem {
-  idx: number;
+  id: number;
   date: string;
   diagnosis: string;
 }
@@ -72,6 +72,17 @@ export const useReportDetailQuery = (
     queryFn: () => getReportDetailData(id),
     queryKey: [QueryKey.reportDetail, {id}],
     ...options,
+  });
+};
+
+export const useAiDiagnosisMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: postAiDiagnosis,
+    onSuccess: () => {
+      console.log('useAiDiagnosisMutation 성공');
+      queryClient.invalidateQueries({queryKey: [QueryKey.report]});
+    },
   });
 };
 export const usePostHairImgMutation = () => {

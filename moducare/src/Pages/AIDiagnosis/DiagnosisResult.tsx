@@ -22,7 +22,12 @@ import {
 import {useReportDetailQuery} from '../../quires/useReportsQuery';
 import {graphData, getHeadType, getComparisonText} from './resultClass';
 import {ResponseAiDiagnosis} from '../../api/ai-api';
-
+import {getEncryptStorage} from '../../util';
+type userInfo = {
+  name: string;
+  birth: string;
+  email: string;
+};
 const DiagnosisResult = ({
   route,
 }: {
@@ -35,7 +40,7 @@ const DiagnosisResult = ({
   });
   // const resultData = type === 'diagnosis' ? diagnosisResult : diagnosisData;
   const [resultData, setResultData] = useState<ResponseAiDiagnosis>();
-  const [data, setData] = useState<number[]>([]);
+  const [data, setData] = useState<barDataItem[]>([]);
   const [headType, setHeadType] = useState<number>(0);
   const [comparisonText, setComparisonText] = useState<number>(0);
 
@@ -47,31 +52,40 @@ const DiagnosisResult = ({
     color: '#888',
   };
 
-  // pdf
-  const [pdfPath, setPdfPath] = useState('');
-
+  const [Info, setInfo] = useState<userInfo>();
   useEffect(() => {
+    const getInfo = async () => {
+      try {
+        const {name, birth, email} = await getEncryptStorage('info');
+        // birth && setb
+        setInfo(prevInfo => ({
+          ...prevInfo,
+          name,
+          birth,
+          email,
+        }));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     if (type === 'diagnosis') {
       setResultData(diagnosisResult);
     } else {
       setResultData(diagnosisData);
     }
+    getInfo();
   }, [type, diagnosisResult, diagnosisData]);
 
   useEffect(() => {
     if (!resultData) return;
 
-    const formattedData =
-      resultData.result?.map(value => ({
-        value,
-        frontColor: colors.MAIN,
-      })) || [];
-
-    setData(formattedData);
+    setData(graphData(resultData.result));
     setHeadType(resultData.headType);
     setComparisonText(resultData.comparison);
   }, [resultData]);
 
+  // pdf
   const htmlContent = `
   <html>
     <head>
@@ -93,22 +107,52 @@ const DiagnosisResult = ({
         span {
           color : #946038;
         }
-
+        @page {
+          margin: 2cm;  // 모든 페이지에 대한 기본 여백 설정
+        }
+        
+        body { 
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+        }
         #paper {
-  			width: 21cm;
-  			min-height: 29.7cm;
-  			padding: 1.5cm 1.5cm 2cm 1.5cm;
-		}
+          width: 21cm;
+          min-height: 29.7cm;
+          padding: 1.5cm;
+          page-break-after: always;  // 페이지 나눔 시 처리
+        }
+
+        #paper::before {
+          content: "";
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) rotate(-30deg);
+          background-image: url('https://moducare.s3.ap-northeast-2.amazonaws.com/uploads/Logo_spell.png');
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: 300px;
+          width: 100%;
+          height: 100%;
+          opacity: 0.1;
+          z-index: -1;   
+          pointer-events: none;
+        }
+
+        .RecommendContainer, 
+        #pictureContainer,
+        #result-graph {
+          margin-top: 2cm;
+          margin-bottom: 2cm;
+        }
+
         #pictureContainer {
   			display: flex;  /* Flexbox 사용 */
-  			justify-content: center; /* 양쪽 정렬 */
+  			justify-content: space-around; /* 양쪽 정렬 */
   			align-items: center; /* 세로 중앙 정렬 */
             gap: 20px;
 		}
-        img {
-          border-radius : 10px;
-          width : 400px;
-        }
         
         #pictureContainer div {
           display : flex;
@@ -138,13 +182,22 @@ const DiagnosisResult = ({
   		 background-color: #72635A; /* 막대 기본 색상 */
   		 border-radius: 5px;
 		}
+
+        #pictureContainer img {
+          height : 300px;
+          border-radius : 10px;
+          width : 350px;
+        }
         #recommend-text {
   		 display: flex;
          flex-direction: column; /* 가로 방향 정렬 */
   		 align-items: center;
          justify-content:center;
         }
-        
+        .manage-comment {
+          white-space: pre-line;  // 줄바꿈 보존
+          line-height: 1.5;       // 줄간격 조정
+        }
       </style>
     </head>
     <body>
@@ -154,72 +207,92 @@ const DiagnosisResult = ({
       </h2>
       <div id="pictureContainer">
         <div>
-          <h4>
-            제공된 두피 사진
+          <h3>
+            사용자 정보
+          </h3>
+           <h4>
+            사용자 이름 : ${Info?.name}
+             <br>
+            생년월일 : ${Info?.birth || ''}
+             <br>
+            이메일 : ${Info?.email || ''}
+             <br>
+            진단일시 : ${resultData?.date}
           </h4>
-           <img class="picture" src="https://moducare.s3.ap-northeast-2.amazonaws.com/eb042bcb-95a6-48de-b7e4-ef783f4d5b0e.png" alt="...">
         </div>
         <div>
-       	  <h4>
-            건강한 두피 사진
-          </h4>
-          <img class="picture" src="https://moducare.s3.ap-northeast-2.amazonaws.com/eb042bcb-95a6-48de-b7e4-ef783f4d5b0e.png" alt="...">
+ 
+          <img class="picture diagnosis" src="${resultData?.img}" alt="...">
         </div>
       </div>
       <div id="pictureContainer">
-          <h4>AI 두피 진단 결과 <span>정상</span>입니다.</h4>
+          <h3>AI 두피 진단 결과 <span>${getHeadType(
+            headType,
+          )}</span>입니다.</h3>
       </div>
       <div id="result-graph"> 
         <div class="gb">
           <div>
-           30
+           ${resultData?.result[0]}
           </div>
-          <div class="bar tm" style="height: 150px;"></div>
+          <div class="bar tm" style="height: ${
+            (resultData?.result[0] ?? 0) * 50
+          }px;"></div>
           <h5>
             탈모
           </h5>
         </div>
         <div class="gb">
           <div>
-           34
+           ${resultData?.result[1]}
           </div>
-          <div class="bar bd" style="height: 180px;"></div>
+          <div class="bar bd" style="height: ${
+            (resultData?.result[1] ?? 0) * 50
+          }px;"></div>
           <h5>
             비듬
           </h5>
         </div>
         <div class="gb">
           <div>
-           26 
+           ${resultData?.result[2]}
           </div>
-          <div class="bar yj" style="height: 120px;"></div>
+          <div class="bar yj" style="height: ${
+            (resultData?.result[2] ?? 0) * 50
+          }px;"></div>
           <h5>
             염증
           </h5>
         </div>
         <div class="gb">
           <div>
-           26 
+           ${resultData?.result[3]}
           </div>
-          <div class="bar hb" style="height: 120px;"></div>
+          <div class="bar hb" style="height: ${
+            (resultData?.result[3] ?? 0) * 50
+          }px;"></div>
           <h5>
             홍반
           </h5>
         </div>
         <div class="gb">
           <div>
-           14 
+           ${resultData?.result[4]}
           </div>
-          <div class="bar pj" style="height: 50px;"></div>
+          <div class="bar pj" style="height: ${
+            (resultData?.result[4] ?? 0) * 50
+          }px;"></div>
           <h5>
             피지
           </h5>
         </div>
         <div class="gb">
           <div>
-           36 
+           ${resultData?.result[5]}
           </div>
-          <div class="bar gj" style="height: 200px;"></div>
+          <div class="bar gj" style="height: ${
+            (resultData?.result[5] ?? 0) * 50
+          }px;"></div>
           <h5>
             각질
           </h5>
@@ -227,19 +300,19 @@ const DiagnosisResult = ({
       </div>
       <div class="RecommendContainer">
         <h4>
-          MODU가 관찰한 두피 결과
+          MODU가 관찰한 최근 두피 검사 결과
         </h4>
         <h3>
-		 최근  검사에 비해 <span>두피가 좋아졌어요!!</span>
+		 <span>${getComparisonText(comparisonText)}</span>
         </h3>
         <div id="recommend-text">
-           	<img class="picture" src="https://moducare.s3.ap-northeast-2.amazonaws.com/eb042bcb-95a6-48de-b7e4-ef783f4d5b0e.png" alt="...">
-          	<h4>
-첫째, 두피를 깨끗하게 유지하려면 적어도 주 2-3회 샴푸로 세척해줘야 해요. 둘째, 너무 뜨거운 물보다는 미지근한 물을 사용하는 게 좋아요. 셋째, 각질 제거를  위해 주 1회 스크럽이나 두피 마스크를 사용해보세요.
-              <br>
-또한, 두피도 보습이 필요하니까 두피 전용 오일이나 세럼을 사용해 보습해주는 게 좋고요. 건강한 모발을 위해 균형 잡힌 식사를 하고, 스트레스는 운동이나 명상으로 관리해보세요. 자외선 차단도 잊지 말고, 마지막으로 두피 마사지를 통해 혈액순환을 촉진해주면 도움이 됩니다.
-            </h4>
+           	<img style="width: 200px;" class="picture" src="https://moducare.s3.ap-northeast-2.amazonaws.com/uploads/Bot_smiling.png" alt="...">
         </div>
+        <h2> MODU가 추천하는 관리비결 </h2>
+             <h4 class="manage-comment">
+             ${resultData?.manageComment || careText}
+             </h4>
+             </div>
       </div>
       </div>
     </body>
@@ -249,8 +322,8 @@ const DiagnosisResult = ({
     try {
       const options = {
         html: htmlContent,
-        fileName: 'testpdf', // PDF 파일 이름
-        directory: 'docs', // 파일이 저장될 디렉토리 (기본값은 documents)
+        fileName: `MODUCARE_${Info?.name}_${resultData?.date}`, // PDF 파일 이름
+        directory: 'Download', // 파일이 저장될 디렉토리 (기본값은 documents)
       };
 
       // PDF 생성
@@ -258,7 +331,6 @@ const DiagnosisResult = ({
 
       // 생성된 PDF 파일 경로 출력
       console.log('PDF 파일 경로:', file.filePath);
-      setPdfPath(file.filePath);
     } catch (error) {
       console.error('PDF 생성 오류:', error);
     }
@@ -295,6 +367,7 @@ const DiagnosisResult = ({
             // 기본
             data={data}
             width={300}
+            maxValue={3}
             height={200}
             disablePress // 누루기 동작 비활성화
             // bar
@@ -333,8 +406,8 @@ const DiagnosisResult = ({
             label="나에게 맞는 샴푸 확인하기"
             onPress={() =>
               navigation.navigate('aiPick', {
-                type: resultData.headType,
-                result: resultData.result,
+                type: resultData?.headType ?? 0,
+                result: resultData?.result ?? [],
               })
             }
           />
