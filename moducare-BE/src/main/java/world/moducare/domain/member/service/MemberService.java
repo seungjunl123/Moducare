@@ -52,7 +52,7 @@ public class MemberService {
     public Member saveOrUpdateMember(String email, String name) {
 
         Member member = memberRepository.findByEmail(email)
-                .map(entity -> entity.updateName(name))
+                .map(Member::findMember)
                 .orElseGet(() -> Member.builder()
                         .email(email)
                         .name(name)
