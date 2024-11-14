@@ -5,16 +5,17 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {colors} from '../../constants/colors';
 import CustomText from '../../Components/Common/CustomText';
 import ItemBox from '../../Components/ItemBox/ItemBox';
 import {useReportQuery, ReportItem} from '../../quires/useReportsQuery';
 import {Dimensions} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../navigate/StackNavigate';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import useAuthStore from '../../store/useAuthStore';
+import {getEncryptStorage} from '../../util';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -23,7 +24,22 @@ export default function ReportPage() {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {data: reportData, isLoading: reportLoading} = useReportQuery();
   const reportList = reportData;
-  const {user} = useAuthStore();
+  const [userName, setUserName] = useState('');
+
+  const getInfo = async () => {
+    try {
+      const {name, birth, email} = await getEncryptStorage('info');
+      name && setUserName(name);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getInfo();
+    }, []),
+  );
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -33,7 +49,7 @@ export default function ReportPage() {
           style={styles.reportIcon}
         />
         <View>
-          <CustomText label={`${user} 님의`} size={20} />
+          <CustomText label={`${userName} 님의`} size={20} />
           <CustomText label="두피 리포트 입니다." size={20} />
         </View>
       </View>

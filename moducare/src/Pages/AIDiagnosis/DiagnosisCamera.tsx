@@ -7,12 +7,15 @@ import usePermission from '../../hook/usePermission';
 import {useNavigation} from '@react-navigation/native';
 import {Camera, useCameraDevice} from 'react-native-vision-camera';
 import CustomButtom from '../../Components/Common/CustomButton';
-import {postAiDiagnosis} from '../../api/ai-api';
+import {postAiDiagnosis, ResponseAiDiagnosis} from '../../api/ai-api';
+import {usePopup} from '../../hook/usePopup';
+import PopupModal from '../../Components/Common/PopupModal';
 
 const DiagnosisCamera = () => {
   const navigation = useNavigation();
   usePermission('CAM');
-
+  const {visible, option, content, showPopup, hidePopup} = usePopup();
+  const [res, setRes] = useState<ResponseAiDiagnosis>();
   const cameraRef = useRef<Camera>(null);
   const device = useCameraDevice('back');
   const [imageUri, setImageUri] = useState<string | null>(null); // 사진 URI 상태
@@ -40,7 +43,23 @@ const DiagnosisCamera = () => {
       type: 'image/jpeg', // 이미지 파일 타입 (예시로 jpeg 사용)
       name: 'photo.jpg', // 파일명
     });
-    await postAiDiagnosis(formData);
+    showPopup({
+      option: 'Loading',
+      content: '검사 진행중',
+    });
+    try {
+      console.log('시작하기');
+      const res = await postAiDiagnosis(formData);
+      setRes(res);
+      if (res.comparison) {
+        showPopup({
+          option: 'confirmMark',
+          content: '검사 완료!',
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // 이미지 삭제 함수
@@ -65,7 +84,7 @@ const DiagnosisCamera = () => {
             <CustomButtom
               label="검사 진행"
               size="small"
-              onPress={() => navigation.navigate('aiResult')}
+              onPress={handleAiDiagnosis}
             />
           </View>
         </>
@@ -85,6 +104,20 @@ const DiagnosisCamera = () => {
           <Pressable style={styles.BtnArea} onPress={handleTakePhoto} />
         </>
       )}
+      <PopupModal
+        visible={visible}
+        option={option}
+        onClose={() => {
+          if (option === 'confirmMark') {
+            hidePopup();
+            navigation.navigate('aiResult', {
+              type: 'diagnosis',
+              diagnosisResult: res,
+            });
+          }
+        }}
+        content={content}
+      />
     </SafeAreaView>
   );
 };
