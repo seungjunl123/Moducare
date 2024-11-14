@@ -83,7 +83,8 @@
 //        System.out.println("SQL 쿼리 방식 소요 시간: " + sqlQueryTime + "ms");
 //
 //        // 최소 1개의 추천이 있어야 합니다.
-////        assertTrue(recommendDtoList.size()==10);
+//        System.out.println("검색결과 수: "+recommendDtoList.size());
+//        assertTrue(recommendDtoList.size()==10);
 //    }
 //
 //    /**
@@ -103,6 +104,7 @@
 //        System.out.println("Elasticsearch 쿼리 방식 소요 시간: " + elasticsearchQueryTime + "ms");
 //
 //        // 최소 1개의 추천이 있어야 합니다.
-////        assertTrue(elasticsearchRecommendations.size()==10);
+//        System.out.println("검색결과 수: "+elasticsearchRecommendations.size());
+//        assertTrue(elasticsearchRecommendations.size()==10);
 //    }
 //}
