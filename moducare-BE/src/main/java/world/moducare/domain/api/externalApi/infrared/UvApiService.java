@@ -126,4 +126,47 @@ public class UvApiService {
             throw new DataNotFoundException("Error parsing JSON response");
         }
     }
+
+    public int callUvApiSync(WeatherRequestDto weatherRequestDto) {
+        try {
+            String sidoName = weatherRequestDto.getSido();
+            String gugunName = weatherRequestDto.getGugun();
+
+            String areaNo = getAreaNo(sidoName, gugunName);
+
+            // 요청 파라미터 설정
+            UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(API_URL)
+                    .queryParam("serviceKey", UV_KEY)
+                    .queryParam("pageNo", "1")
+                    .queryParam("numOfRows", "10")
+                    .queryParam("dataType", "JSON")
+                    .queryParam("areaNo", areaNo)
+                    .queryParam("time", getTime());
+
+            // 특정 파라미터만 인코딩 설정
+            UriComponents uriComponents = uriBuilder.build()
+                    .expand()
+                    .encode(Charset.forName("UTF-8"));
+
+            // URI 생성 시 인코딩되지 않은 serviceKey를 포함
+            URI uri = URI.create(uriComponents.toUriString().replace(
+                    "serviceKey=" + URLEncoder.encode(UV_KEY, "UTF-8"),
+                    "serviceKey=" + UV_KEY));
+
+            // API 호출
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
+
+            // JSON 응답 확인 및 데이터 파싱
+            if (response.getBody() == null || response.getBody().isEmpty()) {
+                throw new DataNotFoundException("Empty JSON response");
+            }
+
+            // 응답 데이터 파싱하여 자외선 지수 추출
+            return parseUvIndex(response.getBody());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new DataNotFoundException("Data not found for the requested station");
+        }
+    }
 }
