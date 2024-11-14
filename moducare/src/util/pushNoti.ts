@@ -17,6 +17,9 @@ const displayNotification = async message => {
       largeIcon: 'ic_launcher',
       color: colors.MAIN,
       sound: 'sound',
+      pressAction: {
+        id: 'challengeNoti',
+      },
     },
   });
 
