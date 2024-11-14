@@ -20,4 +20,6 @@ public interface MyChallengeRepository extends JpaRepository<MyChallenge, Long> 
 
     boolean existsByChallengeAndMember(Challenge challenge, Member member);
 
+    @Query("select distinct mc.member from MyChallenge mc where mc.status='IN'")
+    List<Member> findDistinctMemberId();
 }
