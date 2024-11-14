@@ -60,10 +60,14 @@ public class ChallengeFeedService {
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
         // Set pagination for the requested page with a fixed size of 100 items
-        Pageable pageable = PageRequest.of(page, 100);
+        Pageable pageable = PageRequest.of(page, 10);
         List<ChallengeFeed> challengeFeeds = challengeFeedRepository
                 .findAllByChallengeOrderByCreatedAtDesc(challenge, pageable)
-                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
+                .orElse(null);
+
+        if(challengeFeeds == null){
+            return new ArrayList<>();
+        }
 
         List<FeedResponseDto> list = new ArrayList<>();
         for (ChallengeFeed feed : challengeFeeds) {
