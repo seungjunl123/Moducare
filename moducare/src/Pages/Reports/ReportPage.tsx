@@ -14,7 +14,6 @@ import {Dimensions} from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../navigate/StackNavigate';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import useAuthStore from '../../store/useAuthStore';
 import {getEncryptStorage} from '../../util';
 
 const HEIGHT = Dimensions.get('window').height;
@@ -28,7 +27,7 @@ export default function ReportPage() {
 
   const getInfo = async () => {
     try {
-      const {name, birth, email} = await getEncryptStorage('info');
+      const {name} = await getEncryptStorage('info');
       name && setUserName(name);
     } catch (error) {
       console.log(error);
@@ -42,7 +41,7 @@ export default function ReportPage() {
   );
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Image
           source={require('../../assets/img/report.png')}
@@ -53,7 +52,7 @@ export default function ReportPage() {
           <CustomText label="두피 리포트 입니다." size={20} />
         </View>
       </View>
-      <View style={styles.reportList}>
+      <ScrollView contentContainerStyle={styles.reportList}>
         {reportLoading && (
           <View style={styles.reportListEmpty}>
             <CustomText label="로딩중입니다..." />
@@ -70,7 +69,7 @@ export default function ReportPage() {
               onPress={() => {
                 navigation.navigate('aiResult', {
                   type: 'report',
-                  id: report.idx,
+                  id: report.id,
                   diagnosisResult: null,
                 });
               }}>
@@ -86,8 +85,8 @@ export default function ReportPage() {
               </ItemBox>
             </TouchableOpacity>
           ))}
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 

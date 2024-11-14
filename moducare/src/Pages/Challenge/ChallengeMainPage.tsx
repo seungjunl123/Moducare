@@ -23,7 +23,6 @@ import {
   getMyListType,
   postCreateChallenge,
 } from '../../api/challenge-api';
-import {Alert} from 'react-native';
 import {setEncryptStorage} from '../../util';
 import {
   CameraOptions,
@@ -51,7 +50,7 @@ const options: Action = {
   },
 };
 
-export default function ChallengeMainPage({navigation}) {
+export default function ChallengeMainPage({navigation}: {navigation: any}) {
   const [isModal, setIsModal] = React.useState(false);
   const [myList, setMyList] = React.useState<getMyListType[] | []>([]);
   const [allList, setAllList] = React.useState<getListType[] | []>([]);
@@ -61,8 +60,7 @@ export default function ChallengeMainPage({navigation}) {
   const {visible, option, content, showPopup, hidePopup} = usePopup();
 
   const openImageLibrary = async () => {
-    console.log('ww');
-    const images = await launchImageLibrary(options);
+    const images = await launchImageLibrary(options.options);
     if (images.assets) {
       setImgConfig(images);
     }
@@ -288,7 +286,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   BottomListArea: {
-    flex: 0.36,
+    flex: 0.41,
     elevation: 4,
     borderRadius: 10,
     backgroundColor: '#fff',

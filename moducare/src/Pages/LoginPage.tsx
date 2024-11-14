@@ -56,6 +56,8 @@ const LoginPage = ({navigation}: {navigation: any}) => {
           accessToken,
           registerId: 'google',
         });
+      } else {
+        console.log('구글 로그인 실패 ???????');
       }
     } catch (error: any) {
       console.log('Message', error.message);

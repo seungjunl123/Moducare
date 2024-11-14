@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {View, StyleSheet, TextInput, Pressable, Text} from 'react-native';
 import CustomText from '../../Components/Common/CustomText';
@@ -27,12 +27,14 @@ export default function EditUserPage() {
   const [selectedDate, setSelectedDate] = useState(
     `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
   );
-  const [userName, setUserName] = useState('');
+  const [editedName, setEditedName] = useState('');
+
   const onPressSave = async () => {
-    const res = await putMember({name: userName, birth: selectedDate});
+    console.log('userName', editedName);
+    const res = await putMember({name: editedName, birth: selectedDate});
     if (res === 'Account modification successful') {
       setEncryptStorage('info', {
-        name: userName,
+        name: editedName,
         birth: selectedDate,
         email: Info?.email,
       });
@@ -44,7 +46,7 @@ export default function EditUserPage() {
   const getInfo = async () => {
     try {
       const {name, birth, email} = await getEncryptStorage('info');
-      name && setUserName(name);
+      name && setEditedName(name);
       birth && setSelectedDate(birth);
       // birth && setb
       setInfo({
@@ -72,12 +74,12 @@ export default function EditUserPage() {
         <View>
           <TextInput
             style={styles.input}
-            value={userName}
-            onChangeText={setUserName}
+            value={editedName}
+            onChangeText={setEditedName}
             placeholder="이름을 입력해주세요."
           />
         </View>
-        {userName.length === 0 && (
+        {editedName.length === 0 && (
           <Text style={styles.errorText}>이름 칸은 공백으로 둘 수 없어요!</Text>
         )}
       </View>
