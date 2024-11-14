@@ -55,15 +55,18 @@ public class ChallengeFeedService {
         challengeFeedRepository.save(challengeFeed);
     }
 
-    public List<FeedResponseDto> getFeed(Member member, Long challengeId) {
+    public List<FeedResponseDto> getFeed(Member member, Long challengeId, int page) {
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
-        Pageable pageable = PageRequest.of(0, 100); // 첫 번째 페이지에서 최대 100개만 가져옴
-        List<ChallengeFeed> challengeFeeds = challengeFeedRepository.findAllByChallengeOrderByCreatedAtDesc(challenge, pageable).orElse(null);
+        // Set pagination for the requested page with a fixed size of 100 items
+        Pageable pageable = PageRequest.of(page, 100);
+        List<ChallengeFeed> challengeFeeds = challengeFeedRepository
+                .findAllByChallengeOrderByCreatedAtDesc(challenge, pageable)
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
         List<FeedResponseDto> list = new ArrayList<>();
-        for(ChallengeFeed feed : challengeFeeds){
+        for (ChallengeFeed feed : challengeFeeds) {
             int likeCnt = favoriteRepository.countByFeed(feed);
             boolean exists = favoriteRepository.existsByFeedAndMember(feed, member);
 
@@ -74,13 +77,14 @@ public class ChallengeFeedService {
                     .content(feed.getContent())
                     .feedRegDate(formatToCustomString(feed.getCreatedAt()))
                     .like(likeCnt)
-                    .isLiked(exists?1:0)
+                    .isLiked(exists ? 1 : 0)
                     .build();
 
             list.add(responseDto);
         }
         return list;
     }
+
 
     // YYYY-MM-DD 오전/오후 HH:MM:SS 형식으로 변환
     public static String formatToCustomString(ZonedDateTime zonedDateTime) {
