@@ -45,9 +45,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 || requestURI.equals("/members/login/naver")
                 || requestURI.equals("/members/login/google")
                 || requestURI.equals("/tokens/refresh")
-                || requestURI.equals("/weather")
-                || requestURI.equals("/product/recommend")
-                || requestURI.equals("/product/index")
                 || requestURI.equals("/api/login/oauth2/code/kakao")
                 || requestURI.equals("/login/oauth2/code/kakao")) { // Exclude OAuth callback path
             filterChain.doFilter(request, response);
