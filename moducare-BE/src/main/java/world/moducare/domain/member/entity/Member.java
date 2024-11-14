@@ -116,4 +116,8 @@ public class Member {
         this.name=name;
         this.birth=birth;
     }
+
+    public Member findMember(){
+        return this;
+    }
 }
