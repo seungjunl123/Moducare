@@ -43,11 +43,16 @@ public class ChallengeFeedController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/{challengeId}")
+    @GetMapping("")
     @Operation(summary = "챌린지 피드 조회")
-    public ResponseEntity<List<FeedResponseDto>> getFeed(@AuthenticationPrincipal CustomOAuth2User principal, @PathVariable Long challengeId) {
+    public ResponseEntity<List<FeedResponseDto>> getFeed(
+            @AuthenticationPrincipal CustomOAuth2User principal,
+            @RequestParam("cid") Long challengeId,
+            @RequestParam("page") int page) {
+
         Member member = memberService.findById(principal.getId());
-        List<FeedResponseDto> feedResponseDtoList = feedService.getFeed(member, challengeId);
+        List<FeedResponseDto> feedResponseDtoList = feedService.getFeed(member, challengeId, page);
         return ResponseEntity.status(HttpStatus.OK).body(feedResponseDtoList);
     }
+
 }
