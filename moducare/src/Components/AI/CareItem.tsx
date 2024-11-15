@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import CustomText from '../Common/CustomText';
 import {colors} from '../../constants/colors';
+import {usePostLastestProductMutation} from '../../quires/useProductQuery';
 
 interface ListProps extends PressableProps {
   productImg?: string;
@@ -27,14 +28,17 @@ const CareItem = ({
   productType,
   ...props
 }: ListProps) => {
+  const storePick = usePostLastestProductMutation();
+  const handleProductMove = async (imgSrc: string, link: string) => {
+    storePick.mutate({imgSrc, link});
+    Linking.openURL(link);
+  };
   return (
     <>
       <Pressable
         style={styles.container}
         {...props}
-        onPress={() => {
-          Linking.openURL(link);
-        }}>
+        onPress={() => handleProductMove(productImg, link)}>
         {productImg ? (
           <Image style={styles.ImgArea} source={{uri: productImg}} />
         ) : (
@@ -48,7 +52,7 @@ const CareItem = ({
             <CustomText label={productName} size={15} />
           </View>
           <CustomText
-            label={`${price.toLocaleString()}원`}
+            label={`${Number(price).toLocaleString()}원`}
             size={13}
             variant={'regular'}
           />

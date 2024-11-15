@@ -96,9 +96,14 @@ type FeedType = {
   isLiked: number;
 };
 
-const getFeed = async (challengeId: number): Promise<FeedType[]> => {
+const getFeed = async (
+  challengeId: number,
+  page: number = 1,
+): Promise<FeedType[]> => {
   try {
-    const {data} = await axiosInstance.get(`challenge-feeds/${challengeId}`);
+    const {data} = await axiosInstance.get(
+      `/challenge-feeds?cid=${challengeId}&page=${page}`,
+    );
 
     return data;
   } catch (error) {
