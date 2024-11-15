@@ -62,9 +62,9 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
                 // URL 접근 권한 설정
             .authorizeRequests(auth -> auth // 특정 경로에 대한 인증, 인가 액세스 설정
                 .requestMatchers( // 특정 요청과 일치하는 url에 대한 액세스 설정
-                        new AntPathRequestMatcher("/members/login/**"),
-                        new AntPathRequestMatcher("/tokens/refresh"),
-                        new AntPathRequestMatcher("/members/logout"),
+                        new AntPathRequestMatcher("/api/members/login/**"),
+                        new AntPathRequestMatcher("/api/tokens/refresh"),
+                        new AntPathRequestMatcher("/api/members/logout"),
                         new AntPathRequestMatcher("/swagger-ui.html"),  // Swagger UI 경로 추가
                         new AntPathRequestMatcher("/v3/api-docs/**")  // OpenAPI 문서 경로 추가
                 ).permitAll() // 누구나 접근이 가능하게 (/login, /police-login로 요청이 오면 인증,인가 없이도 접근 가능)
@@ -88,6 +88,8 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
         configuration.addAllowedOrigin("http://localhost:3001");
         configuration.addAllowedOrigin("http://localhost:8080");
         configuration.addAllowedOrigin("http://k11b203.p.ssafy.io");
+        configuration.addAllowedOrigin("http://k11b203.p.ssafy.io/api");
+        configuration.addAllowedOrigin("https://k11b203.p.ssafy.io/api");
         configuration.addAllowedOrigin("https://k11b203.p.ssafy.io"); // 허용할 Origin 설정
         configuration.addAllowedMethod("*");  // 모든 메서드 허용 (GET, POST, PUT 등)
         configuration.addAllowedHeader("*");  // 모든 헤더 허용
