@@ -48,6 +48,7 @@ const getReportData = async () => {
 };
 
 const getReportDetailData = async (id: number) => {
+  console.log('리포트 상세 호출 시작 ', id);
   try {
     const response = await axiosInstance.get(`/diagnosis/${id}`);
     console.log('리포트 상세 호출 성공 ', response.data);

@@ -32,6 +32,7 @@ const postLogin = async ({
       accessToken,
       fcmToken,
     });
+    console.log('로그인 데이터', data);
     return data;
   } catch (error) {
     console.error(error);
@@ -82,12 +83,15 @@ const deleteMember = async (): Promise<void> => {
   }
 };
 
-const putMember = async (userInfo: RequestMember): Promise<void> => {
+const putMember = async (userInfo: RequestMember): Promise<string> => {
   try {
     // axiosInstance로 변경 필요
-    const {data} = await axiosInstance.put('members/modify', {
-      name: userInfo.name,
-      birth: userInfo.birth,
+    console.log('회원 정보 변경 시작', userInfo.name, userInfo.birth);
+    const {data} = await axiosInstance.put('members/modify', null, {
+      params: {
+        name: userInfo.name,
+        birth: userInfo.birth,
+      },
     });
 
     console.log('회원 정보 변경 완료');
