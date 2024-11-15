@@ -39,8 +39,8 @@ const PopupModal = ({visible, onClose, content, option}: PopupModalProps) => {
           <LottieView
             source={lottieSource}
             autoPlay
-            loop={false}
-            style={styles.confirmMark}
+            loop={option === 'Loading'}
+            style={[styles.confirmMark]}
           />
           <CustomText label={content} />
           {option !== 'Loading' && (
@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
   confirmMark: {
     width: 60,
     height: 60,
+    alignSelf: 'center',
   },
 });
 

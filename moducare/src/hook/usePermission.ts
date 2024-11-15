@@ -8,7 +8,7 @@ import {
 } from 'react-native-permissions';
 import {alerts} from '../constants';
 
-type PermissionType = 'CAM' | 'PHOTO';
+type PermissionType = 'CAM' | 'PHOTO' | 'DOCUMENT';
 
 type PerssionOS = {
   [key in PermissionType]: Permission;
@@ -17,6 +17,7 @@ type PerssionOS = {
 const androidPermissons: PerssionOS = {
   CAM: PERMISSIONS.ANDROID.CAMERA,
   PHOTO: PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+  DOCUMENT: PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
 };
 
 const usePermission = (type: PermissionType) => {
