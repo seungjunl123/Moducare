@@ -58,6 +58,8 @@ const getHeadType = (type: number) => {
       return '비듬성 두피';
     case 7:
       return '탈모';
+    case 8:
+      return '복합성 두피';
     default:
       return '데이터 이상!';
   }
