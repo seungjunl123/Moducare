@@ -14,7 +14,7 @@ import world.moducare.domain.member.service.TokenService;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/tokens")
+@RequestMapping("/api/tokens")
 @Tag(name = "토큰 컨트롤러", description = "토큰 관련 API")
 public class TokenApiController {
     private final TokenService tokenService;

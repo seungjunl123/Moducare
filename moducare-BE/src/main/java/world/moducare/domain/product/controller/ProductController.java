@@ -26,7 +26,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/api/product")
 @Tag(name = "제품 컨트롤러", description = "추천 제품 관련 API")
 public class ProductController {
 

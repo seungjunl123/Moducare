@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "마이 챌린지 컨트롤러", description = "마이 챌린지 관련 API")
-@RequestMapping("/my-challenges")
+@RequestMapping("/api/my-challenges")
 public class MyChallengeController {
 
     private final MyChallengeService myChallengeService;

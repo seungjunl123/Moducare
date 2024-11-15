@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "스트레스 진단 컨트롤러", description = "스트레스 진단 관련 API")
-@RequestMapping("/stress")
+@RequestMapping("/api/stress")
 public class StressResultController {
 
     private final StressResultService stressResultService;
