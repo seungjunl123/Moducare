@@ -24,8 +24,7 @@ public class NotificationSceduler {
     private final FirebaseMessageService messageService;
 
     // 매일 오전 9시마다 돌아가는 스케줄러
-//    @Scheduled(cron = "0 0 9 * * ?")
-    @Scheduled(cron = "0 */1 * * * ?")  // 1분마다 실행
+    @Scheduled(cron = "0 0 9 * * ?")
     @Transactional
     public void schedule() {
         // 마이 챌린지가 있는 member 조회.
