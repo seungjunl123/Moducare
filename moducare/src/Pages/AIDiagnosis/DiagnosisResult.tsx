@@ -27,6 +27,10 @@ import {getEncryptStorage} from '../../util';
 import PopupModal from '../../Components/Common/PopupModal';
 import {usePopup} from '../../hook/usePopup';
 import usePermission from '../../hook/usePermission';
+
+import marked from 'marked'; // markdown을 HTML로 변환하는 라이브러리
+import RenderHtml from 'react-native-render-html'; // HTML을 렌더링하는 라이브러리
+
 type userInfo = {
   name: string;
   birth: string;
@@ -341,6 +345,8 @@ const DiagnosisResult = ({
     }
   };
   //
+
+  const htmlContent = marked(resultData?.manageComment);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -403,6 +409,10 @@ const DiagnosisResult = ({
         <View style={styles.careArea}>
           <CustomText label="MODU가 추천하는 관리비결" size={20} />
           <Text style={styles.careText}>{resultData?.manageComment}</Text>
+          <RenderHtml
+            contentWidth={375} // 화면의 너비를 설정
+            source={{html: htmlContent}}
+          />
         </View>
         <View style={styles.BtnArea}>
           <CustomButtom
