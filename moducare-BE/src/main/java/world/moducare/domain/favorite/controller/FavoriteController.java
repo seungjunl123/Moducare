@@ -16,7 +16,7 @@ import world.moducare.global.config.oauth.CustomOAuth2User;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "챌린지 인증 컨트롤러", description = "챌린지 인증 관련 API")
-@RequestMapping("/favorites")
+@RequestMapping("/api/favorites")
 public class FavoriteController {
 
     private final MemberService memberService;

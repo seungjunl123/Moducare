@@ -21,7 +21,7 @@ import world.moducare.global.s3.S3Service;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/diaries")
+@RequestMapping("/api/diaries")
 @Tag(name = "머리 다이어리 컨트롤러", description = "머리 다이어리 관련 API")
 public class DiaryController {
 

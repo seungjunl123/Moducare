@@ -27,7 +27,7 @@ import world.moducare.global.s3.S3Service;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/diagnosis")
+@RequestMapping("/api/diagnosis")
 @Tag(name = "AI 진단 컨트롤러", description = "AI 진단 관련 API")
 public class DiagnosticResultController {
 

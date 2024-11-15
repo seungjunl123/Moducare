@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "챌린지 인증 컨트롤러", description = "챌린지 인증 관련 API")
-@RequestMapping("/challenge-feeds")
+@RequestMapping("/api/challenge-feeds")
 public class ChallengeFeedController {
 
     private final MemberService memberService;
