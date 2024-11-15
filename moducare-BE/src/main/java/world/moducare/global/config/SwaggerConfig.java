@@ -15,7 +15,7 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
-    @Value("http://k11b203.p.ssafy.io:8080")
+    @Value("${BASE_URL}")
     private String BASE_URL;
 
     @Bean
