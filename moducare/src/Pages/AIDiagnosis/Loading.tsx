@@ -1,11 +1,30 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../constants/colors';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import CustomText from '../../Components/Common/CustomText';
+import {useFocusEffect} from '@react-navigation/native';
+import {useAiDiagnosisMutation} from '../../quires/useReportsQuery';
 
-const Loading = ({navigation}) => {
+const Loading = ({route, navigation}) => {
+  const {mutateAsync} = useAiDiagnosisMutation();
+  const {file} = route.params;
+
+  const postAiData = async () => {
+    console.log('넘어온파일', file);
+    const res = await mutateAsync(file);
+    navigation.navigate('aiResult', {
+      type: 'diagnosis',
+      diagnosisResult: res,
+    });
+  };
+  useFocusEffect(
+    React.useCallback(() => {
+      postAiData();
+    }, []),
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <SvgIconAtom name="AiLoading" />

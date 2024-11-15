@@ -14,9 +14,8 @@ import {Button} from 'react-native';
 import {PanGestureHandler} from 'react-native-gesture-handler';
 import {useAiDiagnosisMutation} from '../../quires/useReportsQuery';
 
-const DiagnosisCamera = () => {
+const DiagnosisCamera = ({navigation}) => {
   const {mutateAsync} = useAiDiagnosisMutation();
-  const navigation = useNavigation();
   usePermission('CAM');
   const {visible, option, content, showPopup, hidePopup} = usePopup();
   const [res, setRes] = useState<ResponseAiDiagnosis>();
@@ -76,23 +75,26 @@ const DiagnosisCamera = () => {
       type: 'image/jpeg', // 이미지 파일 타입 (예시로 jpeg 사용)
       name: 'photo.jpg', // 파일명
     });
-    showPopup({
-      option: 'Loading',
-      content: '검사 진행중',
+    navigation.navigate('aiLoading', {
+      file: formData,
     });
-    try {
-      console.log('시작하기');
-      const res = await mutateAsync(formData);
-      setRes(res);
-      if (res.comparison) {
-        showPopup({
-          option: 'confirmMark',
-          content: '검사 완료!',
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    // showPopup({
+    //   option: 'Loading',
+    //   content: '검사 진행중',
+    // });
+    // try {
+    //   console.log('시작하기');
+    //   const res = await mutateAsync(formData);
+    //   setRes(res);
+    //   if (res.comparison) {
+    //     showPopup({
+    //       option: 'confirmMark',
+    //       content: '검사 완료!',
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   // 이미지 삭제 함수
