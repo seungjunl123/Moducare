@@ -13,6 +13,7 @@ import CustomText from '../../Components/Common/CustomText';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import {BarChart, barDataItem} from 'react-native-gifted-charts';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import RNFS from 'react-native-fs';
 import {RootStackParamList} from '../../navigate/StackNavigate';
 import {
   NavigationProp,
@@ -23,6 +24,9 @@ import {useReportDetailQuery} from '../../quires/useReportsQuery';
 import {graphData, getHeadType, getComparisonText} from './resultClass';
 import {ResponseAiDiagnosis} from '../../api/ai-api';
 import {getEncryptStorage} from '../../util';
+import PopupModal from '../../Components/Common/PopupModal';
+import {usePopup} from '../../hook/usePopup';
+import usePermission from '../../hook/usePermission';
 type userInfo = {
   name: string;
   birth: string;
@@ -33,19 +37,17 @@ const DiagnosisResult = ({
 }: {
   route: RouteProp<RootStackParamList, 'aiResult'>;
 }) => {
+  usePermission('DOCUMENT');
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const {visible, option, content, showPopup, hidePopup} = usePopup();
   const {type, id, diagnosisResult} = route.params;
   const {data: diagnosisData} = useReportDetailQuery(id ?? 0, {
     enabled: type === 'report',
   });
-  // const resultData = type === 'diagnosis' ? diagnosisResult : diagnosisData;
   const [resultData, setResultData] = useState<ResponseAiDiagnosis>();
   const [data, setData] = useState<barDataItem[]>([]);
   const [headType, setHeadType] = useState<number>(0);
   const [comparisonText, setComparisonText] = useState<number>(0);
-
-  const careText: string = `첫째, 두피를 깨끗하게 유지하려면 적어도 주 2-3회 샴푸로 세척해줘야 해요. 둘째, 너무 뜨거운 물보다는 미지근한 물을 사용하는 게 좋아요. 셋째, 각질 제거를  위해 주 1회 스크럽이나 두피 마스크를 사용해보세요.\n
-또한, 두피도 보습이 필요하니까 두피 전용 오일이나 세럼을 사용해 보습해주는 게 좋고요. 건강한 모발을 위해 균형 잡힌 식사를 하고, 스트레스는 운동이나 명상으로 관리해보세요. 자외선 차단도 잊지 말고, 마지막으로 두피 마사지를 통해 혈액순환을 촉진해주면 도움이 됩니다.`;
 
   const yAxisTextStyle = {
     fontSize: 12,
@@ -70,7 +72,7 @@ const DiagnosisResult = ({
     };
 
     if (type === 'diagnosis') {
-      setResultData(diagnosisResult);
+      setResultData(diagnosisResult ?? undefined);
     } else {
       setResultData(diagnosisData);
     }
@@ -310,7 +312,7 @@ const DiagnosisResult = ({
         </div>
         <h2> MODU가 추천하는 관리비결 </h2>
              <h4 class="manage-comment">
-             ${resultData?.manageComment || careText}
+             ${resultData?.manageComment}
              </h4>
              </div>
       </div>
@@ -320,10 +322,13 @@ const DiagnosisResult = ({
 `;
   const generatePDF = async () => {
     try {
+      const fileName = `MODUCARE_${Info?.name}_${resultData?.date}`;
+      const downloadPath = `${RNFS.DownloadDirectoryPath}/${fileName}.pdf`;
       const options = {
         html: htmlContent,
-        fileName: `MODUCARE_${Info?.name}_${resultData?.date}`, // PDF 파일 이름
+        fileName: fileName, // PDF 파일 이름
         directory: 'Download', // 파일이 저장될 디렉토리 (기본값은 documents)
+        filePath: downloadPath,
       };
 
       // PDF 생성
@@ -397,9 +402,7 @@ const DiagnosisResult = ({
         </View>
         <View style={styles.careArea}>
           <CustomText label="MODU가 추천하는 관리비결" size={20} />
-          <Text style={styles.careText}>
-            {resultData?.manageComment || careText}
-          </Text>
+          <Text style={styles.careText}>{resultData?.manageComment}</Text>
         </View>
         <View style={styles.BtnArea}>
           <CustomButtom
@@ -411,10 +414,24 @@ const DiagnosisResult = ({
               })
             }
           />
-          <CustomButtom label="두피 검진 문서 생성" onPress={generatePDF} />
+          <CustomButtom
+            label="두피 검진 문서 생성"
+            onPress={() => {
+              generatePDF();
+              showPopup({option: 'confirmMark', content: '문서 생성 완료!'});
+            }}
+          />
           <CustomButtom
             label="메인으로"
             onPress={() => navigation.navigate('bottomNavigate')}
+          />
+          <PopupModal
+            visible={visible}
+            option={option}
+            onClose={() => {
+              hidePopup();
+            }}
+            content={content}
           />
         </View>
       </ScrollView>
