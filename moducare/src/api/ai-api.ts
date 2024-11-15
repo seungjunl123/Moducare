@@ -40,10 +40,8 @@ const getPick = async (
   console.log('result', result);
   try {
     const {data} = await axiosInstance.post(`product/recommend`, {
-      params: {
-        headType,
-        result,
-      },
+      result,
+      headType,
     });
 
     console.log('추천 데이터', data);

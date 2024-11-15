@@ -43,7 +43,9 @@ const PopupModal = ({visible, onClose, content, option}: PopupModalProps) => {
             style={styles.confirmMark}
           />
           <CustomText label={content} />
-          <CustomButton label="확인" onPress={handleClose} size="small" />
+          {option !== 'Loading' && (
+            <CustomButton label="확인" onPress={handleClose} size="small" />
+          )}
         </View>
       </View>
     </Modal>

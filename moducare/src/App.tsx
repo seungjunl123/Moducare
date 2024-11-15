@@ -8,6 +8,7 @@ import pushNoti from './util/pushNoti';
 import notifee, {AuthorizationStatus, EventType} from '@notifee/react-native';
 import {setEncryptStorage} from './util';
 import {Linking} from 'react-native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 const DEEPLINK_PREFIX_URL = ['moducare://'];
 
@@ -83,10 +84,12 @@ export default function App() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClinet}>
-      <NavigationContainer linking={linking}>
-        <RootNavigate />
-      </NavigationContainer>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <QueryClientProvider client={queryClinet}>
+        <NavigationContainer linking={linking}>
+          <RootNavigate />
+        </NavigationContainer>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
