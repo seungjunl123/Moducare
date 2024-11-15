@@ -1,22 +1,13 @@
 import React, {useState} from 'react';
-import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../constants/colors';
 import FeedNav from '../../Components/Common/FeedNav';
 import FeedJoinNav from '../../Components/Common/FeedJoinNav';
 import FeedItem from '../../Components/Challenge/FeedItem';
-import {
-  FeedType,
-  getFeed,
-  postJoinChallenge,
-  postOutChallenge,
-} from '../../api/challenge-api';
+import {postJoinChallenge, postOutChallenge} from '../../api/challenge-api';
 import CustomText from '../../Components/Common/CustomText';
-import {
-  RouteProp,
-  useFocusEffect,
-  useNavigation,
-} from '@react-navigation/native';
+import {RouteProp, useNavigation} from '@react-navigation/native';
 import {getEncryptStorage} from '../../util';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../navigate/StackNavigate';
@@ -33,7 +24,6 @@ const ChallengeFeedPage = ({
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {id, title, type} = route.params;
   const [isType, setIsType] = useState(type);
-  const [feeds, setFeeds] = useState<FeedType[] | []>([]);
   const {visible, option, content, showPopup, hidePopup} = usePopup();
 
   const handleWrite = async () => {
@@ -56,16 +46,6 @@ const ChallengeFeedPage = ({
     await postJoinChallenge(id);
     setIsType('myChallenge');
   };
-  // const getFeeds = async () => {
-  //   const data = await getFeed(id);
-  //   setFeeds(data);
-  // };
-
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     getFeeds();
-  //   }, []),
-  // );
 
   const {
     data: posts,
@@ -78,7 +58,7 @@ const ChallengeFeedPage = ({
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    await refetch;
+    await refetch();
     setIsRefreshing(false);
   };
 
@@ -109,34 +89,9 @@ const ChallengeFeedPage = ({
       ) : (
         <FeedJoinNav onJoin={handleJoin} />
       )}
-      {/* <ScrollView style={styles.FeedList} showsVerticalScrollIndicator={false}>
-        {feeds.length !== 0 ? (
-          feeds.map((data, index) => (
-            <FeedItem
-              key={index}
-              feedId={data.feedId}
-              feedUserName={data.feedUserName}
-              content={data.content}
-              feedRegDate={data.feedRegDate}
-              uri={data.feedImg}
-              like={data.like}
-              isLiked={data.isLiked}
-            />
-          ))
-        ) : (
-          <View style={styles.nullList}>
-            <CustomText label="인증 피드가 존재하지 않아요" size={18} />
-            <CustomText
-              label="다른 사람들보다 먼저 인증피드를 올려보세요!"
-              size={18}
-            />
-          </View>
-        )}
-      </ScrollView> */}
       {posts?.pages.flat().length !== 0 ? (
         <FlatList
           data={posts?.pages.flat()}
-          // style={styles.FeedList}
           renderItem={({item}) => (
             <FeedItem
               feedId={item.feedId}
@@ -152,7 +107,7 @@ const ChallengeFeedPage = ({
           numColumns={1}
           contentContainerStyle={styles.FeedList}
           onEndReached={handleEndReached}
-          onEndReachedThreshold={0.5}
+          onEndReachedThreshold={0.8}
           refreshing={isRefreshing}
           onRefresh={handleRefresh}
           scrollIndicatorInsets={{right: 1}}
@@ -187,7 +142,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   FeedList: {
-    flex: 1,
+    padding: 5,
   },
   nullList: {
     justifyContent: 'center',

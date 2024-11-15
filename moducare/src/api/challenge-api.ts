@@ -1,4 +1,3 @@
-import {NullCheckBoxList} from 'aws-sdk/clients/glue';
 import {setEncryptStorage} from '../util';
 import axiosInstance from '../util/axios';
 
@@ -98,13 +97,12 @@ type FeedType = {
 
 const getFeed = async (
   challengeId: number,
-  page: number = 1,
+  page: number,
 ): Promise<FeedType[]> => {
   try {
     const {data} = await axiosInstance.get(
       `/challenge-feeds?cid=${challengeId}&page=${page}`,
     );
-
     return data;
   } catch (error) {
     console.log('피드가져오기 에러', error);

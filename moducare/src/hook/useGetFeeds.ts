@@ -21,10 +21,10 @@ const useGetFeeds = (
   return useInfiniteQuery({
     queryFn: ({pageParam}) => getFeed(challengeId, pageParam),
     queryKey: ['challengeFeed', challengeId],
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, allPAges) => {
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
       const lastPost = lastPage[lastPage.length - 1];
-      return lastPost ? allPAges.length + 1 : undefined;
+      return lastPost ? allPages.length : undefined;
     },
     ...queryOptions,
   });
