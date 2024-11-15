@@ -14,6 +14,6 @@ COPY conf/default.conf /etc/nginx/conf/default.conf
 
 COPY --from=build /moducare/build /usr/share/nginx/html
 
-EXPOSE 3000
+EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
