@@ -15,7 +15,7 @@ import java.io.IOException;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${firebase.config.path}")
+    @Value("${GOOGLE_APPLICATION_CREDENTIALS}")
     private String firebaseConfigPath;
     private FirebaseApp firebaseApp;
 
