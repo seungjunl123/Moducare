@@ -44,12 +44,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        String path = request.getServletPath();
-//        logger.info("Request path: {}", path);
+        String path = request.getServletPath();
+        logger.info("Request path: {}", path);
 
         // 요청 경로 확인
         String requestURI = request.getRequestURI();
-        logger.info("Request URI: " + requestURI);
+//        logger.info("Request URI: " + requestURI);
         // 로그인 또는 토큰 재발급 요청이면 토큰 검증을 하지 않음
         if (requestURI.equals("/api/members/login/kakao")
                 || requestURI.equals("/api/members/login/naver")
