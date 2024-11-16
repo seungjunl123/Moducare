@@ -22,6 +22,36 @@ const DiagnosisIOT = ({navigation}) => {
     }
   };
 
+  const handleAiDiagnosis = async () => {
+    //검사진행
+    const formData = new FormData();
+    formData.append('file', {
+      uri: capturedImage, // 사진 URI
+      type: 'image/jpeg', // 이미지 파일 타입 (예시로 jpeg 사용)
+      name: 'photo.jpg', // 파일명
+    });
+    navigation.navigate('aiLoading', {
+      file: formData,
+    });
+    // showPopup({
+    //   option: 'Loading',
+    //   content: '검사 진행중',
+    // });
+    // try {
+    //   console.log('시작하기');
+    //   const res = await mutateAsync(formData);
+    //   setRes(res);
+    //   if (res.comparison) {
+    //     showPopup({
+    //       option: 'confirmMark',
+    //       content: '검사 완료!',
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  };
+
   const handleImageDelete = () => {
     setCapturedImage(null);
   };
@@ -44,7 +74,7 @@ const DiagnosisIOT = ({navigation}) => {
             <CustomButtom
               label="검사 진행"
               size="small"
-              onPress={() => navigation.navigate('aiResult')}
+              onPress={handleAiDiagnosis}
             />
           </View>
         </>
