@@ -38,13 +38,22 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
 
     // 스프링 시큐리티 기능 비활성화
     // 스프링 시큐리티의 모든 기능을 사용하지 않게 설정 = 인증, 인가 서비스를 모든 곳에 적용하진 않는다
+//    @Bean
+//    public WebSecurityCustomizer configure() {
+//        // 정적 리소스만 스프링 시큐리티 사용을 비활성화
+//        return (web) -> web.ignoring()
+////                .requestMatchers(toH2Console())
+//                .requestMatchers(new AntPathRequestMatcher("/static/**"));
+//        // static 하위 경로에 있는 리소스와 h2의 데이터를 확인하는데 사용하는 h2-console 하위 url 대상으로 ignore
+//    }
     @Bean
     public WebSecurityCustomizer configure() {
-        // 정적 리소스만 스프링 시큐리티 사용을 비활성화
         return (web) -> web.ignoring()
-//                .requestMatchers(toH2Console())
-                .requestMatchers(new AntPathRequestMatcher("/static/**"));
-        // static 하위 경로에 있는 리소스와 h2의 데이터를 확인하는데 사용하는 h2-console 하위 url 대상으로 ignore
+                .requestMatchers(
+                        new AntPathRequestMatcher("/static/**"),
+                        new AntPathRequestMatcher("/swagger-ui/**"),
+                        new AntPathRequestMatcher("/v3/api-docs/**")
+                );
     }
 
 
@@ -67,8 +76,7 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
                         new AntPathRequestMatcher("/api/members/logout"),
                         new AntPathRequestMatcher("/swagger-ui.html"),
                         new AntPathRequestMatcher("/swagger-ui/**"),  // Allow access to Swagger UI
-                        new AntPathRequestMatcher("/v3/api-docs/**"),  // OpenAPI 문서 경로 추가
-                        new AntPathRequestMatcher("/v3/api-docs/swagger-config")
+                        new AntPathRequestMatcher("/v3/api-docs/**") // OpenAPI 문서 경로 추가
                 ).permitAll() // 누구나 접근이 가능하게 (/login, /police-login로 요청이 오면 인증,인가 없이도 접근 가능)
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll())

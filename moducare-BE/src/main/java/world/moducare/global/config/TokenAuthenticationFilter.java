@@ -28,14 +28,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String path = request.getServletPath();
+        String path = request.getRequestURI();
+        logger.info("shouldNotFilter: path = " + path);
         return path.startsWith("/v3/api-docs")
                 || path.startsWith("/swagger-ui")
-                ||path.startsWith("/api/swagger-ui")
+                || path.startsWith("/swagger-ui.html")
+                || path.startsWith("/api/swagger-ui")
                 || path.startsWith("/api/v3/api-docs")
                 || path.startsWith("/api/tokens/refresh")
                 || path.startsWith("/api/health-check");
     }
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
