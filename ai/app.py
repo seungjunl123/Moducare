@@ -1,17 +1,19 @@
 import io
 from concurrent.futures import ThreadPoolExecutor
 
-import requests
+import httpx
 import torch
+import uvicorn
 from PIL import Image
-from flask import Flask, request, jsonify
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 from torchvision import transforms
 
-app = Flask(__name__)
+app = FastAPI()
 
 PATH = './scalp_weights/'
 
-print(torch.cuda.is_available(), "cuda" if torch.cuda.is_available() else "cpu")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # 모델 가중치만 불러오기
@@ -27,14 +29,17 @@ models = {
 model7 = torch.load(PATH + 'aram_model7.pt', map_location=device)  # 두피여부
 
 
-# 이미지 전처리 함수
-def preprocess_image(img_url):
-    try:
-        response = requests.get(img_url)
-        response.raise_for_status()  # 요청이 성공했는지 확인
+# 요청 데이터 모델
+class ImageRequest(BaseModel):
+    img: str
+
+
+# 이미지 다운로드
+async def preprocess_image(img_url):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(img_url)
+        response.raise_for_status()
         img = Image.open(io.BytesIO(response.content))
-    except requests.exceptions.RequestException as e:
-        raise ValueError(f"이미지 다운로드에 실패했습니다: {str(e)}")
 
     # 전처리: 이미지 크기 조정 및 텐서로 변환
     transform = transforms.Compose([
@@ -79,23 +84,23 @@ def diagnose_head_type(m1p, m2p, m3p, m4p, m5p, m6p):
     return 8  # 복합성 두피
 
 
-@app.route('/ai', methods=['POST'])
-def menu_res():
+@app.post("/ai")
+async def diagnose_scalp(request: ImageRequest):
     # JSON 요청에서 S3 URL을 받음
-    data = request.get_json()
-    if 'img' not in data:
-        return jsonify({"error": "이미지 URL이 제공되지 않았습니다."}), 400
+    img_url = request.img
 
-    img_url = data['img']
+    if not img_url:
+        raise HTTPException(status_code=400, detail="이미지 URL이 제공되지 않았습니다.")
 
     try:
-        img = preprocess_image(img_url)
+        img = await preprocess_image(img_url)
     except ValueError as e:
-        return jsonify({"error": str(e)}), 500
+        raise HTTPException(status_code=500, detail=str(e))
 
     # 이미지가 두피 이미지인지 확인 (모델7 사용)
     if predict_scalp(img) != 0:
-        return jsonify({"error": "두피 이미지가 아닙니다."}), 400
+        # 두피 이미지가 아닌 경우 400 상태 코드 반환
+        return JSONResponse(status_code=400, content={"error": "두피 이미지가 아닙니다."})
 
     # 병렬로 여러 모델 예측 진행
     with ThreadPoolExecutor() as executor:
@@ -120,13 +125,11 @@ def menu_res():
     # 결과를 JSON 형태로 구성
     result = list(predictions.values())[::-1]  # [탈모, 비듬, 모낭홍반농포, 모낭사이홍반, 피지과다, 미세각질]
 
-    response = {
+    return {
         "result": result,
         "headType": head_type
     }
 
-    return jsonify(response)
-
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=5050)
+    uvicorn.run(app, port=5050)
