@@ -131,7 +131,7 @@ function CustomTabBarButton() {
 export default function BottomNavBar({navigation}: {navigation: any}) {
   return (
     <Tab.Navigator
-      initialRouteName="Main"
+      initialRouteName="홈"
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: '#B9834E',
@@ -158,6 +158,7 @@ export default function BottomNavBar({navigation}: {navigation: any}) {
         component={ChallengeMainPage}
         options={{
           tabBarIcon: ChallengeIcon,
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen
@@ -179,6 +180,7 @@ export default function BottomNavBar({navigation}: {navigation: any}) {
         component={ReportNav}
         options={{
           tabBarIcon: ReportIcon,
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen
