@@ -50,14 +50,15 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
                 .requestMatchers(
-                        new AntPathRequestMatcher("/static/**"),
-                        new AntPathRequestMatcher("/swagger-ui/**"),
-                        new AntPathRequestMatcher("/v3/api-docs/**"),
-                        new AntPathRequestMatcher("/api/swagger-ui/**"),
-                        new AntPathRequestMatcher("/api/v3/api-docs/**"),
-                        new AntPathRequestMatcher("/swagger-resources/**")
+                        "/static/**",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html",
+                        "/webjars/**"
                 );
     }
+
 
 
     // 특정 HTTP 요청에 대한 웹 기반 보안 구성
@@ -79,6 +80,8 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
                         new AntPathRequestMatcher("/api/members/logout"),
                         new AntPathRequestMatcher("/swagger-ui.html"),
                         new AntPathRequestMatcher("/swagger-ui/**"),  // Allow access to Swagger UI
+                        new AntPathRequestMatcher("/swagger-resources/**"),
+                        new AntPathRequestMatcher("/webjars/**"),
                         new AntPathRequestMatcher("/v3/api-docs/**") // OpenAPI 문서 경로 추가
                 ).permitAll() // 누구나 접근이 가능하게 (/login, /police-login로 요청이 오면 인증,인가 없이도 접근 가능)
                 .requestMatchers("/api/**").authenticated()
