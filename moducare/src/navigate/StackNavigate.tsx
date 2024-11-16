@@ -102,14 +102,14 @@ const StackNavigate = () => {
         options={{
           title: 'AI 두피 진단 결과지',
           headerTitleAlign: 'center',
-          headerBackImage: () => <PrevIcon />,
+          headerLeft: null,
         }}
       />
       <Stack.Screen
         name="aiPick"
         component={DiagnosisPick}
         options={{
-          title: 'AI 두피 진단 결과지',
+          title: 'AI 상품 추천',
           headerTitleAlign: 'center',
           headerBackImage: () => <PrevIcon />,
         }}

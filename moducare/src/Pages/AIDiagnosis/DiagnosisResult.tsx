@@ -1,10 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {
+  BackHandler,
   Image,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  ToastAndroid,
   View,
 } from 'react-native';
 import {colors} from '../../constants/colors';
@@ -13,7 +16,7 @@ import CustomText from '../../Components/Common/CustomText';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import {BarChart, barDataItem} from 'react-native-gifted-charts';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import RNFS from 'react-native-fs';
+import RNFS, {copyFile, DownloadDirectoryPath} from 'react-native-fs';
 import {RootStackParamList} from '../../navigate/StackNavigate';
 import {
   NavigationProp,
@@ -27,9 +30,6 @@ import {getEncryptStorage} from '../../util';
 import PopupModal from '../../Components/Common/PopupModal';
 import {usePopup} from '../../hook/usePopup';
 import usePermission from '../../hook/usePermission';
-
-import marked from 'marked'; // markdown을 HTML로 변환하는 라이브러리
-import RenderHtml from 'react-native-render-html'; // HTML을 렌더링하는 라이브러리
 
 type userInfo = {
   name: string;
@@ -90,6 +90,39 @@ const DiagnosisResult = ({
     setHeadType(resultData.headType);
     setComparisonText(resultData.comparison);
   }, [resultData]);
+
+  const state = navigation.getState(); // 현재 스택 상태
+  const previousScreen = state.routes[state.index - 1].name; // 이전 화면 정보
+  useEffect(() => {
+    if (previousScreen.toString() === 'aiLoading') {
+      let backPress = 0;
+      const backAction = () => {
+        if (backPress < 1) {
+          backPress++;
+          ToastAndroid.show(
+            '한번 더 누르시면 앱이 종료됩니다.',
+            ToastAndroid.SHORT,
+          );
+          setTimeout(() => {
+            console.log('어어');
+            backPress = 0;
+          }, 2000);
+          return true;
+        } else {
+          BackHandler.exitApp();
+        }
+        return true; // 기본 동작을 막고 커스텀 동작을 처리
+      };
+
+      // BackHandler 이벤트 리스너 등록
+      BackHandler.addEventListener('hardwareBackPress', backAction);
+
+      // 컴포넌트가 언마운트 될 때 이벤트 리스너 정리
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', backAction);
+      };
+    }
+  }, []);
 
   // pdf
   const htmlContent = `
@@ -336,17 +369,35 @@ const DiagnosisResult = ({
       };
 
       // PDF 생성
-      const file = await RNHTMLtoPDF.convert(options);
+      console.log(options.filePath);
+
+      //
+      const showFile = async () => {
+        const file = await RNHTMLtoPDF.convert(options);
+
+        // 파일이 제대로 생성되었는지 확인
+        if (file.filePath) {
+          console.log('파일 생성 완료:', file.filePath);
+          await copyFile(
+            'file://' + file.filePath, // file:// prefix를 추가
+            `${RNFS.DownloadDirectoryPath}/test.pdf`,
+          );
+          console.log('파일 복사 완료');
+        } else {
+          console.error('파일 생성 실패');
+        }
+      };
+
+      showFile();
+      //
 
       // 생성된 PDF 파일 경로 출력
-      console.log('PDF 파일 경로:', file.filePath);
     } catch (error) {
       console.error('PDF 생성 오류:', error);
     }
   };
   //
 
-  const htmlContent = marked(resultData?.manageComment);
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -409,10 +460,6 @@ const DiagnosisResult = ({
         <View style={styles.careArea}>
           <CustomText label="MODU가 추천하는 관리비결" size={20} />
           <Text style={styles.careText}>{resultData?.manageComment}</Text>
-          <RenderHtml
-            contentWidth={375} // 화면의 너비를 설정
-            source={{html: htmlContent}}
-          />
         </View>
         <View style={styles.BtnArea}>
           <CustomButtom
@@ -431,10 +478,12 @@ const DiagnosisResult = ({
               showPopup({option: 'confirmMark', content: '문서 생성 완료!'});
             }}
           />
-          <CustomButtom
-            label="메인으로"
-            onPress={() => navigation.navigate('bottomNavigate')}
-          />
+          {previousScreen.toString() === 'aiLoading' && (
+            <CustomButtom
+              label="메인으로"
+              onPress={() => navigation.navigate('bottomNavigate')}
+            />
+          )}
           <PopupModal
             visible={visible}
             option={option}
