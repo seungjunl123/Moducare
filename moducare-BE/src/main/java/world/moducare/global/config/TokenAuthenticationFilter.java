@@ -36,7 +36,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 || path.startsWith("/api/swagger-ui")
                 || path.startsWith("/api/v3/api-docs")
                 || path.startsWith("/api/tokens/refresh")
-                || path.startsWith("/api/health-check");
+                || path.startsWith("/api/health-check")
+                || path.startsWith("/swagger-resources")
+                || path.startsWith("/webjars/");
     }
 
 

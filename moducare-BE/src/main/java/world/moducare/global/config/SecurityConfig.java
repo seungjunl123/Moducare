@@ -52,7 +52,10 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
                 .requestMatchers(
                         new AntPathRequestMatcher("/static/**"),
                         new AntPathRequestMatcher("/swagger-ui/**"),
-                        new AntPathRequestMatcher("/v3/api-docs/**")
+                        new AntPathRequestMatcher("/v3/api-docs/**"),
+                        new AntPathRequestMatcher("/api/swagger-ui/**"),
+                        new AntPathRequestMatcher("/api/v3/api-docs/**"),
+                        new AntPathRequestMatcher("/swagger-resources/**")
                 );
     }
 
