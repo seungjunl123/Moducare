@@ -16,6 +16,9 @@ import org.springframework.web.filter.ForwardedHeaderFilter;
 @Configuration
 public class SwaggerConfig {
 
+    @Value("${BASE_URL}")
+    private String BASE_URL;
+
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
@@ -31,9 +34,9 @@ public class SwaggerConfig {
                         )
                 )
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-//                .servers(List.of(
-//                        new Server().url(BASE_URL).description("SSAFY server")
-//                ))
+                .servers(List.of(
+                        new Server().url(BASE_URL).description("SSAFY server")
+                ))
                 .info(new Info().title("MODU CARE Swagger")
                         .description("탈모 두피 케어 플랫폼 MODU REST API")
                         .version("3.0.3"));
