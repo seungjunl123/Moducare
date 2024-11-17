@@ -37,7 +37,7 @@ DevOps
 
 
 IOT   
-<img src="https://img.shields.io/badge/raspberrypi-A22846?style=for-the-badge&logo=raspberrypi&logoColor=white"><img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=Python&logoColor=white">
+<img src="https://img.shields.io/badge/raspberrypi-A22846?style=for-the-badge&logo=raspberrypi&logoColor=white"> <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=Python&logoColor=white">
 
 
 
@@ -58,7 +58,7 @@ AI
 |                  FrontEnd                  |                   FrontEnd                    |                  BackEnd                   |                  BackEnd                   |                  AI                        |                  Infra                         |
 | :-----------------------------------------: | :-------------------------------------------: | :----------------------------------------: | :----------------------------------------: |:----------------------------------------: |:----------------------------------------: |
 | <img src="https://avatars.githubusercontent.com/u/89523520?v=4" width="100px;" alt=""/> | <img src="https://avatars.githubusercontent.com/u/89523520?v=4" width="100px;" alt=""/> | <img src="https://avatars.githubusercontent.com/u/103016453?v=4" width="100px;" alt=""/> | <img src="https://avatars.githubusercontent.com/u/38430900?v=4" width="100px;" alt=""/> | <img src="https://avatars.githubusercontent.com/u/89523520?v=4" width="100px;" alt=""/> |<img src="https://avatars.githubusercontent.com/u/89523520?v=4" width="100px;" alt=""/> |
-|     [😎 오진영](https://github.com/JJJJ55)     |     [😎 오승준](https://github.com/JJJJ55)     |     [👑 박민지](https://github.com/coenfflOo)     |     [😎 유현진](https://github.com/1hyunjin)     |[😎 서두나](https://github.com/JJJJ55)     |[😎 최태민](https://github.com/JJJJ55)     |
+|     😎 오진영     |     😎 오승준     |     👑 박민지     |     😎 유현진     |😎 서두나     |😎 최태민     |
 
 
 ## 아키텍쳐 :
