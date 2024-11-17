@@ -236,13 +236,14 @@ export default function BottomNavBar({navigation}: {navigation: any}) {
         headerShown: false,
         tabBarActiveTintColor: '#B9834E',
         tabBarStyle: {
-          borderTopWidth: 0,
+          borderTopWidth: 1,
           shadowColor: 'transparent',
           height: HEIGHT * 0.07,
           position: 'absolute',
+          paddingTop: 5,
         },
         tabBarLabelStyle: {
-          paddingBottom: 12,
+          paddingBottom: 8,
           fontSize: 12,
         },
       }}>
