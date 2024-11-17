@@ -15,17 +15,17 @@ const Loading = ({route, navigation}) => {
   const [isFinish, setFinish] = useState(false);
   const [data, setData] = useState<ResponseAiDiagnosis>();
   const {mutateAsync} = useAiDiagnosisMutation();
-  const {file} = route.params;
+  const {file, type} = route.params;
 
   const postAiData = async () => {
     console.log('넘어온파일', file);
-    const res = await mutateAsync(file);
-    setData(res);
-    // navigation.navigate('aiResult', {
-    //   type: 'diagnosis',
-    //   diagnosisResult: res,
-    // });
-    setFinish(true);
+    try {
+      const res = await mutateAsync(file);
+      setData(res);
+      setFinish(true);
+    } catch (error) {
+      navigation.navigate('aiFail', {type});
+    }
   };
 
   const handleMovePage = () => {
@@ -48,7 +48,6 @@ const Loading = ({route, navigation}) => {
             ToastAndroid.SHORT,
           );
           setTimeout(() => {
-            console.log('어어');
             backPress = 0;
           }, 2000);
           return true;
