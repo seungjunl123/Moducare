@@ -64,9 +64,9 @@ export default function WeatherInfo() {
             <SvgIconAtom name="Main_temparature" size={70} />
             <CustomText
               label={
-                weatherData?.weatherDto?.temperature
+                weatherData?.weatherDto?.temperature !== undefined
                   ? `${weatherData?.weatherDto?.temperature}℃`
-                  : ''
+                  : '로딩중'
               }
               size={20}
             />
@@ -75,9 +75,9 @@ export default function WeatherInfo() {
             <SvgIconAtom name="Main_air" size={70} />
             <CustomText
               label={
-                weatherData?.weatherDto?.airCondition
+                weatherData?.weatherDto?.airCondition !== undefined
                   ? handleAirPhrase(weatherData?.weatherDto?.airCondition)
-                  : ''
+                  : '로딩중'
               }
               size={20}
             />
@@ -86,9 +86,9 @@ export default function WeatherInfo() {
             <SvgIconAtom name="Main_UV" size={70} />
             <CustomText
               label={
-                weatherData?.weatherDto?.uvCondition
+                weatherData?.weatherDto?.uvCondition !== undefined
                   ? handleUvPhrase(weatherData?.weatherDto?.uvCondition)
-                  : ''
+                  : '로딩중'
               }
               size={20}
             />

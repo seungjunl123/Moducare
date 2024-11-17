@@ -16,7 +16,10 @@ const DiagnosisPick = ({
 }) => {
   const [userName, setUserName] = useState('');
   const {type, result} = route.params;
-  const {data: recommendDataList} = useProductListQuery(type, result);
+  const {data: recommendDataList, isPending} = useProductListQuery(
+    type,
+    result,
+  );
 
   const [page, setPage] = React.useState(10);
 
@@ -52,25 +55,31 @@ const DiagnosisPick = ({
             <CustomText size={20} label="상품들을 소개시켜 드릴게요." />
           </View>
         </View>
-        <View style={styles.ListArea}>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {recommendDataList?.slice(0, page).map((item, index) => (
-              <CareItem
-                key={index}
-                productImg={item.productImg}
-                productName={item.productName}
-                link={item.link}
-                price={item.price}
-                productType={item.productType}
-              />
-            ))}
-            {recommendDataList?.length !== 0 && (
-              <Text style={styles.getListArea} onPress={handlePage}>
-                더보기
-              </Text>
-            )}
-          </ScrollView>
-        </View>
+        {isPending ? (
+          <View style={[styles.ListArea, {alignItems: 'center'}]}>
+            <CustomText label="추천 제품을 불러오는 중이에요!" />
+          </View>
+        ) : (
+          <View style={styles.ListArea}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {recommendDataList?.slice(0, page).map((item, index) => (
+                <CareItem
+                  key={index}
+                  productImg={item.productImg}
+                  productName={item.productName}
+                  link={item.link}
+                  price={item.price}
+                  productType={item.productType}
+                />
+              ))}
+              {recommendDataList?.length !== 0 && (
+                <Text style={styles.getListArea} onPress={handlePage}>
+                  더보기
+                </Text>
+              )}
+            </ScrollView>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -81,6 +90,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.WHITE,
     padding: 20,
+    paddingBottom: 0,
   },
   mainArea: {
     flex: 1,
