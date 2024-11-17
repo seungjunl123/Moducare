@@ -2,7 +2,6 @@ package world.moducare.domain.product.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import world.moducare.domain.api.gpt.GptService;
 import world.moducare.domain.api.gpt.PromptService;
@@ -18,16 +17,15 @@ public class UserDiagnosisService {
 
     public float[] getUserEmbedding(AiResultDto aiResultDto) throws JsonProcessingException {
         // 진단 결과를 텍스트로 결합
-        String diagnosisText = aiResultDto.headTypeToString()+"\n";
+        String diagnosisText = aiResultDto.headTypeToString() + "\n";
         for (int i = 0; i < 6; i++) {
-            if (aiResultDto.getResult()[i]>=1){
-                diagnosisText = diagnosisText + aiResultDto.valueOfResult(i) + ":" + aiResultDto.resultToString(i)+"\n";
+            if (aiResultDto.getResult()[i] >= 1) {
+                diagnosisText = diagnosisText + aiResultDto.valueOfResult(i) + ":" + aiResultDto.resultToString(i) + "\n";
             }
         }
 
         String prompt = promptService.makeRecommendPrompt(diagnosisText);
         String answer = gptService.chat(prompt);
-        System.out.println(answer);
 
         // 벡터화
         return embeddingService.getEmbedding(answer);

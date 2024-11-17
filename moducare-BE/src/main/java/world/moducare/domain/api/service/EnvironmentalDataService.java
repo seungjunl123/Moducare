@@ -82,6 +82,9 @@ public class EnvironmentalDataService {
             if (location.length < 2) continue;
             WeatherRequestDto requestDto = new WeatherRequestDto(location[0], location[1]);
 
+            // Redis에서 해당 키 삭제
+            redisTemplate.delete(key);
+
             // API 호출 후 캐시에 업데이트
             WeatherResponseDto updatedData = getEnvironmentalData(requestDto);
             if (updatedData != null) {

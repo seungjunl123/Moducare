@@ -25,7 +25,7 @@ public class TokenProvider {
 
     public String generateMemberToken(Member member, Duration expiredAt) {
         Date now = new Date();
-        return makeToken(new Date(now.getTime()+expiredAt.toMillis()), member.getEmail(), member.getId());
+        return makeToken(new Date(now.getTime() + expiredAt.toMillis()), member.getEmail(), member.getId());
     }
 
     // JWT 토큰 생성 메서드
@@ -39,7 +39,7 @@ public class TokenProvider {
                 .setIssuedAt(now) // 내용 iat 발급일시 : 현재 시간
                 .setExpiration(expiry) // 내용 exp 만료 일시 : expiry 멤버 변숫값
                 .setSubject(email) // 내용 sub 토큰 제목 : 유저의 이메일
-                .claim("id",id) // 클레임 id : 유저 ID
+                .claim("id", id) // 클레임 id : 유저 ID
                 // 서명 : 비밀값과 함께 해시값을 HS256 방식으로 암호화
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                 .compact();

@@ -29,10 +29,7 @@ public class EmbeddingService {
     public float[] getEmbedding(String text) throws JsonProcessingException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-//
-//        String requestBody = String.format("{\"text\": \"%s\"}", text);
-//
-//        HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
+
         Map<String, String> payload = new HashMap<>();
         payload.put("text", text);
 

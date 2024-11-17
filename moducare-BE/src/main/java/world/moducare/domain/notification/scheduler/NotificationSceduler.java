@@ -37,10 +37,9 @@ public class NotificationSceduler {
 
             // fcm 토큰 가져오기
             String fcmToken = findMember.getFcmToken();
-            System.out.println("fcmToken: " + fcmToken);
 
             // fcm 토큰이 있는 멤버에게만 푸시 알림 보내기
-            if(fcmToken != null && !fcmToken.isEmpty()) {
+            if (fcmToken != null && !fcmToken.isEmpty()) {
                 // 메시기 보내기
                 boolean isSent = messageService.sendMessage(fcmToken);
                 if (isSent) {

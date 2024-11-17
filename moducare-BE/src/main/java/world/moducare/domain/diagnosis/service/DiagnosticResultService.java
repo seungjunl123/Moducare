@@ -1,6 +1,5 @@
 package world.moducare.domain.diagnosis.service;
 
-import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -9,7 +8,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import world.moducare.domain.api.dto.ChatGPTResponseDTO;
 import world.moducare.domain.api.gpt.GptService;
 import world.moducare.domain.api.gpt.PromptService;
 import world.moducare.domain.diagnosis.dto.AiResultDto;
@@ -21,6 +19,7 @@ import world.moducare.domain.member.entity.Member;
 import world.moducare.global.exception.ErrorCode;
 import world.moducare.global.exception.RestApiException;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -58,7 +57,7 @@ public class DiagnosticResultService {
     }
 
     public DiagnosisRequestDto getDiagnosis(Long diagnosisId, Member member) {
-        DiagnosticResult diagnosticResult = diagnosticResultRepository.findByMemberAndId(member, diagnosisId).orElseThrow(()->new RestApiException(ErrorCode.NOT_FOUND));
+        DiagnosticResult diagnosticResult = diagnosticResultRepository.findByMemberAndId(member, diagnosisId).orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
         int[] result = new int[6];
         result[0] = diagnosticResult.getHairLoss();
         result[1] = diagnosticResult.getDandruff();
@@ -157,8 +156,7 @@ public class DiagnosticResultService {
             // 결과 반환
             return response.getBody();
         } catch (Exception e) {
-            // 에러 핸들링
-            throw new RuntimeException("AI 서버와 통신 중 오류 발생: " + e.getMessage());
+            throw new RestApiException(ErrorCode.BAD_REQUEST);
         }
     }
 }

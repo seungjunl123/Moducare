@@ -1,6 +1,5 @@
 package world.moducare.domain.challengefeed.service;
 
-import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,12 +15,12 @@ import world.moducare.global.exception.ErrorCode;
 import world.moducare.global.exception.RestApiException;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +39,7 @@ public class ChallengeFeedService {
         boolean exists = challengeFeedRepository.existsByChallengeAndMemberAndToday(member.getId(), challengeId, LocalDate.now());
 
         // 중복된 경우 예외 발생
-        if(exists){
+        if (exists) {
             throw new RestApiException(ErrorCode.CONFLICT);
         }
 
@@ -59,13 +58,12 @@ public class ChallengeFeedService {
         Challenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
-        // Set pagination for the requested page with a fixed size of 100 items
         Pageable pageable = PageRequest.of(page, 10);
         List<ChallengeFeed> challengeFeeds = challengeFeedRepository
                 .findAllByChallengeOrderByCreatedAtDesc(challenge, pageable)
                 .orElse(null);
 
-        if(challengeFeeds == null){
+        if (challengeFeeds == null) {
             return new ArrayList<>();
         }
 

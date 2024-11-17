@@ -36,10 +36,8 @@ public class UvApiService {
 
     private final RegionCodeRepository regionCodeRepository;
 
-//    @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 5, backoff = @Backoff(delay = 500))
     @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 10, backoff = @Backoff(delay = 100))
     public CompletableFuture<Integer> callUvApi(WeatherRequestDto weatherRequestDto) {
-        System.out.println("try uv");
         return CompletableFuture.supplyAsync(() -> {
             try {
                 String sidoName = weatherRequestDto.getSido();
@@ -64,12 +62,11 @@ public class UvApiService {
                 // URI 생성 시 인코딩되지 않은 serviceKey를 포함
                 URI uri = URI.create(uriComponents.toUriString().replace("serviceKey=" + URLEncoder.encode(UV_KEY, "UTF-8"), "serviceKey=" + UV_KEY));
 
-                System.out.println("UV Request URI: " + uri);
-
                 // API 호출
                 RestTemplate restTemplate = new RestTemplate();
                 ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
-// JSON 응답 확인 및 데이터 파싱
+
+                // JSON 응답 확인 및 데이터 파싱
                 if (response.getBody() == null || response.getBody().isEmpty()) {
                     throw new DataNotFoundException("Empty JSON response");
                 }

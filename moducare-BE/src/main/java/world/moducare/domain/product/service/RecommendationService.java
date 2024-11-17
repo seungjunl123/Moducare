@@ -4,20 +4,21 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.CountRequest;
 import co.elastic.clients.elasticsearch.core.CountResponse;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import world.moducare.domain.product.dto.RecommendDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
-import org.springframework.stereotype.Service;
 import org.apache.http.HttpHost;
+import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
+import org.springframework.stereotype.Service;
+import world.moducare.domain.product.dto.RecommendDto;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,8 +41,10 @@ public class RecommendationService {
             return 0;
         }
     }
+
     /**
      * 사용자 임베딩을 기반으로 제품 추천 목록을 반환하는 메소드
+     *
      * @param userEmbedding 사용자 임베딩 벡터
      * @return 추천 제품 리스트
      */
@@ -49,7 +52,7 @@ public class RecommendationService {
         try {
             // RestClient 생성
             RestClient restClient = RestClient.builder(
-                    new HttpHost("k11b203.p.ssafy.io", 9200, "http"))
+                            new HttpHost("k11b203.p.ssafy.io", 9200, "http"))
 //                            new HttpHost("localhost", 9200, "http"))
                     .build();
 

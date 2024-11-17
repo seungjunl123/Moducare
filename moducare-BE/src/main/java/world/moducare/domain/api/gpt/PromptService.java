@@ -9,6 +9,7 @@ import world.moducare.domain.diagnosis.dto.AiResultDto;
 @RequiredArgsConstructor
 public class PromptService {
     private final String[] dustFormat = {"좋음", "보통", "나쁨", "매우나쁨"};
+
     public String makeEnvironmentPrompt(WeatherResponseDto weatherResponseDto) {
         String dust = dustFormat[weatherResponseDto.getAirCondition()];
         int temperature = weatherResponseDto.getTemperature();
@@ -21,8 +22,8 @@ public class PromptService {
         };
 
         return String.format("현재 대기질 지수는 %s, 기온은 %d도, 자외선 지수는 %s입니다. 이에 따라 적절한 탈모, 두피 관리 및 예방 조언을 제공해 주세요. 답변은 반드시 다음 형식을 따르세요: \\n" +
-                "오늘은 {날씨에 대한 설명}! \\n"+
-                "{오늘 날씨에 따른 두피 관리 및 예방 조언}을 하는건 어떨까요? \\n"+
+                "오늘은 {날씨에 대한 설명}! \\n" +
+                "{오늘 날씨에 따른 두피 관리 및 예방 조언}을 하는건 어떨까요? \\n" +
                 "각 문장 당 30자 이내로 두 문장의 형식으로 답변을 해주어야합니다. 반드시 두 문장을 넘어가서는 안됩니다.", dust, temperature, uv);
 
     }

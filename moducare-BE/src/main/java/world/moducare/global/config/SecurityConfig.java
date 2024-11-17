@@ -38,14 +38,6 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
 
     // 스프링 시큐리티 기능 비활성화
     // 스프링 시큐리티의 모든 기능을 사용하지 않게 설정 = 인증, 인가 서비스를 모든 곳에 적용하진 않는다
-//    @Bean
-//    public WebSecurityCustomizer configure() {
-//        // 정적 리소스만 스프링 시큐리티 사용을 비활성화
-//        return (web) -> web.ignoring()
-////                .requestMatchers(toH2Console())
-//                .requestMatchers(new AntPathRequestMatcher("/static/**"));
-//        // static 하위 경로에 있는 리소스와 h2의 데이터를 확인하는데 사용하는 h2-console 하위 url 대상으로 ignore
-//    }
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
@@ -60,34 +52,32 @@ public class SecurityConfig { // 실제 인증을 처리하는 시큐리티 설�
                 );
     }
 
-
-
     // 특정 HTTP 요청에 대한 웹 기반 보안 구성
     // 인증/인가 및 로그인, 로그아웃 관련 설정 가능
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(withDefaults())
-            .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화 -> csrf 공격 방지하기 위해서는 활성화하는 게 좋지만 실습의 편리를 위해 지금은 비활
-            // JWT 필터 추가 (일반 로그인 처리)
-            .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화 -> csrf 공격 방지하기 위해서는 활성화하는 게 좋지만 실습의 편리를 위해 지금은 비활
+                // JWT 필터 추가 (일반 로그인 처리)
+                .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 
 
                 // URL 접근 권한 설정
-            .authorizeRequests(auth -> auth // 특정 경로에 대한 인증, 인가 액세스 설정
-                .requestMatchers( // 특정 요청과 일치하는 url에 대한 액세스 설정
-                        new AntPathRequestMatcher("/api/members/login/**"),
-                        new AntPathRequestMatcher("/api/tokens/refresh"),
-                        new AntPathRequestMatcher("/api/members/logout"),
-                        new AntPathRequestMatcher("/swagger-ui.html"),
-                        new AntPathRequestMatcher("/swagger-ui/**"),  // Allow access to Swagger UI
-                        new AntPathRequestMatcher("/swagger-resources/**"),
-                        new AntPathRequestMatcher("/webjars/**"),
-                        new AntPathRequestMatcher("/api/v3/api-docs/**"),
-        new AntPathRequestMatcher("/v3/api-docs/**") // OpenAPI 문서 경로 추가
-                ).permitAll() // 누구나 접근이 가능하게 (/login, /police-login로 요청이 오면 인증,인가 없이도 접근 가능)
-                .requestMatchers("/api/**").authenticated()
-                .anyRequest().permitAll())
+                .authorizeRequests(auth -> auth // 특정 경로에 대한 인증, 인가 액세스 설정
+                        .requestMatchers( // 특정 요청과 일치하는 url에 대한 액세스 설정
+                                new AntPathRequestMatcher("/api/members/login/**"),
+                                new AntPathRequestMatcher("/api/tokens/refresh"),
+                                new AntPathRequestMatcher("/api/members/logout"),
+                                new AntPathRequestMatcher("/swagger-ui.html"),
+                                new AntPathRequestMatcher("/swagger-ui/**"),  // Allow access to Swagger UI
+                                new AntPathRequestMatcher("/swagger-resources/**"),
+                                new AntPathRequestMatcher("/webjars/**"),
+                                new AntPathRequestMatcher("/api/v3/api-docs/**"),
+                                new AntPathRequestMatcher("/v3/api-docs/**") // OpenAPI 문서 경로 추가
+                        ).permitAll() // 누구나 접근이 가능하게 (/login, /police-login로 요청이 오면 인증,인가 없이도 접근 가능)
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().permitAll())
                 // anyRequest()은 위에서 성정한 url 이외의 요청에 대해서 설정
                 // authenticated()은 별도의 인가는 필요하지 않지만 인증이 성공된 상태여야 접근 가능
                 // /api로 시작하는 url인 경우 401 상태 코드를 반환하도록 예외 처리
