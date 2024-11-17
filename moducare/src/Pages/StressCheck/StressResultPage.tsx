@@ -204,8 +204,8 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
   ResultTitle: {
-    marginTop: 30,
-    marginBottom: HEIGHT * 0.1,
+    marginTop: 20,
+    marginBottom: HEIGHT * 0.05,
   },
   TextContainer: {
     alignItems: 'center',
