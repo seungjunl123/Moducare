@@ -7,7 +7,11 @@ import FeedJoinNav from '../../Components/Common/FeedJoinNav';
 import FeedItem from '../../Components/Challenge/FeedItem';
 import {postJoinChallenge, postOutChallenge} from '../../api/challenge-api';
 import CustomText from '../../Components/Common/CustomText';
-import {RouteProp, useNavigation} from '@react-navigation/native';
+import {
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native';
 import {getEncryptStorage} from '../../util';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../navigate/StackNavigate';
@@ -68,6 +72,12 @@ const ChallengeFeedPage = ({
     }
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, []),
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <Text
@@ -107,7 +117,7 @@ const ChallengeFeedPage = ({
           numColumns={1}
           contentContainerStyle={styles.FeedList}
           onEndReached={handleEndReached}
-          onEndReachedThreshold={0.8}
+          onEndReachedThreshold={2}
           refreshing={isRefreshing}
           onRefresh={handleRefresh}
           scrollIndicatorInsets={{right: 1}}

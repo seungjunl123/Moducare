@@ -33,6 +33,7 @@ import {useFocusEffect} from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import PopupModal from '../../Components/Common/PopupModal';
 import {usePopup} from '../../hook/usePopup';
+import useChallenge from '../../hook/useChallenge';
 
 interface Action {
   title: string;
@@ -80,6 +81,7 @@ export default function ChallengeMainPage({navigation}: {navigation: any}) {
         formData.append('title', title);
         await postCreateChallenge(formData);
         // await postCreateChallenge(title, '');
+        getMyList.refetch();
         const myData = await getMyChallengeList();
         setMyList(myData);
       } else {
@@ -139,18 +141,27 @@ export default function ChallengeMainPage({navigation}: {navigation: any}) {
     setImgConfig(null);
   };
 
-  const getListCompo = async () => {
-    const myData = await getMyChallengeList();
-    const allData = await getChallengeList();
-    setMyList(myData);
-    setAllList(allData);
-  };
+  // const getListCompo = async () => {
+  //   const myData = await getMyChallengeList();
+  //   const allData = await getChallengeList();
+  //   setMyList(myData);
+  //   setAllList(allData);
+  // };
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     console.log('qq');
+  //     getListCompo();
+  //   }, []),
+  // );
+
   useFocusEffect(
     React.useCallback(() => {
-      console.log('qq');
-      getListCompo();
+      getAllList.refetch();
+      getMyList.refetch();
     }, []),
   );
+
+  const {AllLoading, getMyList, getAllList, MyLoading} = useChallenge();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -167,8 +178,23 @@ export default function ChallengeMainPage({navigation}: {navigation: any}) {
             <CustomText label="진행중인 챌린지 목록" size={20} />
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {myList.length !== 0 ? (
+            {/* {myList.length !== 0 ? (
               myList.map((data, index) => (
+                <SmallList
+                  key={index}
+                  title={data.challengeName}
+                  uri={data.challengeImg}
+                  isFinish={data.isDone}
+                  onPress={() => handleMoveFeedPage(data)}
+                />
+              ))
+            ) : (
+              <CustomText label="진행중인 챌린지가 없어요" />
+            )} */}
+            {MyLoading ? (
+              <CustomText label="불러오고 있어요!" />
+            ) : getMyList.data?.length !== 0 ? (
+              getMyList.data?.map((data, index) => (
                 <SmallList
                   key={index}
                   title={data.challengeName}
@@ -190,7 +216,7 @@ export default function ChallengeMainPage({navigation}: {navigation: any}) {
             </Pressable>
           </View>
           <View>
-            {allList.length !== 0 ? (
+            {/* {allList.length !== 0 ? (
               allList.slice(0, 3).map((data, index) => (
                 <SmallList
                   key={index}
@@ -207,6 +233,26 @@ export default function ChallengeMainPage({navigation}: {navigation: any}) {
               ))
             ) : (
               <CustomText label="개설된 챌린지가 없어요" />
+            )} */}
+            {AllLoading ? (
+              <CustomText label="불러오고 있어요!" />
+            ) : getAllList.data?.length !== 0 ? (
+              getAllList.data?.slice(0, 3).map((data, index) => (
+                <SmallList
+                  key={index}
+                  title={data.challengeName}
+                  uri={data.challengeImg}
+                  onPress={() =>
+                    navigation.navigate('challenge_feed', {
+                      id: data.challengeId,
+                      title: data.challengeName,
+                      type: 'allChallenge',
+                    })
+                  }
+                />
+              ))
+            ) : (
+              <CustomText label="진행중인 챌린지가 없어요" />
             )}
           </View>
         </View>
