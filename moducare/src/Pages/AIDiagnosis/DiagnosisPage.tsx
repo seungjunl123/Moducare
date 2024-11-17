@@ -47,7 +47,7 @@ export default function DiagnosisPage({navigation}) {
               보다 정확한 진단이 가능해요
             </Text>
           </View>
-          <SvgIconAtom name="IOT" />
+          <SvgIconAtom name="Modu" />
         </Pressable>
         <Pressable
           style={({pressed}) => [
