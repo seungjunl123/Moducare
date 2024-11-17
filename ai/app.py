@@ -43,7 +43,7 @@ async def preprocess_image(img_url):
 
     # 전처리: 이미지 크기 조정 및 텐서로 변환
     transform = transforms.Compose([
-        transforms.Resize([600, 600], interpolation=transforms.InterpolationMode.BOX),
+        transforms.Resize([600, 600]),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
@@ -60,7 +60,7 @@ def predict_model(model, img):
 # 두피 여부 예측
 def predict_scalp(img):
     output7 = predict_model(model7, img)
-    return output7.argmax(dim=1, keepdim=True).item()
+    return output7.argmax(dim=1).item()
 
 
 # 두피 유형 진단
