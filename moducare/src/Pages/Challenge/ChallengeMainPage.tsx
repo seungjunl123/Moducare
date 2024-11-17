@@ -82,8 +82,8 @@ export default function ChallengeMainPage({navigation}: {navigation: any}) {
         await postCreateChallenge(formData);
         // await postCreateChallenge(title, '');
         getMyList.refetch();
-        const myData = await getMyChallengeList();
-        setMyList(myData);
+        // const myData = await getMyChallengeList();
+        // setMyList(myData);
       } else {
         // await upLoadImgToS3(imgConfig);
         const file = imgConfig.assets[0];
@@ -101,8 +101,9 @@ export default function ChallengeMainPage({navigation}: {navigation: any}) {
         });
 
         await postCreateChallenge(formData);
-        const myData = await getMyChallengeList();
-        setMyList(myData);
+        // const myData = await getMyChallengeList();
+        // setMyList(myData);
+        getMyList.refetch();
       }
       showPopup({
         option: 'confirmMark',
