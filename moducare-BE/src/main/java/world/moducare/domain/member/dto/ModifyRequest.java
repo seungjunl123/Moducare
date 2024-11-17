@@ -7,8 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor // 모든 필드를 인자로 받는 생성자 추가
 public class ModifyRequest {
-    private final String name;
-    private final String birth;
+    private String name;
+    private String birth;
 }

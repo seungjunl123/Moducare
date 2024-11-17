@@ -14,7 +14,7 @@ public class FirebaseMessageService {
 
     private static final Logger log = LoggerFactory.getLogger(FirebaseMessageService.class);
 
-    public boolean sendMessage(String fcmToken){
+    public boolean sendMessage(String fcmToken) {
 
         // 메시지가 전송 여부 플래그
         boolean isMessageSent = false;

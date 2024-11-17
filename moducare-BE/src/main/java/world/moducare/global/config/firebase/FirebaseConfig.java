@@ -22,6 +22,7 @@ public class FirebaseConfig {
         firebaseApp = FirebaseApp.initializeApp(options);
         return firebaseApp;
     }
+
     @Bean
     public FirebaseMessaging initFirebaseMessaging() {
         return FirebaseMessaging.getInstance(firebaseApp);

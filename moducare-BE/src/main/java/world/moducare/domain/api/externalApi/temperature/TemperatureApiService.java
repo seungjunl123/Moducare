@@ -27,7 +27,6 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class TemperatureApiService {
 
-    private static final Logger log = LoggerFactory.getLogger(TemperatureApiService.class);
     @Value("${API_KEY}")
     private String TEMPERATURE_KEY;
     private static final String API_URL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
@@ -53,18 +52,16 @@ public class TemperatureApiService {
     );
 
     String[][] regions = {
-            { "60", "127" }, { "98", "76" }, { "89", "90" },
-            { "55", "124" }, { "58", "74" }, { "67", "100" },
-            { "102", "84" }, { "66", "103" }, { "60", "120" },
-            { "69", "107" }, { "68", "100" }, { "63", "89" },
-            { "51", "67" }, { "87", "106" }, { "91", "77" },
-            { "52", "38" }, { "73", "134" }
+            {"60", "127"}, {"98", "76"}, {"89", "90"},
+            {"55", "124"}, {"58", "74"}, {"67", "100"},
+            {"102", "84"}, {"66", "103"}, {"60", "120"},
+            {"69", "107"}, {"68", "100"}, {"63", "89"},
+            {"51", "67"}, {"87", "106"}, {"91", "77"},
+            {"52", "38"}, {"73", "134"}
     };
-
 
     @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 10, backoff = @Backoff(delay = 100))
     public CompletableFuture<Integer> callTemperatureApi(WeatherRequestDto weatherRequestDto) {
-        System.out.println("try temperature api");
         return CompletableFuture.supplyAsync(() -> {
             try {
                 int index = REGION_MAP.get(weatherRequestDto.getSido());
@@ -96,12 +93,9 @@ public class TemperatureApiService {
                 // URI 생성 시 인코딩되지 않은 serviceKey를 포함
                 URI uri = URI.create(uriComponents.toUriString().replace("serviceKey=" + URLEncoder.encode(TEMPERATURE_KEY, "UTF-8"), "serviceKey=" + TEMPERATURE_KEY));
 
-                System.out.println("Temp Request URI: " + uri);
-
                 // API 호출
                 RestTemplate restTemplate = new RestTemplate();
                 ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
-//                System.out.println("Temp API 응답 본문: " + response.getBody());
 
                 // JSON 응답 확인 및 데이터 파싱
                 if (response.getBody() == null || response.getBody().isEmpty()) {

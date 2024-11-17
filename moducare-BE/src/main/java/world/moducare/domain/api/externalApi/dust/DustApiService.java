@@ -1,8 +1,7 @@
 package world.moducare.domain.api.externalApi.dust;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
@@ -12,15 +11,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import world.moducare.domain.api.dto.WeatherRequestDto;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import world.moducare.global.config.TokenAuthenticationFilter;
 import world.moducare.global.exception.DataNotFoundException;
 
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -29,12 +24,9 @@ public class DustApiService {
     @Value("${API_KEY}")
     private String DUST_KEY;
     private static final String API_URL = "http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/getCtprvnRltmMesureDnsty";
-    private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
 
-    //    @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 5, backoff = @Backoff(delay = 500))
     @Retryable(value = {DataNotFoundException.class, Exception.class}, maxAttempts = 10, backoff = @Backoff(delay = 100))
     public CompletableFuture<Integer> callDustApi(WeatherRequestDto weatherRequestDto) {
-        System.out.println("try dust");
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // 요청 파라미터 설정
@@ -54,12 +46,9 @@ public class DustApiService {
                 // URI 생성 시 인코딩되지 않은 serviceKey를 포함
                 URI uri = URI.create(uriComponents.toUriString().replace("serviceKey=" + URLEncoder.encode(DUST_KEY, "UTF-8"), "serviceKey=" + DUST_KEY));
 
-                System.out.println("Dust Request URI: " + uri);
-
                 // API 호출
                 RestTemplate restTemplate = new RestTemplate();
                 ResponseEntity<String> response = restTemplate.getForEntity(uri, String.class);
-
 
                 // JSON 응답 확인 및 데이터 파싱
                 if (response.getBody() == null || response.getBody().isEmpty()) {

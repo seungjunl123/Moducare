@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository
 public interface DiagnosticResultRepository extends JpaRepository<DiagnosticResult, Long> {
     Optional<List<DiagnosticResult>> findAllByMemberOrderByCreatedAtDesc(Member member);
+
     Optional<DiagnosticResult> findByMemberAndId(Member member, Long diagnosisId);
 
     @Query("SELECT d.average FROM DiagnosticResult d WHERE d.member = :member ORDER BY d.createdAt DESC")

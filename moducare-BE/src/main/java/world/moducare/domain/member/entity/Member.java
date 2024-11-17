@@ -15,6 +15,7 @@ import world.moducare.domain.mychallenge.entity.MyChallenge;
 import world.moducare.domain.notification.entity.Notification;
 import world.moducare.domain.product.entity.LatestProduct;
 import world.moducare.domain.stress.entity.StressResult;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -23,7 +24,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "member")
@@ -55,6 +55,12 @@ public class Member {
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime updatedAt;
+
+    @Builder
+    public Member(String email, String name) {
+        this.email = email;
+        this.name = name;
+    }
 
     @PrePersist
     public void prePersist() {
@@ -97,14 +103,8 @@ public class Member {
         this.fcmToken = newFcmToken;
     }
 
-    public Member updateRefresh(String newRefreshToken) {
+    public void updateRefresh(String newRefreshToken) {
         this.refreshToken = newRefreshToken;
-        return this;
-    }
-
-    public Member updateName(String name) {
-        this.name = name;
-        return this;
     }
 
     public void logout() {
@@ -113,11 +113,11 @@ public class Member {
     }
 
     public void modify(String name, String birth) {
-        this.name=name;
-        this.birth=birth;
+        this.name = name;
+        this.birth = birth;
     }
 
-    public Member findMember(){
+    public Member findMember() {
         return this;
     }
 }

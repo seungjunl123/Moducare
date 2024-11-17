@@ -15,7 +15,6 @@ import java.time.ZonedDateTime;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "favorite")
@@ -28,6 +27,12 @@ public class Favorite {
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime createdAt;
+
+    @Builder
+    public Favorite(ChallengeFeed feed, Member member) {
+        this.feed = feed;
+        this.member = member;
+    }
 
     @PrePersist
     public void prePersist() {
