@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {
   BackHandler,
   Image,
+  Linking,
+  PermissionsAndroid,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -16,7 +18,8 @@ import CustomText from '../../Components/Common/CustomText';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import {BarChart, barDataItem} from 'react-native-gifted-charts';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import RNFS, {copyFile, DownloadDirectoryPath} from 'react-native-fs';
+import ReactNativeBlobUtil from 'react-native-blob-util';
+import {copyFile, DownloadDirectoryPath} from 'react-native-fs';
 import {RootStackParamList} from '../../navigate/StackNavigate';
 import {
   NavigationProp,
@@ -357,46 +360,30 @@ const DiagnosisResult = ({
     </body>
   </html>
 `;
+
   const generatePDF = async () => {
+    const convertdata = resultData?.date.split(' ')[0];
+    console.log(convertdata);
     try {
-      const fileName = `MODUCARE_${Info?.name}_${resultData?.date}`;
-      const downloadPath = `${RNFS.DownloadDirectoryPath}/${fileName}.pdf`;
+      const fileName = `MODUCARE_${Info?.name}_${convertdata}`;
       const options = {
         html: htmlContent,
-        fileName: fileName, // PDF 파일 이름
-        directory: 'Download', // 파일이 저장될 디렉토리 (기본값은 documents)
-        filePath: downloadPath,
+        fileName: `${fileName}`,
+        directory: 'Documents',
       };
 
       // PDF 생성
-      console.log(options.filePath);
+      const file = await RNHTMLtoPDF.convert(options);
 
-      //
-      const showFile = async () => {
-        const file = await RNHTMLtoPDF.convert(options);
-
-        // 파일이 제대로 생성되었는지 확인
-        if (file.filePath) {
-          console.log('파일 생성 완료:', file.filePath);
-          await copyFile(
-            'file://' + file.filePath, // file:// prefix를 추가
-            `${RNFS.DownloadDirectoryPath}/test.pdf`,
-          );
-          console.log('파일 복사 완료');
-        } else {
-          console.error('파일 생성 실패');
-        }
-      };
-
-      showFile();
-      //
-
-      // 생성된 PDF 파일 경로 출력
+      await copyFile(
+        'file://' + file.filePath,
+        `${DownloadDirectoryPath}/${fileName}.pdf`,
+      );
     } catch (error) {
       console.error('PDF 생성 오류:', error);
+      ToastAndroid.show('PDF 생성 중 오류가 발생했습니다.', ToastAndroid.SHORT);
     }
   };
-  //
 
   return (
     <SafeAreaView style={styles.container}>
@@ -478,7 +465,7 @@ const DiagnosisResult = ({
               showPopup({option: 'confirmMark', content: '문서 생성 완료!'});
             }}
           />
-          {previousScreen.toString() === 'aiLoading' && (
+          {previousScreen.toString() !== 'aiLoading' && (
             <CustomButtom
               label="메인으로"
               onPress={() => navigation.navigate('bottomNavigate')}

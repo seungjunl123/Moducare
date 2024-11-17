@@ -1,11 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  Alert,
-  Image,
-} from 'react-native';
+import {View, StyleSheet, Pressable, Dimensions, Image} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../constants/colors';
