@@ -19,6 +19,7 @@ import DiagnosisPick from '../Pages/AIDiagnosis/DiagnosisPick';
 import EditUserPage from '../Pages/User/EditUserPage';
 import StressResultPage from '../Pages/StressCheck/StressResultPage';
 import DiagnosisIOT from '../Pages/AIDiagnosis/DiagnosisIOT';
+import DiagnosisFail from '../Pages/AIDiagnosis/DiagnosisFail';
 
 type RootStackParamList = {
   StressResultPage: {stressScore: number};
@@ -92,6 +93,13 @@ const StackNavigate = () => {
       <Stack.Screen
         name="aiLoading"
         component={Loading}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="aiFail"
+        component={DiagnosisFail}
         options={{
           headerShown: false,
         }}

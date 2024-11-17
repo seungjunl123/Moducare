@@ -19,6 +19,7 @@ import {
 import PopupModal from '../../Components/Common/PopupModal';
 import {usePopup} from '../../hook/usePopup';
 import {getEncryptStorage} from '../../util/encryptedStorage';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -55,6 +56,11 @@ export default function DiaryPage() {
     };
     getInfo();
   }, [isPending]);
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setImgConfig(null);
+  };
 
   const openImageLibrary = async (type: 'line' | 'top') => {
     const images = await launchImageLibrary(options);
@@ -121,6 +127,10 @@ export default function DiaryPage() {
     }
   };
 
+  const handleImgDelete = () => {
+    setImgConfig(null);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -153,17 +163,20 @@ export default function DiaryPage() {
           />
         </View>
         <CustomButton
-          label="오늘의 사진 올리기"
+          label="다이어리 작성하기"
           variant="filled"
           onPress={() => {
             setModalVisible(!modalVisible);
           }}
         />
       </View>
-      <SlideModal visible={modalVisible} onClose={() => setModalVisible(false)}>
+      <SlideModal visible={modalVisible} onClose={handleCloseModal}>
         <View>
           {imgConfig ? (
             <View style={styles.imageContainer}>
+              <Pressable style={styles.closeBtn} onPress={handleImgDelete}>
+                <FontAwesome name="close" size={20} color={'#ffffff'} />
+              </Pressable>
               <Image
                 source={{uri: imgConfig?.assets?.[0].uri}}
                 style={styles.image}
@@ -278,5 +291,17 @@ const styles = StyleSheet.create({
   image: {
     width: 150,
     height: 150,
+  },
+  closeBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.MAIN,
+    position: 'absolute',
+    right: 0,
+    margin: 5,
+    zIndex: 1000,
   },
 });

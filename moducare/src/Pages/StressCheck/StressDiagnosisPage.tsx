@@ -52,9 +52,11 @@ export default function StressDiagnosisPage() {
   const handlePrev = () => {
     if (!scoreStack.current.isEmpty()) {
       let prevScore = scoreStack.current.pop();
+      console.log(QuestionIdx, prevScore, stressScore);
       setStressScore(stressScore - prevScore);
       setQuestionIdx(QuestionIdx - 1);
-      setIsChecked(-1);
+      // setIsChecked(-1);
+      setIsChecked(prevScore);
     }
   };
 

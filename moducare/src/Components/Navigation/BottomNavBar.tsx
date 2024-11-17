@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text,
   Modal,
+  Pressable,
 } from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MainPage from '../../Pages/MainPage';
@@ -29,6 +30,8 @@ import PopupModal from '../Common/PopupModal';
 import LottieView from 'lottie-react-native';
 import CustomText from '../Common/CustomText';
 import {confirmMark, Alert, Loading} from '../../assets/lottie';
+import {colors} from '../../constants';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const Tab = createBottomTabNavigator();
 
@@ -138,6 +141,12 @@ function CustomTabBarButton() {
     setButton(() => withdrawUser);
   };
 
+  const [themeMode, setThemeMode] = useState('light');
+
+  const handleThemePick = (type: string) => {
+    setThemeMode(type);
+  };
+
   return (
     <>
       <TouchableOpacity
@@ -147,7 +156,34 @@ function CustomTabBarButton() {
         <Text style={styles.moreText}>더보기</Text>
       </TouchableOpacity>
       <SlideModal visible={moreOpen} onClose={() => setMoreOpen(!moreOpen)}>
+        <Text style={styles.ThemeTitle}>화면테마</Text>
         <View style={styles.moreModal}>
+          <View style={styles.ThemeArea}>
+            <Pressable
+              style={styles.ThemeBtn}
+              onPress={() => handleThemePick('system')}>
+              <CustomText label="시스템설정" size={18} />
+              {themeMode === 'system' && (
+                <Entypo name="check" size={18} color={colors.NEGATIVE} />
+              )}
+            </Pressable>
+            <Pressable
+              style={styles.ThemeBtn}
+              onPress={() => handleThemePick('light')}>
+              <CustomText label="라이트" size={18} />
+              {themeMode === 'light' && (
+                <Entypo name="check" size={18} color={colors.NEGATIVE} />
+              )}
+            </Pressable>
+            <Pressable
+              style={styles.ThemeBtn}
+              onPress={() => handleThemePick('dark')}>
+              <CustomText label="다크" size={18} />
+              {themeMode === 'dark' && (
+                <Entypo name="check" size={18} color={colors.NEGATIVE} />
+              )}
+            </Pressable>
+          </View>
           <CustomButton
             label="내 정보 수정"
             onPress={() => {
@@ -200,13 +236,14 @@ export default function BottomNavBar({navigation}: {navigation: any}) {
         headerShown: false,
         tabBarActiveTintColor: '#B9834E',
         tabBarStyle: {
-          borderTopWidth: 0,
+          borderTopWidth: 1,
           shadowColor: 'transparent',
           height: HEIGHT * 0.07,
           position: 'absolute',
+          paddingTop: 5,
         },
         tabBarLabelStyle: {
-          paddingBottom: 12,
+          paddingBottom: 8,
           fontSize: 12,
         },
       }}>
@@ -294,7 +331,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   moreModal: {
-    flex: 1,
+    // flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     gap: 15,
@@ -333,5 +370,22 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     gap: 10,
+  },
+  ThemeTitle: {
+    fontSize: 22,
+    color: colors.MAIN,
+    fontFamily: 'Pretendard-ExtraBold',
+    marginBottom: 10,
+  },
+  ThemeArea: {
+    width: '100%',
+    justifyContent: 'space-around',
+    flexDirection: 'row',
+  },
+  ThemeBtn: {
+    width: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
   },
 });
