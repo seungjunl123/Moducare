@@ -30,8 +30,10 @@ const DiagnosisIOT = ({navigation}) => {
       type: 'image/jpeg', // 이미지 파일 타입 (예시로 jpeg 사용)
       name: 'photo.jpg', // 파일명
     });
+    setCapturedImage(null);
     navigation.navigate('aiLoading', {
       file: formData,
+      type: 'IOT',
     });
     // showPopup({
     //   option: 'Loading',

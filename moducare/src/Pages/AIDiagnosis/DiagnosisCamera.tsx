@@ -74,8 +74,11 @@ const DiagnosisCamera = ({navigation}) => {
       type: 'image/jpeg',
       name: 'photo.jpg',
     });
+    setZoom(1);
+    setImageUri(null);
     navigation.navigate('aiLoading', {
       file: formData,
+      type: 'Camera',
     });
   };
 
