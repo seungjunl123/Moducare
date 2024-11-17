@@ -5,6 +5,7 @@ import Carousel from 'react-native-snap-carousel';
 import {Dimensions} from 'react-native';
 import CustomButton from '../Common/CustomButton';
 import CustomText from '../Common/CustomText';
+import {Text} from 'react-native';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -58,6 +59,7 @@ const MyCarousel: React.FC<CarouselProps> = ({isMain, data}) => {
       return (
         <View style={styles.diaryCard}>
           <Image source={diaryItem.img} style={styles.dairyImg} />
+          {diaryItem.img.uri && <CustomText label={diaryItem.regDate} />}
         </View>
       );
     }
@@ -107,12 +109,14 @@ const styles = StyleSheet.create({
   diaryCard: {
     width: WIDTH * 0.6,
     height: HEIGHT * 0.4,
-    marginBottom: 20,
+    marginBottom: 40,
+    alignItems: 'center',
   },
   dairyImg: {
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
+    marginBottom: -20,
   },
   buttonContainer: {
     width: '80%',
