@@ -97,7 +97,7 @@ export default function WeatherInfo() {
         <View style={styles.gptResponse}>
           {isLoading ? (
             <View style={styles.loading}>
-              <CustomText label="로딩 중...😏" size={24} variant="regular" />
+              <CustomText label="로딩 중...😍" size={24} variant="regular" />
             </View>
           ) : (
             <CustomText

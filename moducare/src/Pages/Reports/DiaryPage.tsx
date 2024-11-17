@@ -25,6 +25,7 @@ import {
 } from '../../quires/useReportsQuery';
 import PopupModal from '../../Components/Common/PopupModal';
 import {usePopup} from '../../hook/usePopup';
+import {getEncryptStorage} from '../../util/encryptedStorage';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -38,6 +39,7 @@ export default function DiaryPage() {
   const {data: lineDiaryData} = useLineDiaryQuery();
   const {data: topDiaryData} = useTopDiaryQuery();
   const {mutate: postHairImgMutation, isPending} = usePostHairImgMutation();
+  const [userName, setUserName] = useState('');
 
   const [modalVisible, setModalVisible] = useState(false);
   const {visible, option, content, showPopup, hidePopup} = usePopup();
@@ -50,6 +52,15 @@ export default function DiaryPage() {
     if (isPending) {
       showPopup({option: 'Loading', content: '사진을 업로드 중입니다...'});
     }
+    const getInfo = async () => {
+      try {
+        const {name} = await getEncryptStorage('info');
+        name && setUserName(name);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getInfo();
   }, [isPending]);
 
   const openImageLibrary = async (type: 'line' | 'top') => {
@@ -77,6 +88,12 @@ export default function DiaryPage() {
       openSelectPopup();
       return;
     }
+    const getFileExtension = (type: string | undefined) => {
+      if (!type) {
+        return 'jpg';
+      }
+      return type.split('/')[1] || 'jpg';
+    };
 
     try {
       // 1. formData 생성
@@ -84,7 +101,9 @@ export default function DiaryPage() {
       formData.append('file', {
         uri: imgConfig?.assets?.[0].uri,
         type: imgConfig?.assets?.[0].type,
-        name: imgConfig?.assets?.[0].fileName,
+        name: `${Date.now()}_${userName}_${imgType}.${getFileExtension(
+          imgConfig?.assets?.[0].type,
+        )}`,
       });
 
       // 2. 업로드 된 이미지 정보 전송

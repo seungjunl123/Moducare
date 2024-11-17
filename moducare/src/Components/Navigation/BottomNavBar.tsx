@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
+  Modal,
 } from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MainPage from '../../Pages/MainPage';
@@ -19,12 +20,15 @@ import {useState} from 'react';
 import SlideModal from '../Common/SlideModal';
 import CustomButton from '../Common/CustomButton';
 import {useNavigation} from '@react-navigation/native';
-import NaverLogin, {NaverLoginResponse} from '@react-native-seoul/naver-login';
+import {NaverLoginResponse} from '@react-native-seoul/naver-login';
 import useAuthStore from '../../store/useAuthStore';
-import AuthStackNavigate from '../../navigate/AuthStackNavigate';
-import {deleteMember, postLogout} from '../../api/login-api';
 import {getEncryptStorage} from '../../util';
 import useAuth from '../../hook/useAuth';
+import {usePopup} from '../../hook/usePopup';
+import PopupModal from '../Common/PopupModal';
+import LottieView from 'lottie-react-native';
+import CustomText from '../Common/CustomText';
+import {confirmMark, Alert, Loading} from '../../assets/lottie';
 
 const Tab = createBottomTabNavigator();
 
@@ -67,6 +71,15 @@ function CustomTabBarButton() {
   const navigation = useNavigation<any>();
   const [moreOpen, setMoreOpen] = useState(false);
   const {delUserMutation} = useAuth();
+
+  // popup modal 관련
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [popupOption, setPopupOption] = useState<
+    'Alert' | 'confirmMark' | 'Loading'
+  >('Alert');
+  const [popupContent, setPopupContent] = useState('');
+  const [button, setButton] = useState<(() => void) | null>(null);
+
   const withdrawUser = async (): Promise<void> => {
     console.log('회원 탈퇴 시작');
     // await deleteMember();
@@ -103,6 +116,28 @@ function CustomTabBarButton() {
     const fcmToken = await getEncryptStorage('fcmToken');
     logoutMutation.mutate(fcmToken);
   };
+
+  const lottieSource =
+    popupOption === 'Alert'
+      ? Alert
+      : popupOption === 'confirmMark'
+      ? confirmMark
+      : Loading;
+
+  // PopUP modal 우선 여기 수정하고 나중에 넣을겡
+  const openLogoutModal = () => {
+    setPopupOption('Alert');
+    setPopupContent('정말로 로그아웃 하시겠어요?!');
+    setPopupVisible(true);
+    setButton(() => logout);
+  };
+  const openWithdrawModal = () => {
+    setPopupOption('Alert');
+    setPopupContent('정말로 회원 탈퇴 하시겠어요?!');
+    setPopupVisible(true);
+    setButton(() => withdrawUser);
+  };
+
   return (
     <>
       <TouchableOpacity
@@ -120,9 +155,38 @@ function CustomTabBarButton() {
               navigation.navigate('회원 정보 수정');
             }}
           />
-          <CustomButton label="로그아웃" onPress={logout} />
-          <CustomButton label="회원 탈퇴" onPress={withdrawUser} />
+          <CustomButton label="로그아웃" onPress={openLogoutModal} />
+          <CustomButton label="회원 탈퇴" onPress={openWithdrawModal} />
         </View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={popupVisible}
+          onRequestClose={() => setPopupVisible(false)}
+          // 모달이 전체 화면을 덮을 수 있도록 설정
+          statusBarTranslucent>
+          <View style={styles.overlay}>
+            <View style={styles.modalContainer}>
+              <LottieView
+                source={lottieSource}
+                autoPlay
+                loop={popupOption === 'Loading'}
+                style={[styles.confirmMark]}
+              />
+              <CustomText label={popupContent} />
+              {popupOption !== 'Loading' && (
+                <View style={styles.buttonContainer}>
+                  <CustomButton label="확인" onPress={button} size="small" />
+                  <CustomButton
+                    label="취소"
+                    onPress={() => setPopupVisible(false)}
+                    size="small"
+                  />
+                </View>
+              )}
+            </View>
+          </View>
+        </Modal>
       </SlideModal>
     </>
   );
@@ -232,5 +296,40 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 15,
+  },
+
+  // popup modal 관련
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 20,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 20,
+    width: '80%',
+    maxWidth: 500,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  confirmMark: {
+    width: 60,
+    height: 60,
+    alignSelf: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: 10,
   },
 });
