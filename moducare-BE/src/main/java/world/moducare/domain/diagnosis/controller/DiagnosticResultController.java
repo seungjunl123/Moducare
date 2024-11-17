@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import world.moducare.domain.api.dto.ChatGPTRequestDTO;
 import world.moducare.domain.diagnosis.dto.AiResultDto;
 import world.moducare.domain.diagnosis.dto.DiagnosisRequestDto;
 import world.moducare.domain.diagnosis.dto.DiagnosisResponseDto;
@@ -59,13 +60,9 @@ public class DiagnosticResultController {
         @Parameter(description = "두피 사진파일", required = true) @RequestParam("file") MultipartFile file
         , @AuthenticationPrincipal CustomOAuth2User user) {
 
-        // 두피이미지 S3 저장
         String url = s3Service.uploadImage(file);
         if (url != null) {
-            // ai에 사진 보내서 결과 받기
-            // 탈모,비듬, 염증, 홍반, 피지, 각질 결과값 배열과 headType 받기
-            // TODO: ai 연결하기
-            AiResultDto aiResultDto = new AiResultDto(new int[]{3,1,0,2,1,0}, 7);
+            AiResultDto aiResultDto = diagnosticResultService.getResultByAI(url);
             DiagnosisRequestDto diagnosisRequestDto = diagnosticResultService.diagnoseByAI(user.getMember(), aiResultDto, url);
             return ResponseEntity.status(HttpStatus.CREATED).body(diagnosisRequestDto);
         }

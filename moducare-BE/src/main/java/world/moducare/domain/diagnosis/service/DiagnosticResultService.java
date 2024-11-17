@@ -2,7 +2,14 @@ package world.moducare.domain.diagnosis.service;
 
 import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import world.moducare.domain.api.dto.ChatGPTResponseDTO;
 import world.moducare.domain.api.gpt.GptService;
 import world.moducare.domain.api.gpt.PromptService;
 import world.moducare.domain.diagnosis.dto.AiResultDto;
@@ -26,6 +33,9 @@ public class DiagnosticResultService {
     private final DiagnosticResultRepository diagnosticResultRepository;
     private final GptService gptService;
     private final PromptService promptService;
+    private final RestTemplate restTemplate;
+    @Value("${AI_URL}")
+    private String ai_url;
 
     public List<DiagnosisResponseDto> getDiagnosticList(Member member) {
         List<DiagnosticResult> results = diagnosticResultRepository.findAllByMemberOrderByCreatedAtDesc(member).orElse(null);
@@ -125,5 +135,30 @@ public class DiagnosticResultService {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm:ss", Locale.KOREAN);
         return seoulTime.format(formatter);
+    }
+
+    public AiResultDto getResultByAI(String url) {
+        // JSON 요청 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+
+        String requestBody = "{\"img\": \"" + url + "\"}";
+        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+
+        // AI 서버로 요청 전송
+        try {
+            ResponseEntity<AiResultDto> response = restTemplate.exchange(
+                    ai_url,
+                    HttpMethod.POST,
+                    entity,
+                    AiResultDto.class
+            );
+
+            // 결과 반환
+            return response.getBody();
+        } catch (Exception e) {
+            // 에러 핸들링
+            throw new RuntimeException("AI 서버와 통신 중 오류 발생: " + e.getMessage());
+        }
     }
 }
