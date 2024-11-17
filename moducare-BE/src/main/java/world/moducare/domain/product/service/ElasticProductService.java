@@ -2,14 +2,12 @@ package world.moducare.domain.product.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import world.moducare.domain.product.entity.CrawledProduct;
 import world.moducare.domain.product.entity.ElasticProduct;
 import world.moducare.domain.product.repository.CrawledProductRepository;
 import world.moducare.domain.product.repository.ElasticProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -47,10 +45,7 @@ public class ElasticProductService {
                             (crawledProduct.get헤어타입() == null ? "" : crawledProduct.get헤어타입().trim());
 
             // 벡터화
-//            System.out.println(combinedText);
             float[] embeddingVector = embeddingService.getEmbedding(combinedText);
-//            System.out.println(Arrays.toString(embeddingVector));
-//            System.out.println("Vector length: " + embeddingVector.length);
             elasticProduct.setDescriptionVector(embeddingVector);
 
             // Elasticsearch에 저장

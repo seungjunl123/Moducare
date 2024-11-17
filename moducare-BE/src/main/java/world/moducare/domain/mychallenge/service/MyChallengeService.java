@@ -28,7 +28,7 @@ public class MyChallengeService {
     public void addMyChallenge(Member member, Long challengeId) {
 
         Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(()-> new RestApiException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
 
         // 마이 챌린지로 추가할 때 이미 참여했다가 나간 챌린지인지 조회
         MyChallenge exists = myChallengeRepository.findByMemberIdAndChallengeIdAndStatus(member.getId(), challengeId, Status.OUT);
@@ -38,8 +38,7 @@ public class MyChallengeService {
             exists.updateStatus(Status.IN);
             myChallengeRepository.save(exists);
 
-        }
-        else {
+        } else {
 
             MyChallenge myChallenge = MyChallenge.builder()
                     .member(member)
@@ -70,7 +69,7 @@ public class MyChallengeService {
         if (challenge.getHeadCount() == 0) {
             challengeRepository.delete(challenge);
             myChallengeRepository.delete(myChallenge);
-        }else {
+        } else {
             challengeRepository.save(challenge);
             myChallengeRepository.save(myChallenge);
 

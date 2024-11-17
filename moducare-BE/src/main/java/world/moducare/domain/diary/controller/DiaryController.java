@@ -15,9 +15,9 @@ import world.moducare.domain.diary.service.DiaryService;
 import world.moducare.domain.member.entity.Member;
 import world.moducare.domain.member.service.MemberService;
 import world.moducare.global.config.oauth.CustomOAuth2User;
+import world.moducare.global.s3.S3Service;
 
 import java.util.List;
-import world.moducare.global.s3.S3Service;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,8 +32,8 @@ public class DiaryController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "머리 다이어리 저장", description = "이마 라인이나 정수리 사진을 저장")
     public ResponseEntity<?> saveLatestProduct(@AuthenticationPrincipal CustomOAuth2User principal,
-        @RequestParam("file") MultipartFile file,
-        @RequestParam("type") String type) {
+                                               @RequestParam("file") MultipartFile file,
+                                               @RequestParam("type") String type) {
 
         Member member = memberService.findById(principal.getId());
 

@@ -18,7 +18,7 @@ public class GptService {
         this.restTemplate = restTemplate;
     }
 
-    public String chat(String prompt){
+    public String chat(String prompt) {
         String apiURL = "https://api.openai.com/v1/chat/completions";
         String model = "gpt-4o-mini"; // 또는 "gpt-4"
 

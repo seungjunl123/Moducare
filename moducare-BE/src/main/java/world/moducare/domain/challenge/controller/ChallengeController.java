@@ -29,7 +29,7 @@ public class ChallengeController {
     private final S3Service s3Service;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary="챌린지 생성 API")
+    @Operation(summary = "챌린지 생성 API")
     public ResponseEntity<Void> makeChallenge(@AuthenticationPrincipal CustomOAuth2User principal,
                                               @RequestParam("title") String title,
                                               @RequestParam(value = "file", required = false) MultipartFile file) {
@@ -45,7 +45,7 @@ public class ChallengeController {
 
     @GetMapping()
     @Operation(summary = "전체 챌린지 목록 조회 API")
-    public ResponseEntity<List<ChallengeResponseDto>> getChallengeList(@AuthenticationPrincipal CustomOAuth2User principal){
+    public ResponseEntity<List<ChallengeResponseDto>> getChallengeList(@AuthenticationPrincipal CustomOAuth2User principal) {
         Member member = memberService.findById(principal.getId());
         List<ChallengeResponseDto> list = challengeService.getList(member);
         return ResponseEntity.ok(list);

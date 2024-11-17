@@ -25,7 +25,7 @@ public class WeatherController {
 
     @PostMapping(value = "")
     @Operation(summary = "현재 기준 날씨 예보 정보 조회")
-    public ResponseEntity<WeatherResultResponseDto> getWeatherData(@RequestBody WeatherRequestDto weatherRequestDto) throws Exception {
+    public ResponseEntity<WeatherResultResponseDto> getWeatherData(@RequestBody WeatherRequestDto weatherRequestDto) {
         WeatherResponseDto weatherResponseDto = environmentalDataService.getEnvironmentalData(weatherRequestDto);
         String gptAnswer = gptService.chat(promptService.makeEnvironmentPrompt(weatherResponseDto));
         WeatherResultResponseDto result = WeatherResultResponseDto.builder().weatherDto(weatherResponseDto).gptResponse(gptAnswer).build();

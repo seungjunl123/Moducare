@@ -16,7 +16,7 @@ public interface MyChallengeRepository extends JpaRepository<MyChallenge, Long> 
     List<MyChallenge> findByMemberIdAndStatus(@Param("memberId") Long memberId);
 
     @Query("select m from MyChallenge  m where m.member.id = :memberId and m.challenge.id = :challengeId and m.status = :status")
-    MyChallenge findByMemberIdAndChallengeIdAndStatus(@Param("memberId") Long memberId, @Param("challengeId") Long challengeId, @Param("status")Status status);
+    MyChallenge findByMemberIdAndChallengeIdAndStatus(@Param("memberId") Long memberId, @Param("challengeId") Long challengeId, @Param("status") Status status);
 
     boolean existsByChallengeAndMember(Challenge challenge, Member member);
 

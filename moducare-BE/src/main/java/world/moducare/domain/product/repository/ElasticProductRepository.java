@@ -1,8 +1,8 @@
 package world.moducare.domain.product.repository;
 
-import world.moducare.domain.product.entity.ElasticProduct;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
+import world.moducare.domain.product.entity.ElasticProduct;
 
 import java.util.List;
 
