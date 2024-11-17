@@ -59,7 +59,7 @@ public class PromptService {
                 prompt.append("이전 기록이 없어 비교할 수 없습니다.");
                 break;
         }
-        prompt.append("\n두피 및 탈모 관리를 위한 추천 방법을 제안해 주세요.");
+        prompt.append("\n두피 상태의 종합 분석과 함께 치료 방향성, 두피 및 탈모 관리를 위한 추천 방법을 제안해 주세요. 마크다운이 아닌 줄글 형식으로 제공해주세요.");
 
         return prompt.toString();
     }
