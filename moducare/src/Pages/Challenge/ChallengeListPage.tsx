@@ -8,6 +8,8 @@ import BigList from '../../Components/Challenge/BigList';
 import {getChallengeList, getListType} from '../../api/challenge-api';
 import {usePopup} from '../../hook/usePopup';
 import PopupModal from '../../Components/Common/PopupModal';
+import {useFocusEffect} from '@react-navigation/native';
+import useChallenge from '../../hook/useChallenge';
 
 export default function ChallengeListPage({navigation}) {
   const {visible, option, content, showPopup, hidePopup} = usePopup();
@@ -21,13 +23,21 @@ export default function ChallengeListPage({navigation}) {
       showPopup({option: 'Alert', content: '마지막 페이지 입니다.'});
     }
   };
-  const getListCompo = async () => {
-    const allData = await getChallengeList();
-    setAllList(allData);
-  };
-  React.useEffect(() => {
-    getListCompo();
-  }, []);
+  // const getListCompo = async () => {
+  //   const allData = await getChallengeList();
+  //   setAllList(allData);
+  // };
+  // React.useEffect(() => {
+  //   getListCompo();
+  // }, []);
+
+  const {AllLoading, getAllList} = useChallenge();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getAllList.refetch();
+    }, []),
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -41,7 +51,7 @@ export default function ChallengeListPage({navigation}) {
         </View>
         <View style={styles.ListArea}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {allList.length !== 0 ? (
+            {/* {allList.length !== 0 ? (
               allList.slice(0, page).map((data, index) => (
                 <BigList
                   key={index}
@@ -61,8 +71,33 @@ export default function ChallengeListPage({navigation}) {
               <View style={styles.nullList}>
                 <CustomText label="개설된 챌린지가 없어요" size={18} />
               </View>
+            )} */}
+            {AllLoading ? (
+              <View style={styles.nullList}>
+                <CustomText label="불러오고 있어요!" size={18} />
+              </View>
+            ) : getAllList.data?.length !== 0 ? (
+              getAllList.data?.slice(0, page).map((data, index) => (
+                <BigList
+                  key={index}
+                  title={data.challengeName}
+                  user={data.challengeUser}
+                  uri={data.challengeImg}
+                  onPress={() =>
+                    navigation.navigate('challenge_feed', {
+                      id: data.challengeId,
+                      title: data.challengeName,
+                      type: 'allChallenge',
+                    })
+                  }
+                />
+              ))
+            ) : (
+              <View style={styles.nullList}>
+                <CustomText label="개설된 챌린지가 없어요" size={18} />
+              </View>
             )}
-            {allList.length !== 0 && (
+            {getAllList.data?.length !== 0 && (
               <Text style={styles.getListArea} onPress={handlePage}>
                 더보기
               </Text>

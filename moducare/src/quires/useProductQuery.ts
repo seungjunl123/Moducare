@@ -26,9 +26,17 @@ export const usePostLastestProductMutation = () => {
   });
 };
 
+// export const useProductListQuery = (headType: number, result: number[]) => {
+//   return useQuery({
+//     queryFn: () => getPick(headType, result),
+//     queryKey: [QueryKey.recommend],
+//   });
+// };
 export const useProductListQuery = (headType: number, result: number[]) => {
-  return useQuery({
+  const {data, isPending} = useQuery({
     queryFn: () => getPick(headType, result),
     queryKey: [QueryKey.recommend],
   });
+
+  return {data, isPending};
 };
