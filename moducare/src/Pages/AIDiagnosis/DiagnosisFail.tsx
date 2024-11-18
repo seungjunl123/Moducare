@@ -10,11 +10,13 @@ import CustomButtom from '../../Components/Common/CustomButton';
 import {BackHandler} from 'react-native';
 
 const DiagnosisFail = ({route, navigation}) => {
-  const {type} = route.params;
+  const {type, content} = route.params;
 
   const handleMovePage = () => {
     if (type === 'IOT') {
       navigation.navigate('aiIOT');
+    } else if (type === 'IOTError') {
+      navigation.navigate('ai');
     } else {
       navigation.navigate('aiCamera');
     }
@@ -49,8 +51,14 @@ const DiagnosisFail = ({route, navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <LottieView source={fail} autoPlay loop={false} style={styles.robot} />
-      <CustomText label="두피 이미지가 아니에요! 재촬영 해주세요!" size={20} />
-      <CustomButtom label="재촬영하기" onPress={handleMovePage} />
+      <CustomText
+        label={content ? content : '두피 이미지가 아니에요! 재촬영 해주세요!'}
+        size={20}
+      />
+      <CustomButtom
+        label={content ? '이전으로' : '재촬영하기'}
+        onPress={handleMovePage}
+      />
       <CustomButtom
         label="메인으로"
         onPress={() => navigation.navigate('bottomNavigate')}

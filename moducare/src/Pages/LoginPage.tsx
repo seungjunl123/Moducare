@@ -68,7 +68,7 @@ const LoginPage = ({navigation}: {navigation: any}) => {
     <>
       <SafeAreaView style={styles.container}>
         <View style={styles.mainArea}>
-          <SvgIconAtom style={{margin: 'auto'}} name="Logo" />
+          <SvgIconAtom style={{margin: 'auto'}} name="NewLogo" />
           <View style={styles.btnArea}>
             <Pressable
               style={[styles.btn, styles.kakao]}

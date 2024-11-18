@@ -465,7 +465,7 @@ const DiagnosisResult = ({
               showPopup({option: 'confirmMark', content: '문서 생성 완료!'});
             }}
           />
-          {previousScreen.toString() !== 'aiLoading' && (
+          {previousScreen.toString() === 'aiLoading' && (
             <CustomButtom
               label="메인으로"
               onPress={() => navigation.navigate('bottomNavigate')}
