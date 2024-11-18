@@ -66,7 +66,7 @@ export default function DiagnosisPage({navigation}: {navigation: any}) {
         </Pressable>
         <View style={styles.TextArea}>
           <CustomText label="핸드폰 카메라 촬영법" />
-          <CustomText label="  1. 카메라 줌을 5배로 설정해주세요." />
+          <CustomText label="  1. 카메라 줌을 알맞게 설정해주세요." />
           <CustomText label="  2. 초점을 맞추고 두피에 밀착해주세요." />
           <CustomText label="  3. 촬영 후 AI 검사를 진행해주세요." />
         </View>
