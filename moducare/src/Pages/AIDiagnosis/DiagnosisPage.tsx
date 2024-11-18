@@ -8,8 +8,8 @@ import {useFocusEffect} from '@react-navigation/native';
 import {usePopup} from '../../hook/usePopup';
 import PopupModal from '../../Components/Common/PopupModal';
 
-export default function DiagnosisPage({navigation}) {
-  const {visible, option, content, showPopup, hidePopup} = usePopup();
+export default function DiagnosisPage({navigation}: {navigation: any}) {
+  const {visible, popupOption, popupContent, showPopup, hidePopup} = usePopup();
   const [product, setProduct] = React.useState<string>('');
 
   const handlePress = (device: string) => {
@@ -87,8 +87,8 @@ export default function DiagnosisPage({navigation}) {
       <PopupModal
         visible={visible}
         onClose={hidePopup}
-        content={content}
-        option={option}
+        content={popupContent}
+        option={popupOption}
       />
     </SafeAreaView>
   );

@@ -24,15 +24,11 @@ const postLogin = async ({
   fcmToken,
   accessToken,
 }: RequestLogin): Promise<ResponseLogin> => {
-  console.log('!!registerId', registerId);
-  console.log('!!accessToken', accessToken);
-  console.log('!!fcmToken', fcmToken);
   try {
     const {data} = await axiosInstance.post(`members/login/${registerId}`, {
       accessToken,
       fcmToken,
     });
-    console.log('로그인 데이터', data);
     return data;
   } catch (error) {
     console.error(error);
@@ -51,9 +47,7 @@ const postRefreshToken = async (): Promise<ResponseAccess> => {
     if (!refreshToken) {
       throw new Error('리프레시 토큰이 없습니다.');
     }
-    console.log('리프레시 토큰 있어요', refreshToken);
     const {data} = await axiosInstance.post('tokens/refresh', {refreshToken});
-    console.log('리프레시 토큰 받아오기 성공', data);
     return data;
   } catch (error) {
     console.error('리프레시 토큰 에러', error);
@@ -85,8 +79,6 @@ const deleteMember = async (): Promise<void> => {
 
 const putMember = async (userInfo: RequestMember): Promise<string> => {
   try {
-    // axiosInstance로 변경 필요
-    console.log('회원 정보 변경 시작', userInfo.name, userInfo.birth);
     const {data} = await axiosInstance.put('members/modify', null, {
       params: {
         name: userInfo.name,
@@ -94,7 +86,6 @@ const putMember = async (userInfo: RequestMember): Promise<string> => {
       },
     });
 
-    console.log('회원 정보 변경 완료');
     return data;
   } catch (error) {
     console.log(error);
@@ -120,7 +111,6 @@ const postLoginKaKao = async ({
     fcmToken,
   });
 
-  console.log('데이터', data);
   return data;
 };
 

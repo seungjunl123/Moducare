@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, View, Text} from 'react-native';
 import {colors} from '../../constants/colors';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
@@ -25,7 +25,7 @@ const DiagnosisPick = ({
 
   const getInfo = async () => {
     try {
-      const {name, birth, email} = await getEncryptStorage('info');
+      const {name} = await getEncryptStorage('info');
       name && setUserName(name);
     } catch (error) {
       console.log(error);

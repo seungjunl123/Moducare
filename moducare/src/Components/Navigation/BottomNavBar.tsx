@@ -21,12 +21,8 @@ import {useState} from 'react';
 import SlideModal from '../Common/SlideModal';
 import CustomButton from '../Common/CustomButton';
 import {useNavigation} from '@react-navigation/native';
-import {NaverLoginResponse} from '@react-native-seoul/naver-login';
-import useAuthStore from '../../store/useAuthStore';
 import {getEncryptStorage} from '../../util';
 import useAuth from '../../hook/useAuth';
-import {usePopup} from '../../hook/usePopup';
-import PopupModal from '../Common/PopupModal';
 import LottieView from 'lottie-react-native';
 import CustomText from '../Common/CustomText';
 import {confirmMark, Alert, Loading} from '../../assets/lottie';
@@ -57,20 +53,6 @@ const ReportIcon = ({color, size}: {color: string; size: number}) => (
 );
 
 function CustomTabBarButton() {
-  const {setNaverLoginSuccess, setNaverLoginFailure, setIsLoggedIn} =
-    useAuthStore(
-      state =>
-        state as {
-          setNaverLoginSuccess: (
-            value: NaverLoginResponse['successResponse'],
-          ) => void;
-          setNaverLoginFailure: (
-            value: NaverLoginResponse['failureResponse'],
-          ) => void;
-          setIsLoggedIn: (value: boolean) => void;
-          isLoggedIn: boolean;
-        },
-    );
   const navigation = useNavigation<any>();
   const [moreOpen, setMoreOpen] = useState(false);
   const {delUserMutation} = useAuth();
@@ -88,32 +70,6 @@ function CustomTabBarButton() {
     // await deleteMember();
     delUserMutation.mutate();
   };
-  // const logout = async (): Promise<void> => {
-  //   try {
-  //     // 네이버 로그아웃 -> 전체 로그아웃으로 변경 필요
-  //     // 카카오 상태관리도 그냥 초기아웃 하면 되나?
-  //     await NaverLogin.logout();
-  //     await Promise.all([
-  //       setNaverLoginSuccess(undefined),
-  //       setNaverLoginFailure(undefined),
-  //       setIsLoggedIn(false),
-  //     ]);
-  //     setMoreOpen(false);
-
-  //     // 로그아웃 상태 백엔드 전달
-  //     const fcmToken = await getEncryptStorage('fcmToken');
-  //     await postLogout(fcmToken);
-
-  //     console.log('로그아웃 완료');
-  //     // 로그인 화면으로 복귀.
-  //     setTimeout(() => {
-  //       console.log('로그인 화면으로 복귀');
-  //       navigation.navigate('AuthStack');
-  //     }, 100);
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
   const {logoutMutation} = useAuth();
   const logout = async () => {
     const fcmToken = await getEncryptStorage('fcmToken');

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Platform, PermissionsAndroid} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import ItemBox from '../ItemBox/ItemBox';
 import CustomText from '../Common/CustomText';
 import SvgIconAtom from '../Common/SvgIconAtom';
@@ -18,18 +18,15 @@ interface WeatherData {
 export default function WeatherInfo() {
   const [sido, setSido] = React.useState<string>('');
   const [gugun, setGugun] = React.useState<string>('');
-  const {data: weatherData, isLoading} = useWeatherQuery({
-    sido,
-    gugun,
-  }) as {data: WeatherData; isLoading: boolean};
-
-  React.useEffect(() => {
-    if (Platform.OS === 'android') {
-      PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      );
-    }
-  }, []);
+  const {data: weatherData, isLoading} = useWeatherQuery(
+    {
+      sido,
+      gugun,
+    },
+    {
+      enabled: Boolean(sido && gugun),
+    },
+  ) as {data: WeatherData; isLoading: boolean};
 
   React.useEffect(() => {
     const watchId = Geolocation.watchPosition(
@@ -41,7 +38,7 @@ export default function WeatherInfo() {
         });
       },
       error => {
-        console.log(error);
+        console.log('에러발생', error);
       },
       {
         enableHighAccuracy: true,
@@ -54,7 +51,6 @@ export default function WeatherInfo() {
     };
   }, [sido, gugun]);
 
-  console.log('weatherData', weatherData);
   return (
     <View>
       <ItemBox>

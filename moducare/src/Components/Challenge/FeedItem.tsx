@@ -27,15 +27,12 @@ const FeedItem = ({
   const [count, setCount] = useState(like);
 
   const handleLike = async () => {
-    console.log('좋아요');
     await postLike(feedId, 0);
     setCount(count + 1);
-    console.log(count);
     setLove(1);
   };
 
   const handleUnLike = async () => {
-    console.log('안좋아요');
     await postLike(feedId, 1);
     setCount(count - 1);
     setLove(0);

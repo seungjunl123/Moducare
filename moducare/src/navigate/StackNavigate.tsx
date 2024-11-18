@@ -50,6 +50,15 @@ type RootStackParamList = {
       date: string;
     } | null;
   };
+  aiIOT: undefined;
+  aiCamera: undefined;
+  aiLoading: undefined;
+  aiFail: undefined;
+  challenge: undefined;
+  challenge_list: undefined;
+  report: undefined;
+  '회원 정보 수정': undefined;
+  stress: undefined;
 };
 
 const PrevIcon = () => (
@@ -57,7 +66,7 @@ const PrevIcon = () => (
 );
 
 const StackNavigate = () => {
-  const Stack = createStackNavigator();
+  const Stack = createStackNavigator<RootStackParamList>();
   return (
     <Stack.Navigator initialRouteName="bottomNavigate">
       <Stack.Screen name="main" component={MainPage} />
@@ -110,7 +119,7 @@ const StackNavigate = () => {
         options={{
           title: 'AI 두피 진단 결과지',
           headerTitleAlign: 'center',
-          headerLeft: null,
+          headerLeft: () => null,
         }}
       />
       <Stack.Screen

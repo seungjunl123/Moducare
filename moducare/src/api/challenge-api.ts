@@ -2,13 +2,10 @@ import {setEncryptStorage} from '../util';
 import axiosInstance from '../util/axios';
 
 const postCreateChallenge = async (file?: FormData): Promise<void> => {
-  console.log('이미지 보내야함', file);
   try {
-    const {data} = await axiosInstance.post(`challenges`, file, {
+    const {data} = await axiosInstance.post('challenges', file, {
       headers: {'Content-Type': 'multipart/form-data'},
     });
-
-    console.log('챌린지 생성 성공', data);
 
     return data;
   } catch (error) {

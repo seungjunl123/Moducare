@@ -80,7 +80,7 @@ const DiagnosisIOT = ({navigation}) => {
               />
             </View>
           </ViewShot>
-          <Pressable style={styles.BtnArea} onPress={captureScreen}></Pressable>
+          <Pressable style={styles.BtnArea} onPress={captureScreen} />
         </>
       )}
     </SafeAreaView>
