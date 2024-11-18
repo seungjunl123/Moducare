@@ -1,5 +1,4 @@
 import axiosInstance from '../util/axios';
-import Config from 'react-native-config';
 
 interface LatestProduct {
   link: string;
@@ -8,8 +7,7 @@ interface LatestProduct {
 
 const getLastestProduct = async (): Promise<LatestProduct> => {
   try {
-    const response = await axiosInstance.get(`product/latest`);
-    console.log('최근 상품 호출 성공 ', response);
+    const response = await axiosInstance.get('product/latest');
     return response.data;
   } catch (error) {
     console.log(error);
@@ -22,11 +20,10 @@ const postLastestProduct = async (
   link: string,
 ): Promise<LatestProduct> => {
   try {
-    const response = await axiosInstance.post(`product/latest`, {
+    const response = await axiosInstance.post('product/latest', {
       imgSrc,
       link,
     });
-    console.log('최근 상품 저장 성공 ', response.data);
     return response.data;
   } catch (error) {
     console.log(error);

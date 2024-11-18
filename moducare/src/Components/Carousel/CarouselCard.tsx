@@ -32,6 +32,11 @@ interface CarouselProps {
 }
 
 const MyCarousel: React.FC<CarouselProps> = ({isMain, data}) => {
+  const getItemLayout = (_: any, index: number) => ({
+    length: WIDTH * 0.6,
+    offset: WIDTH * 0.6 * index,
+    index,
+  });
   const renderItem = ({item}: {item: MainCarouselItem | DiaryCarouselItem}) => {
     if (isMain) {
       const mainItem = item as MainCarouselItem;
@@ -74,6 +79,10 @@ const MyCarousel: React.FC<CarouselProps> = ({isMain, data}) => {
         itemWidth={WIDTH * 0.6}
         layout="default"
         inactiveSlideScale={0.9}
+        firstItem={0}
+        initialScrollIndex={0}
+        getItemLayout={getItemLayout}
+        enableSnap={true}
       />
     </View>
   );
@@ -113,10 +122,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dairyImg: {
+    maxHeight: 300,
     width: '100%',
     height: '100%',
     resizeMode: 'contain',
-    marginBottom: -20,
+    marginBottom: 10,
   },
   buttonContainer: {
     width: '80%',

@@ -66,7 +66,6 @@ const CalenderModal = ({
       try {
         const info = await getEncryptStorage('info');
         if (info) {
-          console.log(info);
           setCurrentMonth(new Date(info.birth)); // info.date가 날짜 문자열이라고 가정
         }
       } catch (error) {

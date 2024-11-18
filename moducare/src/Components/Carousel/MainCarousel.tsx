@@ -24,7 +24,7 @@ export default function MainCarousel() {
       img: require('../../assets/img/Challenge.png'),
       buttonLabel: '보러가기',
       buttonOnPress: () => {
-        navigation.navigate('challenge');
+        navigation.navigate('챌린지');
       },
     },
     {

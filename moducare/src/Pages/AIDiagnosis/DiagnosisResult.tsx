@@ -2,9 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {
   BackHandler,
   Image,
-  Linking,
-  PermissionsAndroid,
-  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -18,7 +15,6 @@ import CustomText from '../../Components/Common/CustomText';
 import SvgIconAtom from '../../Components/Common/SvgIconAtom';
 import {BarChart, barDataItem} from 'react-native-gifted-charts';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import ReactNativeBlobUtil from 'react-native-blob-util';
 import {copyFile, DownloadDirectoryPath} from 'react-native-fs';
 import {RootStackParamList} from '../../navigate/StackNavigate';
 import {
@@ -32,7 +28,6 @@ import {ResponseAiDiagnosis} from '../../api/ai-api';
 import {getEncryptStorage} from '../../util';
 import PopupModal from '../../Components/Common/PopupModal';
 import {usePopup} from '../../hook/usePopup';
-import usePermission from '../../hook/usePermission';
 
 type userInfo = {
   name: string;
@@ -44,9 +39,8 @@ const DiagnosisResult = ({
 }: {
   route: RouteProp<RootStackParamList, 'aiResult'>;
 }) => {
-  usePermission('DOCUMENT');
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const {visible, option, content, showPopup, hidePopup} = usePopup();
+  const {visible, popupOption, popupContent, showPopup, hidePopup} = usePopup();
   const {type, id, diagnosisResult} = route.params;
   const {data: diagnosisData} = useReportDetailQuery(id ?? 0, {
     enabled: type === 'report',
@@ -107,7 +101,6 @@ const DiagnosisResult = ({
             ToastAndroid.SHORT,
           );
           setTimeout(() => {
-            console.log('어어');
             backPress = 0;
           }, 2000);
           return true;
@@ -362,8 +355,12 @@ const DiagnosisResult = ({
 `;
 
   const generatePDF = async () => {
-    const convertdata = resultData?.date.split(' ')[0];
-    console.log(convertdata);
+    const convertdata =
+      resultData?.date.split(' ')[0] +
+      '_' +
+      resultData?.date.split(' ')[2].split(':')[0] +
+      resultData?.date.split(' ')[2].split(':')[1] +
+      (resultData?.date.split(' ')[1] === '오전' ? 'AM' : 'PM');
     try {
       const fileName = `MODUCARE_${Info?.name}_${convertdata}`;
       const options = {
@@ -419,11 +416,7 @@ const DiagnosisResult = ({
             maxValue={3}
             height={200}
             disablePress // 누루기 동작 비활성화
-            // bar
-            // initialSpacing={20} // 초기 간격
-            // spacing={30} // bar 간격
             barBorderRadius={2}
-            // barWidth={12} // bar width
             frontColor={colors.MAIN} // bar 색상
             // x축
             xAxisIndicesColor={'#D9D9D9'} // x축 단계별 표시 색상
@@ -465,7 +458,7 @@ const DiagnosisResult = ({
               showPopup({option: 'confirmMark', content: '문서 생성 완료!'});
             }}
           />
-          {previousScreen.toString() !== 'aiLoading' && (
+          {previousScreen.toString() === 'aiLoading' && (
             <CustomButtom
               label="메인으로"
               onPress={() => navigation.navigate('bottomNavigate')}
@@ -473,11 +466,11 @@ const DiagnosisResult = ({
           )}
           <PopupModal
             visible={visible}
-            option={option}
+            option={popupOption}
             onClose={() => {
               hidePopup();
             }}
-            content={content}
+            content={popupContent}
           />
         </View>
       </ScrollView>

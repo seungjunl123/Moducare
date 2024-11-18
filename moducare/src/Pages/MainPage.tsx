@@ -9,7 +9,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import SmallList from '../Components/Challenge/SmallList';
 import WeatherInfo from '../Components/Weather/WeatherInfo';
 import MainCarousel from '../Components/Carousel/MainCarousel';
-import {getMyChallengeList, getMyListType} from '../api/challenge-api';
+import {getMyListType} from '../api/challenge-api';
 import {RootStackParamList} from '../navigate/StackNavigate';
 import {setEncryptStorage} from '../util';
 import useChallenge from '../hook/useChallenge';
@@ -19,7 +19,6 @@ const WINDOW_HEIGHT = Dimensions.get('window').height;
 export default function MainPage() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [myList, setMyList] = React.useState<getMyListType[] | []>([]);
 
   const handleMoveFeedPage = (data: getMyListType) => {
     setEncryptStorage('isDone', data.isDone);
@@ -29,16 +28,6 @@ export default function MainPage() {
       type: 'myChallenge',
     });
   };
-
-  // const getListCompo = async () => {
-  //   const myData = await getMyChallengeList();
-  //   setMyList(myData);
-  // };
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     getListCompo();
-  //   }, []),
-  // );
 
   const {getMyList, MyLoading} = useChallenge();
 
@@ -73,19 +62,6 @@ export default function MainPage() {
               <ScrollView
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled={true}>
-                {/* {myList.length !== 0 ? (
-                  myList.map((data, index) => (
-                    <SmallList
-                      key={index}
-                      title={data.challengeName}
-                      uri={data.challengeImg}
-                      isFinish={data.isDone}
-                      onPress={() => handleMoveFeedPage(data)}
-                    />
-                  ))
-                ) : (
-                  <CustomText label="진행중인 챌린지가 없어요" />
-                )} */}
                 {MyLoading ? (
                   <CustomText label="불러오고 있어요!" />
                 ) : getMyList.data?.length !== 0 ? (
@@ -136,12 +112,11 @@ const styles = StyleSheet.create({
   },
   boxHeaderText: {
     fontSize: 20,
-
     fontWeight: 'bold',
   },
   helloImage: {
-    width: 200,
-    height: 200,
+    width: WINDOW_WIDTH * 0.6,
+    height: WINDOW_HEIGHT * 0.25,
   },
   startButton: {
     width: WINDOW_WIDTH * 0.9,

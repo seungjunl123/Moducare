@@ -63,7 +63,6 @@ export default function EditUserPage() {
   useFocusEffect(
     useCallback(() => {
       getInfo();
-      console.log(' info', Info);
     }, []),
   );
 

@@ -1,4 +1,3 @@
-import {useEffect} from 'react';
 import {Alert, Linking} from 'react-native';
 import {
   check,
@@ -21,36 +20,35 @@ const androidPermissons: PerssionOS = {
 };
 
 const usePermission = (type: PermissionType) => {
-  useEffect(() => {
-    (async () => {
-      const permissonOS = androidPermissons[type];
-      const checked = await check(permissonOS);
-      console.log('checked', checked);
+  const checkPermission = async () => {
+    const permissonOS = androidPermissons[type];
+    const checked = await check(permissonOS);
 
-      switch (checked) {
-        case RESULTS.GRANTED:
-          break;
-        case RESULTS.BLOCKED:
-        case RESULTS.DENIED:
-        case RESULTS.LIMITED:
-          Alert.alert(
-            alerts[`${type}_PERMISSION`].TITLE,
-            alerts[`${type}_PERMISSION`].DESCRIPTION,
-            [
-              {
-                text: '설정하기',
-                onPress: () => Linking.openSettings(),
-              },
-              {
-                text: '취소',
-                style: 'cancel',
-              },
-            ],
-          );
-      }
-      // await request(permissonOS);
-    })();
-  }, []);
+    switch (checked) {
+      case RESULTS.GRANTED:
+        return true;
+      case RESULTS.BLOCKED:
+      case RESULTS.DENIED:
+      case RESULTS.LIMITED:
+        Alert.alert(
+          alerts[`${type}_PERMISSION`].TITLE,
+          alerts[`${type}_PERMISSION`].DESCRIPTION,
+          [
+            {
+              text: '설정하기',
+              onPress: () => Linking.openSettings(),
+            },
+            {
+              text: '취소',
+              style: 'cancel',
+            },
+          ],
+        );
+        return false;
+    }
+  };
+
+  return {checkPermission};
 };
 
 export default usePermission;
