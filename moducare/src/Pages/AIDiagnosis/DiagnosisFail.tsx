@@ -9,7 +9,7 @@ import {fail} from '../../assets/lottie';
 import CustomButtom from '../../Components/Common/CustomButton';
 import {BackHandler} from 'react-native';
 
-const DiagnosisFail = ({route, navigation}) => {
+const DiagnosisFail = ({route, navigation}: {route: any; navigation: any}) => {
   const {type} = route.params;
 
   const handleMovePage = () => {

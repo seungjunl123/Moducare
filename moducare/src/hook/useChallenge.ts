@@ -15,7 +15,6 @@ const useGetMyList = () => {
     queryKey: ['challenge', 'getMy'],
     queryFn: getMyChallengeList,
   });
-
   return {data, isPending, isSuccess, refetch};
 };
 

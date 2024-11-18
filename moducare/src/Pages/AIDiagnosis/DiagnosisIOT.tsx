@@ -35,23 +35,6 @@ const DiagnosisIOT = ({navigation}) => {
       file: formData,
       type: 'IOT',
     });
-    // showPopup({
-    //   option: 'Loading',
-    //   content: '검사 진행중',
-    // });
-    // try {
-    //   console.log('시작하기');
-    //   const res = await mutateAsync(formData);
-    //   setRes(res);
-    //   if (res.comparison) {
-    //     showPopup({
-    //       option: 'confirmMark',
-    //       content: '검사 완료!',
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
   };
 
   const handleImageDelete = () => {
@@ -89,7 +72,7 @@ const DiagnosisIOT = ({navigation}) => {
               />
             </View>
           </ViewShot>
-          <Pressable style={styles.BtnArea} onPress={captureScreen}></Pressable>
+          <Pressable style={styles.BtnArea} onPress={captureScreen} />
         </>
       )}
     </SafeAreaView>

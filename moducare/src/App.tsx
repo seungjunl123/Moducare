@@ -7,8 +7,9 @@ import messaging from '@react-native-firebase/messaging';
 import pushNoti from './util/pushNoti';
 import notifee, {AuthorizationStatus, EventType} from '@notifee/react-native';
 import {setEncryptStorage} from './util';
-import {Linking} from 'react-native';
+import {Linking, StyleSheet} from 'react-native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {PERMISSIONS, requestMultiple} from 'react-native-permissions';
 
 const DEEPLINK_PREFIX_URL = ['moducare://'];
 
@@ -19,7 +20,7 @@ const deepLinksConfig = {
       screens: {
         챌린지: '챌린지',
       },
-    },
+    } as any,
     ai: 'ai',
   },
 };
@@ -52,6 +53,7 @@ export default function App() {
       return false;
     }
   };
+
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
     console.log('[FCM Token] ', fcmToken);
@@ -59,10 +61,16 @@ export default function App() {
   };
 
   React.useEffect(() => {
-    requestNotificationPermission();
-    getFcmToken();
+    const requestPermission = async () => {
+      await requestNotificationPermission();
+      await requestMultiple([
+        PERMISSIONS.ANDROID.CAMERA,
+        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      ]);
+      getFcmToken();
+    };
+    requestPermission();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      // console.log('[Remote Message] ', JSON.stringify(remoteMessage));
       pushNoti.dispayNoti(remoteMessage);
     });
 
@@ -70,7 +78,7 @@ export default function App() {
   }, []);
 
   React.useEffect(() => {
-    return notifee.onForegroundEvent(({type, detail}) => {
+    return notifee.onForegroundEvent(({type}) => {
       switch (type) {
         case EventType.DISMISSED:
           console.log('dismissed');
@@ -84,7 +92,7 @@ export default function App() {
   }, []);
 
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={styles.container}>
       <QueryClientProvider client={queryClinet}>
         <NavigationContainer linking={linking}>
           <RootNavigate />
@@ -93,3 +101,9 @@ export default function App() {
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

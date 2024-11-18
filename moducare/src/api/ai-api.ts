@@ -36,15 +36,11 @@ const getPick = async (
   headType: number,
   result: number[],
 ): Promise<ResponsePick[]> => {
-  console.log('headType', headType);
-  console.log('result', result);
   try {
-    const {data} = await axiosInstance.post(`product/recommend`, {
+    const {data} = await axiosInstance.post('product/recommend', {
       result,
       headType,
     });
-
-    console.log('추천 데이터', data);
 
     return data;
   } catch (error) {

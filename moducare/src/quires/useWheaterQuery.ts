@@ -18,6 +18,7 @@ export const useWeatherQuery = (
     queryFn: () => postWeather(params.sido, params.gugun),
     enabled: Boolean(params.sido && params.gugun),
     staleTime: 1000 * 60 * 5,
+    refetchOnMount: true, // 컴포넌트 마운트시 항상 새로운 데이터 fetch
     ...options,
   });
 
