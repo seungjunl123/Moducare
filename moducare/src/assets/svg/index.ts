@@ -9,7 +9,7 @@ export {default as Finish} from './Finish.svg';
 export {default as Right} from './Right.svg';
 export {default as Basic} from './basicImg.svg';
 export {default as Splash} from './SplashLogo.svg';
-export {default as Logo} from './Logo.svg';
+export {default as NewLogo} from './newLogo.svg';
 export {default as MainSVG} from './qqq.svg';
 export {default as Kakao} from './kakao.svg';
 export {default as Naver} from './naver.svg';
