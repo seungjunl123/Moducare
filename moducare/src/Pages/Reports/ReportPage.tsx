@@ -4,6 +4,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import React, {useCallback, useState} from 'react';
 import {colors} from '../../constants/colors';
@@ -65,7 +66,11 @@ export default function ReportPage() {
         )}
         {reportList &&
           reportList.map((report: ReportItem) => (
-            <TouchableOpacity
+            <Pressable
+              style={({pressed}) => [
+                styles.buttonContainer,
+                pressed && styles.pressed, // 누를 때 스타일
+              ]}
               onPress={() => {
                 navigation.navigate('aiResult', {
                   type: 'report',
@@ -83,7 +88,7 @@ export default function ReportPage() {
                   <CustomText label={report.diagnosis} variant="regular" />
                 </View>
               </ItemBox>
-            </TouchableOpacity>
+            </Pressable>
           ))}
       </ScrollView>
     </View>
@@ -110,8 +115,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   reportCard: {
-    borderWidth: 1,
-    borderColor: colors.SUB,
+    width: '100%',
   },
   reportCardItem: {
     flexDirection: 'row',
@@ -121,5 +125,14 @@ const styles = StyleSheet.create({
     height: HEIGHT * 0.5,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  pressed: {
+    borderWidth: 3,
+  },
+  buttonContainer: {
+    borderColor: colors.SUB,
+    borderWidth: 1,
+    borderRadius: 10,
+    width: '100%',
   },
 });

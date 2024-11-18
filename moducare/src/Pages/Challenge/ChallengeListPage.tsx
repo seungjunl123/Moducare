@@ -13,16 +13,9 @@ import useChallenge from '../../hook/useChallenge';
 
 export default function ChallengeListPage({navigation}) {
   const {visible, option, content, showPopup, hidePopup} = usePopup();
-  const [allList, setAllList] = React.useState<getListType[] | []>([]);
+  // const [allList, setAllList] = React.useState<getListType[] | []>([]);
   const [page, setPage] = React.useState(10);
 
-  const handlePage = () => {
-    if (allList.length >= page) {
-      setPage(page + 10);
-    } else {
-      showPopup({option: 'Alert', content: '마지막 페이지 입니다.'});
-    }
-  };
   // const getListCompo = async () => {
   //   const allData = await getChallengeList();
   //   setAllList(allData);
@@ -98,7 +91,21 @@ export default function ChallengeListPage({navigation}) {
               </View>
             )}
             {getAllList.data?.length !== 0 && (
-              <Text style={styles.getListArea} onPress={handlePage}>
+              // <Text style={styles.getListArea} onPress={handlePage}>
+              //   더보기
+              // </Text>
+              <Text
+                style={styles.getListArea}
+                onPress={() => {
+                  if (getAllList.data!.length >= page) {
+                    setPage(page + 10);
+                  } else {
+                    showPopup({
+                      option: 'Alert',
+                      content: '마지막 페이지 입니다.',
+                    });
+                  }
+                }}>
                 더보기
               </Text>
             )}

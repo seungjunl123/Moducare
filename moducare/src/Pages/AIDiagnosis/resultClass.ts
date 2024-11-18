@@ -1,41 +1,28 @@
 const graphData = (resultData: number[]) => {
-  console.log('resultData', resultData);
-  const labelTextStyle = {
-    fontSize: 12,
-    fontWeight: 500,
-    color: '#888',
-  };
-
   return [
     {
       value: resultData[0],
       label: '탈모',
-      // labelTextStyle: labelTextStyle,
     },
     {
       value: resultData[1],
       label: '비듬',
-      // labelTextStyle: labelTextStyle,
     },
     {
       value: resultData[2],
       label: '염증',
-      // labelTextStyle: labelTextStyle,
     },
     {
       value: resultData[3],
       label: '홍반',
-      // labelTextStyle: labelTextStyle,
     },
     {
       value: resultData[4],
       label: '피지',
-      // labelTextStyle: labelTextStyle,
     },
     {
       value: resultData[5],
       label: '각질',
-      // labelTextStyle: labelTextStyle,
     },
   ];
 };
