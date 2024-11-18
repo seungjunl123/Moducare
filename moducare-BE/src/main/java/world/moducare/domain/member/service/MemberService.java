@@ -15,12 +15,6 @@ import world.moducare.global.exception.RestApiException;
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final LatestProductRepository latestProductRepository;
-
-    public Member findByEmail(String email) {
-        return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new RestApiException(ErrorCode.NOT_FOUND));
-    }
 
     public Member findById(Long userId) {
         return memberRepository.findById(userId)
