@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {Pressable, StyleSheet, View, Image} from 'react-native';
+import {Pressable, StyleSheet, View, Image, Alert} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {colors} from '../../constants/colors';
 import CustomText from '../../Components/Common/CustomText';
@@ -35,27 +35,17 @@ const DiagnosisIOT = ({navigation}) => {
       file: formData,
       type: 'IOT',
     });
-    // showPopup({
-    //   option: 'Loading',
-    //   content: '검사 진행중',
-    // });
-    // try {
-    //   console.log('시작하기');
-    //   const res = await mutateAsync(formData);
-    //   setRes(res);
-    //   if (res.comparison) {
-    //     showPopup({
-    //       option: 'confirmMark',
-    //       content: '검사 완료!',
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
   };
 
   const handleImageDelete = () => {
     setCapturedImage(null);
+  };
+
+  const handleWebViewError = () => {
+    navigation.navigate('aiFail', {
+      type: 'IOTError',
+      content: '먼저 기기와의 연결을 진행해주세요!',
+    });
   };
 
   return (
@@ -85,7 +75,8 @@ const DiagnosisIOT = ({navigation}) => {
           <ViewShot ref={viewShotRef} options={{format: 'jpg', quality: 0.9}}>
             <View style={styles.cameraArea}>
               <WebView
-                source={{uri: 'http://192.168.137.49:8000/index.html'}}
+                source={{uri: 'http://192.168.137.225:8000'}}
+                onError={handleWebViewError}
               />
             </View>
           </ViewShot>

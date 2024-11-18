@@ -69,7 +69,7 @@ const ChallengeWritePage = ({route}) => {
       const fileName = file.fileName; // 이미지 파일명
       const type = file.type; // 이미지 타입
       const formData = new FormData();
-      formData.append('content', content);
+      formData.append('content', challengeContent);
       formData.append('file', {
         uri: uri,
         type: type,
