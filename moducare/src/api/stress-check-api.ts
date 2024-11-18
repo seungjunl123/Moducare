@@ -1,13 +1,10 @@
-import axios from 'axios';
 import axiosInstance from '../util/axios';
 import Config from 'react-native-config';
 
 type ResultData = {
-  data: {
-    value: number;
-    dataPointText: string;
-    label: string;
-  }[];
+  value: number;
+  dataPointText: string;
+  label: string;
 };
 
 const postResult = async (stressScore: number): Promise<void> => {
@@ -15,8 +12,6 @@ const postResult = async (stressScore: number): Promise<void> => {
     const {data} = await axiosInstance.post(`${Config.API_URL}stress`, {
       score: stressScore,
     });
-
-    console.log(data);
     return data;
   } catch (error) {
     console.log(error);

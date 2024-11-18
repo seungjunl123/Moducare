@@ -39,8 +39,7 @@ const useLogin = (mutationOptions?: UseMutationCustomOptions) => {
     mutationFn: postLogin,
     onSuccess: data => {
       const {jwtAccessToken, refreshToken, name, birth, email} = data;
-      console.log('정보', {name, birth, email});
-      console.log('jwtAccessToken', jwtAccessToken);
+      // console.log('jwtAccessToken', jwtAccessToken);
       setEncryptStorage('refreshToken', refreshToken);
       setEncryptStorage('info', {name, birth, email});
       setHeader('Authorization', `Bearer ${jwtAccessToken}`);
@@ -129,8 +128,6 @@ function useAuth() {
   const logoutMutation = useLogout();
   const delUserMutation = useDelUser();
   const isLoginLoading = refreshTokenQuery.isPending;
-  console.log('로그인상태', isLogin);
-  console.log('로그인로딩', isLoginLoading);
   return {
     loginMutation,
     refreshTokenQuery,

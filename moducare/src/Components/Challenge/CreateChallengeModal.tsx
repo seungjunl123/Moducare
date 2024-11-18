@@ -1,14 +1,5 @@
-import React, {Component} from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  PressableProps,
-  Dimensions,
-  ModalProps,
-  Modal,
-} from 'react-native';
-import {colors} from '../../constants/colors';
+import React from 'react';
+import {StyleSheet, ModalProps, Modal} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomButtom from '../Common/CustomButton';
 

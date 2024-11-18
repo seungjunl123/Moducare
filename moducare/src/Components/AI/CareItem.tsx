@@ -13,7 +13,7 @@ import {colors} from '../../constants/colors';
 import {usePostLastestProductMutation} from '../../quires/useProductQuery';
 
 interface ListProps extends PressableProps {
-  productImg?: string;
+  productImg: string;
   productName: string;
   link: string;
   price: number;
@@ -29,7 +29,7 @@ const CareItem = ({
   ...props
 }: ListProps) => {
   const storePick = usePostLastestProductMutation();
-  const handleProductMove = async (imgSrc: string, link: string) => {
+  const handleProductMove = async (imgSrc: string) => {
     storePick.mutate({imgSrc, link});
     Linking.openURL(link);
   };
@@ -38,7 +38,7 @@ const CareItem = ({
       <Pressable
         style={styles.container}
         {...props}
-        onPress={() => handleProductMove(productImg, link)}>
+        onPress={() => handleProductMove(productImg)}>
         {productImg ? (
           <Image style={styles.ImgArea} source={{uri: productImg}} />
         ) : (

@@ -14,8 +14,8 @@ import usePermission from '../../hook/usePermission';
 import {usePopup} from '../../hook/usePopup';
 import PopupModal from '../../Components/Common/PopupModal';
 
-const DiagnosisCamera = ({navigation}) => {
-  usePermission('CAM');
+const DiagnosisCamera = ({navigation}: {navigation: any}) => {
+  const {checkPermission} = usePermission('CAM');
   const {visible, option, content, showPopup, hidePopup} = usePopup();
   const [res, setRes] = useState();
   const cameraRef = useRef<Camera>(null);
@@ -48,6 +48,11 @@ const DiagnosisCamera = ({navigation}) => {
 
   // 사진 촬영 함수
   const handleTakePhoto = async () => {
+    const hasPermission = await checkPermission();
+    if (!hasPermission) {
+      return;
+    }
+
     if (cameraRef.current) {
       try {
         showPopup({
