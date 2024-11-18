@@ -25,11 +25,7 @@ public class TokenService {
 
         // 유효한 토큰일 때 리프레시 토큰으로 사용자 ID 찾음
         Member member = memberRepository.findByRefreshToken(refreshToken).orElseThrow(() -> new RestApiException(ErrorCode.FORBIDDEN_ACCESS));
-        String newRefreshToken = tokenProvider.generateMemberToken(member, Duration.ofHours(2));
-        member.updateRefresh(newRefreshToken);
-        memberRepository.save(member);
-
-        return newRefreshToken;
+        return tokenProvider.generateMemberToken(member, Duration.ofHours(2));
     }
 
 }
