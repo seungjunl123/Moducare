@@ -9,12 +9,12 @@ interface PopupConfig {
 
 export const usePopup = () => {
   const [visible, setVisible] = useState(false);
-  const [popupOption, setPopupOption] = useState<PopupOption>('Alert');
-  const [popupContent, setPopupContent] = useState('');
+  const [option, setOption] = useState<PopupOption>('Alert');
+  const [content, setContent] = useState('');
 
   const showPopup = ({option, content}: PopupConfig) => {
-    setPopupOption(option);
-    setPopupContent(content);
+    setOption(option);
+    setContent(content);
     setVisible(true);
   };
 
@@ -24,8 +24,8 @@ export const usePopup = () => {
 
   return {
     visible,
-    popupOption,
-    popupContent,
+    option,
+    content,
     showPopup,
     hidePopup,
   };
