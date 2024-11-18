@@ -285,6 +285,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     paddingBottom: 8,
     fontSize: 12,
+    color: '#8E8E8E',
   },
   moreModal: {
     // flex: 1,
