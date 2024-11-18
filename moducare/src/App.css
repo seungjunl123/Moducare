@@ -38,6 +38,11 @@
   color: #61dafb;
 }
 
+.App-QRBox-QR-img {
+  border-radius: 10px;
+  width: 42%;
+}
+
 .App-QRBox {
   margin-top: 5vmin;
   background-color: #72635a;
@@ -49,7 +54,7 @@
   min-height: 150px;
   width: 50%;
   max-width: 350px;
-  padding: 10px 20px;
+  padding: 10px 15px;
 }
 
 .App-body h3 {

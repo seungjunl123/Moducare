@@ -1,4 +1,10 @@
-import { HeaderLogo, BodyLogo, MainCharacter, MainHead } from "./assets/index";
+import {
+  HeaderLogo,
+  BodyLogo,
+  MainCharacter,
+  MainHead,
+  QR,
+} from "./assets/index";
 import "./App.css";
 import GlobalFont from "./assets/fonts/fonts";
 
@@ -15,16 +21,7 @@ function App() {
         <img src={BodyLogo} className="Body-logo" alt="logo" />
         <h3>모두케어가 사진을 통해 당신의 두피 상태를 확인해드릴게요</h3>
         <div className="App-QRBox">
-          <div
-            className="App-QRBox-QR"
-            style={{
-              backgroundColor: "#ffffff",
-              minWidth: "140px",
-              minHeight: "140px",
-            }}
-          >
-            {/* <img src={QR} className="App-QRBox-QR-img" alt="logo" /> */}
-          </div>
+          <img src={QR} className="App-QRBox-QR-img" alt="logo" />
           <div className="App-QRBox-text">
             <h5>두피 상태를 간단히 체크해봐요!</h5>
             <h5>Downlad App</h5>
