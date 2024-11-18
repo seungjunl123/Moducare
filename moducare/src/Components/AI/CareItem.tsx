@@ -11,6 +11,8 @@ import {
 import CustomText from '../Common/CustomText';
 import {colors} from '../../constants/colors';
 import {usePostLastestProductMutation} from '../../quires/useProductQuery';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 interface ListProps extends PressableProps {
   productImg: string;
@@ -33,6 +35,9 @@ const CareItem = ({
     storePick.mutate({imgSrc, link});
     Linking.openURL(link);
   };
+
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
   return (
     <>
       <Pressable
@@ -68,48 +73,49 @@ const CareItem = ({
 
 export default CareItem;
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignContent: 'center',
-    gap: 10,
-    marginBottom: 15,
-    paddingHorizontal: 20,
-  },
-  ImgArea: {
-    width: 100,
-    height: 100,
-  },
-  detailArea: {
-    justifyContent: 'space-between',
-    flex: 1,
-  },
-  subText: {
-    fontFamily: 'Pretendard-Regualr',
-    color: colors.DARK_GRAY,
-    fontSize: 10,
-  },
-  subArea: {
-    flexDirection: 'row',
-    // borderWidth: 1,
-    justifyContent: 'flex-end',
-    fontFamily: 'Pretendard-Bold',
-    color: colors.BLACK,
-  },
-  subAreaText: {
-    padding: 5,
-    borderRadius: 10,
-    textAlign: 'right',
-    fontFamily: 'Pretendard-Bold',
-    color: colors.DARK_GRAY,
-    fontSize: 10,
-    backgroundColor: colors.WHITE_GRAY,
-  },
-  line: {
-    marginHorizontal: 20,
-    height: 1,
-    backgroundColor: colors.WHITE_GRAY,
-    marginVertical: 10,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignContent: 'center',
+      gap: 10,
+      marginBottom: 15,
+      paddingHorizontal: 20,
+    },
+    ImgArea: {
+      width: 100,
+      height: 100,
+    },
+    detailArea: {
+      justifyContent: 'space-between',
+      flex: 1,
+    },
+    subText: {
+      fontFamily: 'Pretendard-Regualr',
+      color: colors[theme].DARK_GRAY,
+      fontSize: 10,
+    },
+    subArea: {
+      flexDirection: 'row',
+      // borderWidth: 1,
+      justifyContent: 'flex-end',
+      fontFamily: 'Pretendard-Bold',
+      color: colors[theme].BLACK,
+    },
+    subAreaText: {
+      padding: 5,
+      borderRadius: 10,
+      textAlign: 'right',
+      fontFamily: 'Pretendard-Bold',
+      color: colors[theme].DARK_GRAY,
+      fontSize: 10,
+      backgroundColor: colors[theme].WHITE_GRAY,
+    },
+    line: {
+      marginHorizontal: 20,
+      height: 1,
+      backgroundColor: colors[theme].WHITE_GRAY,
+      marginVertical: 10,
+    },
+  });

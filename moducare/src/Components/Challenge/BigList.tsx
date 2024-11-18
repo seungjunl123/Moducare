@@ -10,6 +10,8 @@ import {
 import CustomText from '../Common/CustomText';
 import SvgIconAtom from '../Common/SvgIconAtom';
 import {colors} from '../../constants/colors';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 interface ListProps extends PressableProps {
   uri?: string;
@@ -18,6 +20,8 @@ interface ListProps extends PressableProps {
 }
 
 const BigList = ({uri, title = '', user = 0, ...props}: ListProps) => {
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
   return (
     <>
       <Pressable style={styles.container} {...props}>
@@ -42,33 +46,34 @@ const BigList = ({uri, title = '', user = 0, ...props}: ListProps) => {
 
 export default BigList;
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignContent: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 15,
-    paddingHorizontal: 20,
-  },
-  ImgArea: {
-    width: 80,
-    height: 80,
-    borderRadius: 100,
-  },
-  detailArea: {
-    justifyContent: 'space-between',
-  },
-  dateArea: {
-    justifyContent: 'flex-end',
-    textAlign: 'right',
-    fontFamily: 'Pretendard-Bold',
-    color: colors.BLACK,
-    fontSize: 12,
-  },
-  line: {
-    marginHorizontal: 20,
-    height: 1,
-    backgroundColor: colors.WHITE_GRAY,
-    marginVertical: 10,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignContent: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+      paddingHorizontal: 20,
+    },
+    ImgArea: {
+      width: 80,
+      height: 80,
+      borderRadius: 100,
+    },
+    detailArea: {
+      justifyContent: 'space-between',
+    },
+    dateArea: {
+      justifyContent: 'flex-end',
+      textAlign: 'right',
+      fontFamily: 'Pretendard-Bold',
+      color: colors[theme].BLACK,
+      fontSize: 12,
+    },
+    line: {
+      marginHorizontal: 20,
+      height: 1,
+      backgroundColor: colors[theme].WHITE_GRAY,
+      marginVertical: 10,
+    },
+  });

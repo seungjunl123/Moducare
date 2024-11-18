@@ -7,6 +7,8 @@ import {colors} from '../../constants/colors';
 import {useFocusEffect} from '@react-navigation/native';
 import {usePopup} from '../../hook/usePopup';
 import PopupModal from '../../Components/Common/PopupModal';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 export default function DiagnosisPage({navigation}: {navigation: any}) {
   const {visible, popupOption, popupContent, showPopup, hidePopup} = usePopup();
@@ -30,6 +32,9 @@ export default function DiagnosisPage({navigation}: {navigation: any}) {
       };
     }, []),
   );
+
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -94,49 +99,50 @@ export default function DiagnosisPage({navigation}: {navigation: any}) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#fff',
-    padding: 10,
-  },
-  MainArea: {
-    flex: 0.8,
-  },
-  BtnArea: {
-    flex: 0.1,
-    width: '100%',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  pickArea: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderColor: colors.WHITE_GRAY,
-    borderWidth: 3,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-    marginVertical: 5,
-  },
-  pick: {
-    borderColor: colors.MAIN,
-  },
-  TextArea: {
-    width: '100%',
-    marginVertical: 10,
-    paddingHorizontal: 10,
-  },
-  text: {
-    fontFamily: 'Pretendard-Bold',
-    color: colors.BLACK,
-    fontSize: 15,
-  },
-  subText: {
-    fontFamily: 'Pretendard-Bold',
-    color: colors.GRAY,
-    fontSize: 10,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      width: '100%',
+      height: '100%',
+      backgroundColor: colors[theme].WHITE,
+      padding: 10,
+    },
+    MainArea: {
+      flex: 0.8,
+    },
+    BtnArea: {
+      flex: 0.1,
+      width: '100%',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+    },
+    pickArea: {
+      width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      borderColor: colors[theme].WHITE_GRAY,
+      borderWidth: 3,
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+      borderRadius: 10,
+      marginVertical: 5,
+    },
+    pick: {
+      borderColor: colors[theme].MAIN,
+    },
+    TextArea: {
+      width: '100%',
+      marginVertical: 10,
+      paddingHorizontal: 10,
+    },
+    text: {
+      fontFamily: 'Pretendard-Bold',
+      color: colors[theme].BLACK,
+      fontSize: 15,
+    },
+    subText: {
+      fontFamily: 'Pretendard-Bold',
+      color: colors[theme].GRAY,
+      fontSize: 10,
+    },
+  });

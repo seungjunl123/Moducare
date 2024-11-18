@@ -8,6 +8,8 @@ import LottieView from 'lottie-react-native';
 import {fail} from '../../assets/lottie';
 import CustomButtom from '../../Components/Common/CustomButton';
 import {BackHandler} from 'react-native';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 const DiagnosisFail = ({route, navigation}) => {
   const {type, content} = route.params;
@@ -48,6 +50,8 @@ const DiagnosisFail = ({route, navigation}) => {
     }, []),
   );
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
   return (
     <SafeAreaView style={styles.container}>
       <LottieView source={fail} autoPlay loop={false} style={styles.robot} />
@@ -67,25 +71,26 @@ const DiagnosisFail = ({route, navigation}) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    gap: 20,
-  },
-  robot: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
-  },
-  confirmMark: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 10,
+      gap: 20,
+    },
+    robot: {
+      width: 100,
+      height: 100,
+      alignSelf: 'center',
+    },
+    confirmMark: {
+      width: 100,
+      height: 100,
+      alignSelf: 'center',
+    },
+  });
 
 export default DiagnosisFail;

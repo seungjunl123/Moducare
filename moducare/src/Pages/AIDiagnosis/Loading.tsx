@@ -10,6 +10,8 @@ import {confirmMark, robot} from '../../assets/lottie';
 import {ResponseAiDiagnosis} from '../../api/ai-api';
 import CustomButtom from '../../Components/Common/CustomButton';
 import {BackHandler} from 'react-native';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 const Loading = ({route, navigation}) => {
   const [isFinish, setFinish] = useState(false);
@@ -64,6 +66,8 @@ const Loading = ({route, navigation}) => {
     }, []),
   );
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
   return (
     <SafeAreaView style={styles.container}>
       {isFinish ? (
@@ -95,25 +99,26 @@ const Loading = ({route, navigation}) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-    gap: 20,
-  },
-  robot: {
-    width: 250,
-    height: 250,
-    alignSelf: 'center',
-  },
-  confirmMark: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 10,
+      gap: 20,
+    },
+    robot: {
+      width: 250,
+      height: 250,
+      alignSelf: 'center',
+    },
+    confirmMark: {
+      width: 100,
+      height: 100,
+      alignSelf: 'center',
+    },
+  });
 
 export default Loading;

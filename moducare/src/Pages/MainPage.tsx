@@ -13,6 +13,8 @@ import {getMyListType} from '../api/challenge-api';
 import {RootStackParamList} from '../navigate/StackNavigate';
 import {setEncryptStorage} from '../util';
 import useChallenge from '../hook/useChallenge';
+import useThemeStorage from '../hook/useThemeStorage';
+import {ThemeMode} from '../types/common';
 
 const WINDOW_WIDTH = Dimensions.get('window').width;
 const WINDOW_HEIGHT = Dimensions.get('window').height;
@@ -36,6 +38,9 @@ export default function MainPage() {
       getMyList.refetch();
     }, []),
   );
+
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -91,71 +96,72 @@ export default function MainPage() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-  },
-  contentContainer: {
-    margin: 20,
-    alignItems: 'center',
-    gap: 20,
-  },
-  headerTextContainer: {
-    marginStart: 20,
-    alignSelf: 'flex-start',
-  },
-  headerText: {
-    fontSize: 20,
-    marginStart: 20,
-    fontWeight: 'bold',
-  },
-  boxHeaderText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  helloImage: {
-    width: WINDOW_WIDTH * 0.6,
-    height: WINDOW_HEIGHT * 0.25,
-  },
-  startButton: {
-    width: WINDOW_WIDTH * 0.9,
-  },
-  weatherBoxImage: {
-    width: 70,
-    height: 70,
-  },
-  weatherBox: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: 20,
-  },
-  weatherBoxItem: {
-    alignItems: 'center',
-    gap: 5,
-  },
-  challengeBox: {
-    height: WINDOW_HEIGHT * 0.2,
-    gap: 10,
-    margin: 10,
-  },
-  challengeBoxItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  challengeBoxImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  challengeBoxText: {
-    marginStart: 10,
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: colors.BLACK,
-  },
-  challengeBoxArrow: {
-    marginLeft: 'auto',
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      justifyContent: 'center',
+      backgroundColor: colors[theme].WHITE,
+    },
+    contentContainer: {
+      margin: 20,
+      alignItems: 'center',
+      gap: 20,
+    },
+    headerTextContainer: {
+      marginStart: 20,
+      alignSelf: 'flex-start',
+    },
+    headerText: {
+      fontSize: 20,
+      marginStart: 20,
+      fontWeight: 'bold',
+    },
+    boxHeaderText: {
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    helloImage: {
+      width: WINDOW_WIDTH * 0.6,
+      height: WINDOW_HEIGHT * 0.25,
+    },
+    startButton: {
+      width: WINDOW_WIDTH * 0.9,
+    },
+    weatherBoxImage: {
+      width: 70,
+      height: 70,
+    },
+    weatherBox: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      margin: 20,
+    },
+    weatherBoxItem: {
+      alignItems: 'center',
+      gap: 5,
+    },
+    challengeBox: {
+      height: WINDOW_HEIGHT * 0.2,
+      gap: 10,
+      margin: 10,
+    },
+    challengeBoxItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    challengeBoxImage: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+    },
+    challengeBoxText: {
+      marginStart: 10,
+      fontSize: 15,
+      fontWeight: 'bold',
+      color: colors[theme].BLACK,
+    },
+    challengeBoxArrow: {
+      marginLeft: 'auto',
+    },
+  });

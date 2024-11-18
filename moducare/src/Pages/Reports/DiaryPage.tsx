@@ -20,6 +20,8 @@ import PopupModal from '../../Components/Common/PopupModal';
 import {usePopup} from '../../hook/usePopup';
 import {getEncryptStorage} from '../../util/encryptedStorage';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 const WIDTH = Dimensions.get('window').width;
 
@@ -131,6 +133,8 @@ export default function DiaryPage() {
     setImgConfig(null);
   };
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -228,80 +232,81 @@ export default function DiaryPage() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    flex: 1,
-    backgroundColor: colors.WHITE,
-  },
-  header: {
-    alignItems: 'center',
-    margin: 20,
-  },
-  headerText: {
-    fontSize: 24,
-    fontFamily: 'Pretendard-Bold',
-    textAlign: 'center',
-  },
-  reportIcon: {
-    width: 80,
-    height: 100,
-  },
-  reportList: {
-    margin: 20,
-    gap: 12,
-  },
-  reportCard: {
-    borderWidth: 1,
-    borderColor: colors.SUB,
-  },
-  reportCardItem: {
-    flexDirection: 'row',
-    gap: 20,
-  },
-  gallaryButtonGroup: {
-    flexDirection: 'row',
-    alignContent: 'space-between',
-    marginBottom: 20,
-  },
-  buttonGroup: {
-    width: WIDTH * 0.9,
-    alignSelf: 'center',
-  },
-  modalItem: {
-    alignItems: 'center',
-  },
-  modalContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    margin: 40,
-  },
-  bottomSpace: {
-    height: 100,
-  },
-  buttonContainer: {
-    marginBottom: 20,
-  },
-  imageContainer: {
-    alignItems: 'center',
-    margin: 10,
-    marginVertical: 20,
-  },
-  image: {
-    width: 150,
-    height: 150,
-  },
-  closeBtn: {
-    width: 30,
-    height: 30,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.MAIN,
-    position: 'absolute',
-    right: 0,
-    margin: 5,
-    zIndex: 1000,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      justifyContent: 'center',
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+    },
+    header: {
+      alignItems: 'center',
+      margin: 20,
+    },
+    headerText: {
+      fontSize: 24,
+      fontFamily: 'Pretendard-Bold',
+      textAlign: 'center',
+    },
+    reportIcon: {
+      width: 80,
+      height: 100,
+    },
+    reportList: {
+      margin: 20,
+      gap: 12,
+    },
+    reportCard: {
+      borderWidth: 1,
+      borderColor: colors[theme].SUB,
+    },
+    reportCardItem: {
+      flexDirection: 'row',
+      gap: 20,
+    },
+    gallaryButtonGroup: {
+      flexDirection: 'row',
+      alignContent: 'space-between',
+      marginBottom: 20,
+    },
+    buttonGroup: {
+      width: WIDTH * 0.9,
+      alignSelf: 'center',
+    },
+    modalItem: {
+      alignItems: 'center',
+    },
+    modalContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      margin: 40,
+    },
+    bottomSpace: {
+      height: 100,
+    },
+    buttonContainer: {
+      marginBottom: 20,
+    },
+    imageContainer: {
+      alignItems: 'center',
+      margin: 10,
+      marginVertical: 20,
+    },
+    image: {
+      width: 150,
+      height: 150,
+    },
+    closeBtn: {
+      width: 30,
+      height: 30,
+      borderRadius: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors[theme].MAIN,
+      position: 'absolute',
+      right: 0,
+      margin: 5,
+      zIndex: 1000,
+    },
+  });

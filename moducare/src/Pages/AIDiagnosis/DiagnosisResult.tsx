@@ -28,6 +28,8 @@ import {ResponseAiDiagnosis} from '../../api/ai-api';
 import {getEncryptStorage} from '../../util';
 import PopupModal from '../../Components/Common/PopupModal';
 import {usePopup} from '../../hook/usePopup';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 type userInfo = {
   name: string;
@@ -382,6 +384,9 @@ const DiagnosisResult = ({
     }
   };
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -417,7 +422,7 @@ const DiagnosisResult = ({
             height={200}
             disablePress // 누루기 동작 비활성화
             barBorderRadius={2}
-            frontColor={colors.MAIN} // bar 색상
+            frontColor={colors[theme].MAIN} // bar 색상
             // x축
             xAxisIndicesColor={'#D9D9D9'} // x축 단계별 표시 색상
             xAxisColor={'#d9d9d9'} // x축 색상
@@ -478,71 +483,72 @@ const DiagnosisResult = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-    // alignItems: 'center',
-    padding: 15,
-  },
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+      // alignItems: 'center',
+      padding: 15,
+    },
 
-  photoArea: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 10,
-  },
-  photoDetailArea: {
-    width: '50%',
-    alignItems: 'center',
-  },
-  photo: {
-    width: '100%',
-    resizeMode: 'cover',
-    height: 150,
-    borderRadius: 10,
-    marginVertical: 10,
-  },
+    photoArea: {
+      width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      gap: 10,
+    },
+    photoDetailArea: {
+      width: '50%',
+      alignItems: 'center',
+    },
+    photo: {
+      width: '100%',
+      resizeMode: 'cover',
+      height: 150,
+      borderRadius: 10,
+      marginVertical: 10,
+    },
 
-  checkArea: {
-    width: '100%',
-    alignItems: 'center',
-    gap: 20,
-  },
-  checkText: {
-    fontSize: 20,
-    fontFamily: 'Pretendard-Bold',
-    color: colors.BLACK,
-  },
-  checkResult: {
-    fontSize: 25,
-    fontFamily: 'Pretendard-ExtraBold',
-    color: colors.MAIN,
-  },
+    checkArea: {
+      width: '100%',
+      alignItems: 'center',
+      gap: 20,
+    },
+    checkText: {
+      fontSize: 20,
+      fontFamily: 'Pretendard-Bold',
+      color: colors[theme].BLACK,
+    },
+    checkResult: {
+      fontSize: 25,
+      fontFamily: 'Pretendard-ExtraBold',
+      color: colors[theme].MAIN,
+    },
 
-  careArea: {
-    width: '100%',
-    alignItems: 'flex-start',
-    marginVertical: 20,
-  },
-  careText: {
-    fontSize: 15,
-    fontFamily: 'Pretendard-Medium',
-    color: colors.BLACK,
-  },
+    careArea: {
+      width: '100%',
+      alignItems: 'flex-start',
+      marginVertical: 20,
+    },
+    careText: {
+      fontSize: 15,
+      fontFamily: 'Pretendard-Medium',
+      color: colors[theme].BLACK,
+    },
 
-  BtnArea: {
-    width: '100%',
-    paddingHorizontal: 10,
-    gap: 10,
-  },
-  ResultGraph: {
-    gap: 10,
-    marginVertical: 20,
-    flexDirection: 'row',
-    alignSelf: 'center',
-    justifyContent: 'center',
-  },
-});
+    BtnArea: {
+      width: '100%',
+      paddingHorizontal: 10,
+      gap: 10,
+    },
+    ResultGraph: {
+      gap: 10,
+      marginVertical: 20,
+      flexDirection: 'row',
+      alignSelf: 'center',
+      justifyContent: 'center',
+    },
+  });
 
 export default DiagnosisResult;

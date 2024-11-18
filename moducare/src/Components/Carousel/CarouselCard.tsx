@@ -6,6 +6,9 @@ import {Dimensions} from 'react-native';
 import CustomButton from '../Common/CustomButton';
 import CustomText from '../Common/CustomText';
 import {Text} from 'react-native';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
+import {colors} from '../../constants';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -70,6 +73,9 @@ const MyCarousel: React.FC<CarouselProps> = ({isMain, data}) => {
     }
   };
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
+
   return (
     <View style={styles.carouselContainer}>
       <Carousel
@@ -90,49 +96,50 @@ const MyCarousel: React.FC<CarouselProps> = ({isMain, data}) => {
 
 export default MyCarousel;
 
-const styles = StyleSheet.create({
-  card: {
-    width: WIDTH * 0.6,
-    height: HEIGHT * 0.4,
-    borderRadius: 10,
-    borderWidth: 3,
-    borderColor: '#E0E0E0',
-    backgroundColor: 'white',
-    alignItems: 'center',
-  },
-  carouselContainer: {
-    width: '100%',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
-  img: {
-    marginTop: 10,
-    marginBottom: 10,
-    width: '60%',
-    height: '60%',
-    resizeMode: 'contain',
-  },
-  diaryCard: {
-    width: WIDTH * 0.6,
-    height: HEIGHT * 0.4,
-    marginBottom: 40,
-    alignItems: 'center',
-  },
-  dairyImg: {
-    maxHeight: 300,
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-    marginBottom: 10,
-  },
-  buttonContainer: {
-    width: '80%',
-    marginBottom: 10,
-  },
-  titleContainer: {
-    marginTop: 5,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    card: {
+      width: WIDTH * 0.6,
+      height: HEIGHT * 0.4,
+      borderRadius: 10,
+      borderWidth: 3,
+      borderColor: colors[theme].DARK_GRAY,
+      backgroundColor: colors[theme].WHITE,
+      alignItems: 'center',
+    },
+    carouselContainer: {
+      width: '100%',
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginTop: 10,
+    },
+    img: {
+      marginTop: 10,
+      marginBottom: 10,
+      width: '60%',
+      height: '60%',
+      resizeMode: 'contain',
+    },
+    diaryCard: {
+      width: WIDTH * 0.6,
+      height: HEIGHT * 0.4,
+      marginBottom: 40,
+      alignItems: 'center',
+    },
+    dairyImg: {
+      maxHeight: 300,
+      width: '100%',
+      height: '100%',
+      resizeMode: 'contain',
+      marginBottom: 10,
+    },
+    buttonContainer: {
+      width: '80%',
+      marginBottom: 10,
+    },
+    titleContainer: {
+      marginTop: 5,
+    },
+  });

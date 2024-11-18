@@ -24,6 +24,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
 import {usePopup} from '../../hook/usePopup';
 import PopupModal from '../../Components/Common/PopupModal';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 interface Action {
   title: string;
@@ -95,6 +97,9 @@ const ChallengeWritePage = ({route}) => {
     setImgConfig(null);
   };
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -145,52 +150,53 @@ const ChallengeWritePage = ({route}) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-    padding: 20,
-  },
-  UploadArea: {
-    marginVertical: 20,
-    height: 300,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  UploadText: {
-    textAlign: 'center',
-    color: colors.MAIN,
-    fontSize: 14,
-    fontFamily: 'Pretendard-Medium',
-  },
-  InputArea: {
-    backgroundColor: colors.WHITE_GRAY,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    flex: 0.5,
-    marginBottom: 30,
-    height: HEIGHT * 0.2,
-  },
-  imageContainer: {
-    position: 'relative',
-    width: 300,
-    alignItems: 'center',
-    margin: 10,
-    marginVertical: 20,
-    marginHorizontal: 'auto',
-  },
-  closeBtn: {
-    width: 30,
-    height: 30,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.MAIN,
-    position: 'absolute',
-    right: 0,
-    margin: 5,
-    zIndex: 1000,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+      padding: 20,
+    },
+    UploadArea: {
+      marginVertical: 20,
+      height: 300,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    UploadText: {
+      textAlign: 'center',
+      color: colors[theme].MAIN,
+      fontSize: 14,
+      fontFamily: 'Pretendard-Medium',
+    },
+    InputArea: {
+      backgroundColor: colors[theme].WHITE_GRAY,
+      borderRadius: 10,
+      paddingHorizontal: 10,
+      flex: 0.5,
+      marginBottom: 30,
+      height: HEIGHT * 0.2,
+    },
+    imageContainer: {
+      position: 'relative',
+      width: 300,
+      alignItems: 'center',
+      margin: 10,
+      marginVertical: 20,
+      marginHorizontal: 'auto',
+    },
+    closeBtn: {
+      width: 30,
+      height: 30,
+      borderRadius: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors[theme].MAIN,
+      position: 'absolute',
+      right: 0,
+      margin: 5,
+      zIndex: 1000,
+    },
+  });
 
 export default ChallengeWritePage;

@@ -8,6 +8,8 @@ import {useProductListQuery} from '../../quires/useProductQuery';
 import {RootStackParamList} from '../../navigate/StackNavigate';
 import {RouteProp, useFocusEffect} from '@react-navigation/native';
 import {getEncryptStorage} from '../../util';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 const DiagnosisPick = ({
   route,
@@ -44,6 +46,9 @@ const DiagnosisPick = ({
       // 새로운 리스트 요청 필요
     }
   };
+
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -85,40 +90,41 @@ const DiagnosisPick = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-    padding: 20,
-    paddingBottom: 0,
-  },
-  mainArea: {
-    flex: 1,
-  },
-  topArea: {
-    gap: 10,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignContent: 'center',
-    marginBottom: 20,
-  },
-  ListArea: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-    borderColor: colors.WHITE_GRAY,
-    paddingTop: 20,
-    borderWidth: 1,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    elevation: 4,
-  },
-  getListArea: {
-    paddingVertical: 20,
-    textAlign: 'center',
-    fontFamily: 'Pretendard-Bold',
-    fontSize: 15,
-    color: colors.DARK_GRAY,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+      padding: 20,
+      paddingBottom: 0,
+    },
+    mainArea: {
+      flex: 1,
+    },
+    topArea: {
+      gap: 10,
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignContent: 'center',
+      marginBottom: 20,
+    },
+    ListArea: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+      borderColor: colors[theme].WHITE_GRAY,
+      paddingTop: 20,
+      borderWidth: 1,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      elevation: 4,
+    },
+    getListArea: {
+      paddingVertical: 20,
+      textAlign: 'center',
+      fontFamily: 'Pretendard-Bold',
+      fontSize: 15,
+      color: colors[theme].DARK_GRAY,
+    },
+  });
 
 export default DiagnosisPick;

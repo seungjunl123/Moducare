@@ -7,6 +7,7 @@ import {
   Text,
   Modal,
   Pressable,
+  useColorScheme,
 } from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MainPage from '../../Pages/MainPage';
@@ -28,6 +29,8 @@ import CustomText from '../Common/CustomText';
 import {confirmMark, Alert, Loading} from '../../assets/lottie';
 import {colors} from '../../constants';
 import Entypo from 'react-native-vector-icons/Entypo';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 const Tab = createBottomTabNavigator();
 
@@ -43,7 +46,21 @@ const ChallengeIcon = ({color, size}: {color: string; size: number}) => (
 );
 
 const DiagnosisIcon = () => (
-  <View style={styles.walkButton}>
+  <View
+    style={{
+      width: WIDTH * 0.17,
+      height: WIDTH * 0.17,
+      borderRadius: WIDTH * 0.09,
+      top: HEIGHT * -0.025,
+      backgroundColor: '#A28E81',
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.5,
+      shadowRadius: 4,
+      elevation: 5,
+    }}>
     <SimpleLineIcons name="camera" color="white" size={40} />
   </View>
 );
@@ -97,11 +114,23 @@ function CustomTabBarButton() {
     setButton(() => withdrawUser);
   };
 
-  const [themeMode, setThemeMode] = useState('light');
-
+  const {theme, isSystem, setMode, setSystem} = useThemeStorage();
+  const systemDefault = useColorScheme();
   const handleThemePick = (type: string) => {
-    setThemeMode(type);
+    if (type === 'light') {
+      setMode('light');
+      setSystem(false);
+    } else if (type === 'dark') {
+      setMode('dark');
+      setSystem(false);
+    } else if (type === 'system') {
+      setMode(systemDefault ?? 'light');
+      setSystem(true);
+    }
   };
+
+  // const {theme} = useThemeStorage();
+  const styles = styling(theme);
 
   return (
     <>
@@ -119,24 +148,24 @@ function CustomTabBarButton() {
               style={styles.ThemeBtn}
               onPress={() => handleThemePick('system')}>
               <CustomText label="시스템설정" size={18} />
-              {themeMode === 'system' && (
-                <Entypo name="check" size={18} color={colors.NEGATIVE} />
+              {isSystem === true && (
+                <Entypo name="check" size={18} color={colors[theme].NEGATIVE} />
               )}
             </Pressable>
             <Pressable
               style={styles.ThemeBtn}
               onPress={() => handleThemePick('light')}>
               <CustomText label="라이트" size={18} />
-              {themeMode === 'light' && (
-                <Entypo name="check" size={18} color={colors.NEGATIVE} />
+              {theme === 'light' && isSystem === false && (
+                <Entypo name="check" size={18} color={colors[theme].NEGATIVE} />
               )}
             </Pressable>
             <Pressable
               style={styles.ThemeBtn}
               onPress={() => handleThemePick('dark')}>
               <CustomText label="다크" size={18} />
-              {themeMode === 'dark' && (
-                <Entypo name="check" size={18} color={colors.NEGATIVE} />
+              {theme === 'dark' && isSystem === false && (
+                <Entypo name="check" size={18} color={colors[theme].NEGATIVE} />
               )}
             </Pressable>
           </View>
@@ -185,6 +214,7 @@ function CustomTabBarButton() {
 }
 
 export default function BottomNavBar({navigation}: {navigation: any}) {
+  const {theme} = useThemeStorage();
   return (
     <Tab.Navigator
       initialRouteName="홈"
@@ -192,7 +222,8 @@ export default function BottomNavBar({navigation}: {navigation: any}) {
         headerShown: false,
         tabBarActiveTintColor: '#B9834E',
         tabBarStyle: {
-          borderTopWidth: 1,
+          backgroundColor: colors[theme].WHITE,
+          // borderTopWidth: 1,
           shadowColor: 'transparent',
           height: HEIGHT * 0.07,
           position: 'absolute',
@@ -261,88 +292,89 @@ export default function BottomNavBar({navigation}: {navigation: any}) {
   );
 }
 
-const styles = StyleSheet.create({
-  walkButton: {
-    width: WIDTH * 0.17,
-    height: WIDTH * 0.17,
-    borderRadius: WIDTH * 0.09,
-    top: HEIGHT * -0.025,
-    backgroundColor: '#A28E81',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  moreButton: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  moreText: {
-    marginTop: 4,
-    paddingBottom: 8,
-    fontSize: 12,
-    color: '#8E8E8E',
-  },
-  moreModal: {
-    // flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 15,
-  },
-
-  // popup modal 관련
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 20,
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 20,
-    width: '80%',
-    maxWidth: 500,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    walkButton: {
+      width: WIDTH * 0.17,
+      height: WIDTH * 0.17,
+      borderRadius: WIDTH * 0.09,
+      top: HEIGHT * -0.025,
+      backgroundColor: '#A28E81',
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.5,
+      shadowRadius: 4,
+      elevation: 5,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  confirmMark: {
-    width: 60,
-    height: 60,
-    alignSelf: 'center',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  ThemeTitle: {
-    fontSize: 22,
-    color: colors.MAIN,
-    fontFamily: 'Pretendard-ExtraBold',
-    marginBottom: 10,
-  },
-  ThemeArea: {
-    width: '100%',
-    justifyContent: 'space-around',
-    flexDirection: 'row',
-  },
-  ThemeBtn: {
-    width: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-});
+    moreButton: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    moreText: {
+      marginTop: 4,
+      paddingBottom: 8,
+      fontSize: 12,
+      color: '#8E8E8E',
+    },
+    moreModal: {
+      // flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 15,
+    },
+
+    // popup modal 관련
+    overlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 20,
+      backgroundColor: colors[theme].WHITE,
+      borderRadius: 12,
+      padding: 20,
+      width: '80%',
+      maxWidth: 500,
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    confirmMark: {
+      width: 60,
+      height: 60,
+      alignSelf: 'center',
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      gap: 10,
+    },
+    ThemeTitle: {
+      fontSize: 22,
+      color: colors[theme].MAIN,
+      fontFamily: 'Pretendard-ExtraBold',
+      marginBottom: 10,
+    },
+    ThemeArea: {
+      width: '100%',
+      justifyContent: 'space-around',
+      flexDirection: 'row',
+    },
+    ThemeBtn: {
+      width: 100,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+    },
+  });

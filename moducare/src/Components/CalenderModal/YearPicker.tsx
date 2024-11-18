@@ -2,6 +2,8 @@ import React, {useEffect, useRef} from 'react';
 import {StyleSheet, TouchableOpacity, View, ScrollView} from 'react-native';
 import {colors} from '../../constants/colors';
 import CustomText from '../Common/CustomText';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 interface YearPickerProps {
   setCurrentMonth: (date: Date) => void;
@@ -40,6 +42,9 @@ const YearPicker = ({
     }
   }, []); // 컴포넌트가 마운트될 때만 실행
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
+
   return (
     <View style={styles.yearPickerContainer}>
       <View style={styles.yearPickerHeader}>
@@ -70,36 +75,37 @@ const YearPicker = ({
   );
 };
 
-const styles = StyleSheet.create({
-  yearPickerContainer: {
-    alignSelf: 'center',
-    position: 'absolute',
-    width: '110%',
-    backgroundColor: 'white',
-    maxHeight: 500,
-    zIndex: 1000,
-    borderWidth: 1,
-    borderRadius: 10,
-    borderColor: colors.GRAY,
-  },
-  yearPickerHeader: {
-    alignSelf: 'center',
-    padding: 20,
-  },
-  yearItem: {
-    alignSelf: 'center',
-    width: '80%',
-    paddingVertical: 30,
-    alignItems: 'center',
-    borderBottomWidth: 0.2,
-    borderBottomColor: colors.GRAY,
-  },
-  selectedYear: {
-    backgroundColor: colors.SUB,
-  },
-  scrollContent: {
-    paddingVertical: 10,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    yearPickerContainer: {
+      alignSelf: 'center',
+      position: 'absolute',
+      width: '110%',
+      backgroundColor: 'white',
+      maxHeight: 500,
+      zIndex: 1000,
+      borderWidth: 1,
+      borderRadius: 10,
+      borderColor: colors[theme].GRAY,
+    },
+    yearPickerHeader: {
+      alignSelf: 'center',
+      padding: 20,
+    },
+    yearItem: {
+      alignSelf: 'center',
+      width: '80%',
+      paddingVertical: 30,
+      alignItems: 'center',
+      borderBottomWidth: 0.2,
+      borderBottomColor: colors[theme].GRAY,
+    },
+    selectedYear: {
+      backgroundColor: colors[theme].SUB,
+    },
+    scrollContent: {
+      paddingVertical: 10,
+    },
+  });
 
 export default YearPicker;

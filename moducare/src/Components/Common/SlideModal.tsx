@@ -2,6 +2,8 @@ import React from 'react';
 import {Modal, StyleSheet, Dimensions, Pressable, View} from 'react-native';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import {colors} from '../../constants/colors';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 interface SlideModalProps {
   visible: boolean;
@@ -16,6 +18,8 @@ export default function SlideModal({
   onClose,
   children,
 }: SlideModalProps) {
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
   return (
     <GestureRecognizer onSwipeDown={onClose}>
       <Modal
@@ -34,25 +38,26 @@ export default function SlideModal({
   );
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContainer: {
-    backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 15,
-    minHeight: HEIGHT * 0.33,
-  },
-  modalHeadLine: {
-    width: 100,
-    height: 4,
-    backgroundColor: colors.MAIN,
-    borderRadius: 10,
-    alignSelf: 'center',
-    marginBottom: 10,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'flex-end',
+    },
+    modalContainer: {
+      backgroundColor: colors[theme].WHITE,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      padding: 15,
+      minHeight: HEIGHT * 0.33,
+    },
+    modalHeadLine: {
+      width: 100,
+      height: 4,
+      backgroundColor: colors[theme].MAIN,
+      borderRadius: 10,
+      alignSelf: 'center',
+      marginBottom: 10,
+    },
+  });
