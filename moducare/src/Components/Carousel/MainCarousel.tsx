@@ -14,8 +14,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function MainCarousel() {
   const navigation = useNavigation<NavigationProp>();
-  // const {data: latestProductData} = useLatestProductQuery();
-  const latestProductData = null;
+  const {data: latestProductData} = useLatestProductQuery();
 
   // 메인 캐러셀은 여기서 저장
   const CarouselData = [
