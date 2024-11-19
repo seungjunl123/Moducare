@@ -1,19 +1,13 @@
 package world.moducare.domain.diagnosis.service;
 
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 import world.moducare.domain.api.gpt.GptService;
 import world.moducare.domain.api.gpt.PromptService;
 import world.moducare.domain.diagnosis.dto.AiResultDto;
@@ -153,12 +147,6 @@ public class DiagnosticResultService {
         // AI 서버로 요청 전송
         try {
 
-            // 요청 전에 로그를 추가하여 요청 본문과 헤더를 확인
-            System.out.println("Sending request to AI server:");
-            System.out.println("URL: " + ai_url);
-            System.out.println("Request Body: " + requestBody);
-            System.out.println("Headers: " + headers);
-
             ResponseEntity<AiResultDto> response = restTemplate.exchange(
                     ai_url,
                     HttpMethod.POST,
@@ -166,51 +154,10 @@ public class DiagnosticResultService {
                     AiResultDto.class
             );
 
-            // 응답 받기 후 로그를 추가하여 응답 내용을 확인
-            System.out.println("Received response from AI server:");
-            System.out.println("Response Status Code: " + response.getStatusCode());
-            System.out.println("Response Body: " + response.getBody());
-
-
             // 결과 반환
             return response.getBody();
         } catch (Exception e) {
-            System.err.println("Error occurred while calling AI server:");
-            e.printStackTrace();
             throw new RestApiException(ErrorCode.BAD_REQUEST);
         }
     }
-//    public AiResultDto getResultByAI(MultipartFile file) {
-//        // 멀티파트 요청 생성
-//        try {
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-//
-//            // 멀티파트 요청의 본문 생성
-//            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-//            body.add("file", new ByteArrayResource(file.getBytes()) {
-//                @Override
-//                public String getFilename() {
-//                    return file.getOriginalFilename();
-//                }
-//            });
-//
-//            HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
-//
-//            // AI 서버로 요청 전송
-//            ResponseEntity<AiResultDto> response = restTemplate.exchange(
-//                    ai_url,
-//                    HttpMethod.POST,
-//                    entity,
-//                    AiResultDto.class
-//            );
-//
-//            // 결과 반환
-//            return response.getBody();
-//        } catch (IOException e) {
-//            throw new RestApiException(ErrorCode.BAD_REQUEST);
-//        } catch (Exception e) {
-//            throw new RestApiException(ErrorCode.BAD_REQUEST);
-//        }
-//    }
 }

@@ -59,7 +59,6 @@ public class DiagnosticResultController {
         if (url != null) {
             AiResultDto aiResultDto;
             try {
-//                aiResultDto = diagnosticResultService.getResultByAI(file);
                 aiResultDto = diagnosticResultService.getResultByAI(url);
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("두피 이미지가 아닙니다.");
