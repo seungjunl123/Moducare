@@ -152,6 +152,13 @@ public class DiagnosticResultService {
 
         // AI 서버로 요청 전송
         try {
+
+            // 요청 전에 로그를 추가하여 요청 본문과 헤더를 확인
+            System.out.println("Sending request to AI server:");
+            System.out.println("URL: " + ai_url);
+            System.out.println("Request Body: " + requestBody);
+            System.out.println("Headers: " + headers);
+
             ResponseEntity<AiResultDto> response = restTemplate.exchange(
                     ai_url,
                     HttpMethod.POST,
@@ -159,9 +166,17 @@ public class DiagnosticResultService {
                     AiResultDto.class
             );
 
+            // 응답 받기 후 로그를 추가하여 응답 내용을 확인
+            System.out.println("Received response from AI server:");
+            System.out.println("Response Status Code: " + response.getStatusCode());
+            System.out.println("Response Body: " + response.getBody());
+
+
             // 결과 반환
             return response.getBody();
         } catch (Exception e) {
+            System.err.println("Error occurred while calling AI server:");
+            e.printStackTrace();
             throw new RestApiException(ErrorCode.BAD_REQUEST);
         }
     }
