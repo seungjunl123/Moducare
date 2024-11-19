@@ -7,6 +7,8 @@ import world.moducare.domain.product.dto.LatestProductDto;
 import world.moducare.domain.product.entity.LatestProduct;
 import world.moducare.domain.product.repository.LatestProductRepository;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class ProductService {
@@ -14,11 +16,22 @@ public class ProductService {
     private final LatestProductRepository latestProductRepository;
 
     public void saveLatestProduct(Member member, LatestProductDto latestProductDto) {
-        LatestProduct latestProduct = LatestProduct.builder()
-                .imgSrc(latestProductDto.getImgSrc())
-                .link(latestProductDto.getLink())
-                .member(member)
-                .build();
+        Optional<LatestProduct> existingProduct = latestProductRepository.findByMember(member);
+
+        LatestProduct latestProduct;
+        if (existingProduct.isPresent()) {
+            // 기존 엔티티 업데이트
+            latestProduct = existingProduct.get();
+            latestProduct.update(latestProductDto.getImgSrc(), latestProductDto.getLink());
+            // 변경된 엔티티는 트랜잭션 종료 시점에 자동으로 업데이트됩니다.
+        } else {
+            // 새로운 엔티티 생성 및 저장
+            latestProduct = LatestProduct.builder()
+                    .imgSrc(latestProductDto.getImgSrc())
+                    .link(latestProductDto.getLink())
+                    .member(member)
+                    .build();
+        }
         latestProductRepository.save(latestProduct);
     }
 
