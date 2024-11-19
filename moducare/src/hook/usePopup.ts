@@ -11,6 +11,8 @@ export const usePopup = () => {
   const [visible, setVisible] = useState(false);
   const [option, setOption] = useState<PopupOption>('Alert');
   const [content, setContent] = useState('');
+  const [confirm, setConfirm] = useState(false);
+  const [cancle, setCancle] = useState(false);
 
   const showPopup = ({option, content}: PopupConfig) => {
     setOption(option);
