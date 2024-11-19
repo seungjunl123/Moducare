@@ -9,7 +9,15 @@ import {usePopup} from '../../hook/usePopup';
 import PopupModal from '../../Components/Common/PopupModal';
 
 export default function DiagnosisPage({navigation}: {navigation: any}) {
-  const {visible, option, content, showPopup, hidePopup} = usePopup();
+  const {
+    visible,
+    option,
+    content,
+    popupConfirm,
+    popupCancel,
+    showPopup,
+    hidePopup,
+  } = usePopup();
   const [product, setProduct] = React.useState<string>('');
 
   const handlePress = (device: string) => {
@@ -79,7 +87,13 @@ export default function DiagnosisPage({navigation}: {navigation: any}) {
             label="두피 촬영하기"
             variant="outlined"
             onPress={() =>
-              showPopup({option: 'Alert', content: '촬영 기기를 선택해주세요.'})
+              showPopup({
+                option: 'Alert',
+                content: '촬영 기기를 선택해주세요.',
+                confirm: () => {
+                  hidePopup();
+                },
+              })
             }
           />
         )}
@@ -88,6 +102,8 @@ export default function DiagnosisPage({navigation}: {navigation: any}) {
         visible={visible}
         onClose={hidePopup}
         content={content}
+        confirm={popupConfirm}
+        cancel={popupCancel}
         option={option}
       />
     </SafeAreaView>

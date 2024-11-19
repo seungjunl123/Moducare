@@ -5,18 +5,22 @@ type PopupOption = 'Alert' | 'confirmMark' | 'Loading';
 interface PopupConfig {
   option: PopupOption;
   content: string;
+  confirm?: () => void | 'none';
+  cancel?: () => void | 'none';
 }
 
 export const usePopup = () => {
   const [visible, setVisible] = useState(false);
   const [option, setOption] = useState<PopupOption>('Alert');
   const [content, setContent] = useState('');
-  const [confirm, setConfirm] = useState(false);
-  const [cancle, setCancle] = useState(false);
+  const [popupConfirm, setPopupConfirm] = useState<(() => void) | 'none'>();
+  const [popupCancel, setPopupCancel] = useState<(() => void) | 'none'>();
 
-  const showPopup = ({option, content}: PopupConfig) => {
+  const showPopup = ({option, content, confirm, cancel}: PopupConfig) => {
     setOption(option);
     setContent(content);
+    setPopupConfirm(confirm ?? 'none');
+    setPopupCancel(cancel ?? 'none');
     setVisible(true);
   };
 
@@ -30,5 +34,7 @@ export const usePopup = () => {
     content,
     showPopup,
     hidePopup,
+    popupConfirm,
+    popupCancel,
   };
 };

@@ -28,7 +28,15 @@ const ChallengeFeedPage = ({
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {id, title, type} = route.params;
   const [isType, setIsType] = useState(type);
-  const {visible, option, content, showPopup, hidePopup} = usePopup();
+  const {
+    visible,
+    option,
+    content,
+    showPopup,
+    hidePopup,
+    popupConfirm,
+    popupCancel,
+  } = usePopup();
 
   const handleWrite = async () => {
     const isDone = await getEncryptStorage('isDone');
@@ -38,6 +46,9 @@ const ChallengeFeedPage = ({
       showPopup({
         option: 'Alert',
         content: '사진 등록 완료! \n 내일 다시 해주세요!',
+        confirm: () => {
+          hidePopup();
+        },
       });
     }
   };
@@ -137,6 +148,8 @@ const ChallengeFeedPage = ({
         option={option}
         onClose={hidePopup}
         content={content}
+        confirm={popupConfirm}
+        cancel={popupCancel}
       />
     </SafeAreaView>
   );

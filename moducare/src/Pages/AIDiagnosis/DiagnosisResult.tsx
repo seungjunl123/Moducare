@@ -40,7 +40,15 @@ const DiagnosisResult = ({
   route: RouteProp<RootStackParamList, 'aiResult'>;
 }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const {visible, option, content, showPopup, hidePopup} = usePopup();
+  const {
+    visible,
+    option,
+    content,
+    showPopup,
+    hidePopup,
+    popupConfirm,
+    popupCancel,
+  } = usePopup();
   const {type, id, diagnosisResult} = route.params;
   const {data: diagnosisData} = useReportDetailQuery(id ?? 0, {
     enabled: type === 'report',
@@ -455,7 +463,13 @@ const DiagnosisResult = ({
             label="두피 검진 문서 생성"
             onPress={() => {
               generatePDF();
-              showPopup({option: 'confirmMark', content: '문서 생성 완료!'});
+              showPopup({
+                option: 'confirmMark',
+                content: '문서 생성 완료!',
+                confirm: () => {
+                  hidePopup();
+                },
+              });
             }}
           />
           {previousScreen.toString() === 'aiLoading' && (
@@ -467,10 +481,10 @@ const DiagnosisResult = ({
           <PopupModal
             visible={visible}
             option={option}
-            onClose={() => {
-              hidePopup();
-            }}
+            onClose={hidePopup}
             content={content}
+            confirm={popupConfirm}
+            cancel={popupCancel}
           />
         </View>
       </ScrollView>
