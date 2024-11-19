@@ -40,7 +40,7 @@ const DiagnosisResult = ({
   route: RouteProp<RootStackParamList, 'aiResult'>;
 }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const {visible, popupOption, popupContent, showPopup, hidePopup} = usePopup();
+  const {visible, option, content, showPopup, hidePopup} = usePopup();
   const {type, id, diagnosisResult} = route.params;
   const {data: diagnosisData} = useReportDetailQuery(id ?? 0, {
     enabled: type === 'report',
@@ -466,11 +466,11 @@ const DiagnosisResult = ({
           )}
           <PopupModal
             visible={visible}
-            option={popupOption}
+            option={option}
             onClose={() => {
               hidePopup();
             }}
-            content={popupContent}
+            content={content}
           />
         </View>
       </ScrollView>
