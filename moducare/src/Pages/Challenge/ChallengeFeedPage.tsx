@@ -58,8 +58,18 @@ const ChallengeFeedPage = ({
     navigation.goBack();
   };
   const handleJoin = async () => {
+    showPopup({option: 'Loading', content: '챌린지 참여 중 입니다.'});
     await postJoinChallenge(id);
-    setIsType('myChallenge');
+    // setIsType('myChallenge');
+    showPopup({
+      option: 'confirmMark',
+      content: '챌린지 참여완료!',
+      confirm: () => {
+        hidePopup();
+        // navigation.goBack();
+      },
+    });
+    navigation.goBack();
   };
 
   const {
