@@ -45,7 +45,7 @@ const ChallengeFeedPage = ({
     } else {
       showPopup({
         option: 'Alert',
-        content: '사진 등록 완료! \n 내일 다시 해주세요!',
+        content: '오늘 인증 완료! \n내일 다시 해주세요!',
         confirm: () => {
           hidePopup();
         },

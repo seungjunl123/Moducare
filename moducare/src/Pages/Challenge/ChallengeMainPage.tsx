@@ -161,6 +161,15 @@ export default function ChallengeMainPage({navigation}: {navigation: any}) {
     });
   };
 
+  const handleJoin = (id: number, title: string) => {
+    setEncryptStorage('isDone', 0);
+    navigation.navigate('challenge_feed', {
+      id: id,
+      title: title,
+      type: 'allChallenge',
+    });
+  };
+
   const handleImgDelete = () => {
     setImgConfig(null);
   };
@@ -261,20 +270,18 @@ export default function ChallengeMainPage({navigation}: {navigation: any}) {
             {AllLoading ? (
               <CustomText label="불러오고 있어요!" />
             ) : getAllList.data?.length !== 0 ? (
-              getAllList.data?.slice(0, 3).map((data, index) => (
-                <SmallList
-                  key={index}
-                  title={data.challengeName}
-                  uri={data.challengeImg}
-                  onPress={() =>
-                    navigation.navigate('challenge_feed', {
-                      id: data.challengeId,
-                      title: data.challengeName,
-                      type: 'allChallenge',
-                    })
-                  }
-                />
-              ))
+              getAllList.data
+                ?.slice(0, 3)
+                .map((data, index) => (
+                  <SmallList
+                    key={index}
+                    title={data.challengeName}
+                    uri={data.challengeImg}
+                    onPress={() =>
+                      handleJoin(data.challengeId, data.challengeName)
+                    }
+                  />
+                ))
             ) : (
               <CustomText label="진행중인 챌린지가 없어요" />
             )}

@@ -10,6 +10,7 @@ import {usePopup} from '../../hook/usePopup';
 import PopupModal from '../../Components/Common/PopupModal';
 import {useFocusEffect} from '@react-navigation/native';
 import useChallenge from '../../hook/useChallenge';
+import {setEncryptStorage} from '../../util';
 
 export default function ChallengeListPage({navigation}) {
   const {
@@ -33,6 +34,15 @@ export default function ChallengeListPage({navigation}) {
   // }, []);
 
   const {AllLoading, getAllList} = useChallenge();
+
+  const handleJoin = (id: number, title: string) => {
+    setEncryptStorage('isDone', 0);
+    navigation.navigate('challenge_feed', {
+      id: id,
+      title: title,
+      type: 'allChallenge',
+    });
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -78,21 +88,19 @@ export default function ChallengeListPage({navigation}) {
                 <CustomText label="불러오고 있어요!" size={18} />
               </View>
             ) : getAllList.data?.length !== 0 ? (
-              getAllList.data?.slice(0, page).map((data, index) => (
-                <BigList
-                  key={index}
-                  title={data.challengeName}
-                  user={data.challengeUser}
-                  uri={data.challengeImg}
-                  onPress={() =>
-                    navigation.navigate('challenge_feed', {
-                      id: data.challengeId,
-                      title: data.challengeName,
-                      type: 'allChallenge',
-                    })
-                  }
-                />
-              ))
+              getAllList.data
+                ?.slice(0, page)
+                .map((data, index) => (
+                  <BigList
+                    key={index}
+                    title={data.challengeName}
+                    user={data.challengeUser}
+                    uri={data.challengeImg}
+                    onPress={() =>
+                      handleJoin(data.challengeId, data.challengeName)
+                    }
+                  />
+                ))
             ) : (
               <View style={styles.nullList}>
                 <CustomText label="개설된 챌린지가 없어요" size={18} />
