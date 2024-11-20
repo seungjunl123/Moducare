@@ -146,6 +146,7 @@ public class DiagnosticResultService {
 
         // AI 서버로 요청 전송
         try {
+
             ResponseEntity<AiResultDto> response = restTemplate.exchange(
                     ai_url,
                     HttpMethod.POST,
