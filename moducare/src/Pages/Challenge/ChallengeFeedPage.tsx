@@ -58,11 +58,11 @@ const ChallengeFeedPage = ({
     navigation.goBack();
   };
   const handleJoin = async () => {
-    showPopup({option: 'Loading', content: '챌린지 참여 중 입니다.'});
+    showPopup({option: 'Loading', content: '챌린지 추가 중 입니다.'});
     await postJoinChallenge(id);
     showPopup({
       option: 'confirmMark',
-      content: '챌린지 참여완료!',
+      content: '챌린지 추가 완료!',
       confirm: () => navigation.goBack(),
     });
   };
