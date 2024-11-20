@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -108,6 +109,12 @@ public class TemperatureApiService {
                 throw new DataNotFoundException("Data not found for the requested station");
             }
         });
+    }
+
+    @Recover
+    public CompletableFuture<Integer> recover(DataNotFoundException e, WeatherRequestDto weatherRequestDto) {
+//        System.err.println("Recover called: " + e.getMessage());
+        return CompletableFuture.completedFuture(10); // 기본값 반환
     }
 
     // 기준 날짜를 가져오는 메서드
