@@ -98,9 +98,7 @@ const ChallengeWritePage = ({route}) => {
       showPopup({
         option: 'confirmMark',
         content: '인증피드 작성 완료!',
-        confirm: () => {
-          hidePopup();
-        },
+        confirm: () => navigation.goBack(),
       });
       // 페이지 전환
     } catch (error) {
