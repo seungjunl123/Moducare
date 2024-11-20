@@ -19,8 +19,10 @@ export const usePopup = () => {
   const showPopup = ({option, content, confirm, cancel}: PopupConfig) => {
     setOption(option);
     setContent(content);
-    setPopupConfirm(confirm ?? 'none');
-    setPopupCancel(cancel ?? 'none');
+    // 함수일 경우 함수 자체를 저장할 경우 이를 실행하고 리턴된 결과를 저장
+    // () => confirm을 사용하는 경우 버튼이 클릭되었을 때 '함수가 실행되는 것'을 저장
+    setPopupConfirm(() => confirm ?? 'none');
+    setPopupCancel(() => cancel ?? 'none');
     setVisible(true);
   };
 
