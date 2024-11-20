@@ -29,8 +29,8 @@ def handle_request(request: ImageRequest):
         return JSONResponse(
             status_code=response.status_code,  # 대상 서버의 상태 코드 사용
             content={
-                "status": response.status_code,
-                "target_response": response.json()
+                "result": response.json().get("result"),  # 'result' 값만 추출
+                "headType": response.json().get("headType")  # 'headType' 값만 추출
             }
         )
     except requests.RequestException as e:
