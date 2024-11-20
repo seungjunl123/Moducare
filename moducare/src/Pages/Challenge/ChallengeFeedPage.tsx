@@ -60,16 +60,11 @@ const ChallengeFeedPage = ({
   const handleJoin = async () => {
     showPopup({option: 'Loading', content: '챌린지 참여 중 입니다.'});
     await postJoinChallenge(id);
-    // setIsType('myChallenge');
     showPopup({
       option: 'confirmMark',
       content: '챌린지 참여완료!',
-      confirm: () => {
-        hidePopup();
-        // navigation.goBack();
-      },
+      confirm: () => navigation.goBack(),
     });
-    navigation.goBack();
   };
 
   const {
@@ -158,7 +153,14 @@ const ChallengeFeedPage = ({
         option={option}
         onClose={hidePopup}
         content={content}
-        confirm={popupConfirm}
+        confirm={
+          // option === 'confirmMark'
+          //   ? () => {
+          //       navigation.goBack();
+          //     }
+          //   : popupConfirm
+          popupConfirm
+        }
         cancel={popupCancel}
       />
     </SafeAreaView>
