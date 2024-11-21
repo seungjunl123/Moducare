@@ -1,10 +1,7 @@
 package world.moducare.domain.diagnosis.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import world.moducare.domain.member.entity.Member;
 
@@ -26,6 +23,7 @@ public class DiagnosticResult {
     @Column(name = "img_src", nullable = false, columnDefinition = "TEXT")
     private String image;
 
+    @Setter
     @Column(name = "advice", nullable = false, columnDefinition = "TEXT")
     private String advice;
 
