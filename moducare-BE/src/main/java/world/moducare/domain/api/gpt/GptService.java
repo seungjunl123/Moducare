@@ -20,7 +20,7 @@ public class GptService {
 
     public String chat(String prompt) {
         String apiURL = "https://api.openai.com/v1/chat/completions";
-        String model = "gpt-4o-mini"; // 또는 "gpt-4"
+        String model = "gpt-3.5-turbo"; // 또는 "gpt-4"
 
         ChatGPTRequestDTO request = new ChatGPTRequestDTO(model, prompt);
 
