@@ -404,7 +404,7 @@ const DiagnosisResult = ({
             <CustomText label="건강한 두피 사진" size={20} />
             <Image
               style={styles.photo}
-              source={require('../../assets/good.png')}
+              source={require('../../assets/good2.jpg')}
             />
           </View>
         </View>
