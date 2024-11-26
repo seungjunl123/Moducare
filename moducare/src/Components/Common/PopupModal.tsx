@@ -5,6 +5,9 @@ import LottieView from 'lottie-react-native';
 import {confirmMark, Alert, Loading} from '../../assets/lottie';
 
 import CustomButton from './CustomButton';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
+import {colors} from '../../constants';
 
 interface PopupModalProps {
   visible: boolean;
@@ -40,6 +43,9 @@ const PopupModal = ({
     onClose();
   };
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
+
   return (
     <Modal
       animationType="fade"
@@ -71,41 +77,39 @@ const PopupModal = ({
   );
 };
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 20,
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 20,
-    width: '80%',
-    maxWidth: 500,
-    // 그림자 효과
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  confirmMark: {
-    width: 60,
-    height: 60,
-    alignSelf: 'center',
-  },
-  buttonArea: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-});
+    modalContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 20,
+      backgroundColor: colors[theme].WHITE,
+      borderRadius: 12,
+      padding: 20,
+      width: '80%',
+      maxWidth: 500,
+      // 그림자 효과
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    confirmMark: {
+      width: 60,
+      height: 60,
+      alignSelf: 'center',
+    },
+  });
+
 
 export default PopupModal;

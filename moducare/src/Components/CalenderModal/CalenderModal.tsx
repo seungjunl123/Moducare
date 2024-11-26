@@ -13,6 +13,8 @@ import YearPicker from './YearPicker';
 import CustomText from '../Common/CustomText';
 import Feather from 'react-native-vector-icons/Feather';
 import {getEncryptStorage} from '../../util/encryptedStorage';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 interface CalenderModalProps {
   visible: boolean;
@@ -225,6 +227,9 @@ const CalenderModal = ({
     }
   };
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
+
   return (
     <Modal
       visible={visible}
@@ -235,7 +240,11 @@ const CalenderModal = ({
         <Pressable style={styles.modalContainer}>
           <View style={styles.header}>
             <TouchableOpacity onPress={goToPrevMonth}>
-              <Feather name="chevron-left" size={24} color={colors.BLACK} />
+              <Feather
+                name="chevron-left"
+                size={24}
+                color={colors[theme].BLACK}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -250,7 +259,11 @@ const CalenderModal = ({
               />
             </TouchableOpacity>
             <TouchableOpacity onPress={goToNextMonth}>
-              <Feather name="chevron-right" size={24} color={colors.BLACK} />
+              <Feather
+                name="chevron-right"
+                size={24}
+                color={colors[theme].BLACK}
+              />
             </TouchableOpacity>
           </View>
           {showYearPicker && (
@@ -270,77 +283,78 @@ const CalenderModal = ({
 
 export default CalenderModal;
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    paddingTop: 20,
-    width: WIDTH * 0.8,
-    backgroundColor: colors.WHITE,
-    borderRadius: 10,
-    padding: 15,
-    minHeight: HEIGHT * 0.5,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    margin: 20,
-  },
-  calender: {
-    justifyContent: 'space-between',
-  },
-  monthLabel: {
-    fontSize: 18,
-    color: colors.BLACK,
-  },
-  row: {
-    flexDirection: 'row',
-  },
-  cell: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 40,
-  },
-  headerText: {
-    color: colors.BLACK,
-    fontSize: 18,
-  },
-  headerTextRed: {
-    color: colors.NEGATIVE,
-  },
-  headerTextBlue: {
-    color: colors.POSITIVE,
-  },
-  cellText: {
-    color: colors.BLACK,
-  },
-  cellTextGray: {
-    color: colors.GRAY,
-  },
-  cellTextRed: {
-    color: colors.NEGATIVE,
-  },
-  cellTextBlue: {
-    color: colors.POSITIVE,
-  },
-  selectedDay: {
-    backgroundColor: colors.SUB,
-    borderRadius: 20,
-    textAlign: 'center',
-    lineHeight: 40,
-    color: colors.BLACK,
-    overflow: 'hidden',
-    width: 40,
-    height: 40,
-    opacity: 0.8,
-  },
-  cellTextGrayOpacity: {
-    opacity: 0.3,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContainer: {
+      paddingTop: 20,
+      width: WIDTH * 0.8,
+      backgroundColor: colors[theme].WHITE,
+      borderRadius: 10,
+      padding: 15,
+      minHeight: HEIGHT * 0.5,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      margin: 20,
+    },
+    calender: {
+      justifyContent: 'space-between',
+    },
+    monthLabel: {
+      fontSize: 18,
+      color: colors[theme].BLACK,
+    },
+    row: {
+      flexDirection: 'row',
+    },
+    cell: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: 40,
+    },
+    headerText: {
+      color: colors[theme].BLACK,
+      fontSize: 18,
+    },
+    headerTextRed: {
+      color: colors[theme].NEGATIVE,
+    },
+    headerTextBlue: {
+      color: colors[theme].POSITIVE,
+    },
+    cellText: {
+      color: colors[theme].BLACK,
+    },
+    cellTextGray: {
+      color: colors[theme].GRAY,
+    },
+    cellTextRed: {
+      color: colors[theme].NEGATIVE,
+    },
+    cellTextBlue: {
+      color: colors[theme].POSITIVE,
+    },
+    selectedDay: {
+      backgroundColor: colors[theme].SUB,
+      borderRadius: 20,
+      textAlign: 'center',
+      lineHeight: 40,
+      color: colors[theme].BLACK,
+      overflow: 'hidden',
+      width: 40,
+      height: 40,
+      opacity: 0.8,
+    },
+    cellTextGrayOpacity: {
+      opacity: 0.3,
+    },
+  });

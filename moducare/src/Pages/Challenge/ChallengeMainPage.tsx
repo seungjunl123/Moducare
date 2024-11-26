@@ -34,6 +34,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import PopupModal from '../../Components/Common/PopupModal';
 import {usePopup} from '../../hook/usePopup';
 import useChallenge from '../../hook/useChallenge';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 interface Action {
   title: string;
@@ -186,6 +188,8 @@ export default function ChallengeMainPage({navigation}: {navigation: any}) {
   );
 
   const {AllLoading, getMyList, getAllList, MyLoading} = useChallenge();
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -236,7 +240,11 @@ export default function ChallengeMainPage({navigation}: {navigation: any}) {
           <View style={styles.ListTitle}>
             <CustomText label="챌린지 목록 살펴보기" size={20} />
             <Pressable onPress={() => navigation.navigate('challenge_list')}>
-              <Entypo name="chevron-right" color={colors.BLACK} size={25} />
+              <Entypo
+                name="chevron-right"
+                color={colors[theme].BLACK}
+                size={25}
+              />
             </Pressable>
           </View>
           <View>
@@ -328,82 +336,83 @@ export default function ChallengeMainPage({navigation}: {navigation: any}) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  mainArea: {
-    flex: 0.9,
-  },
-  topArea: {
-    gap: 10,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignContent: 'center',
-    marginBottom: 20,
-  },
-  listBoxArea: {
-    gap: 10,
-  },
-  ListArea: {
-    flex: 0.5,
-    elevation: 4,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    marginBottom: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  BottomListArea: {
-    flex: 0.42,
-    elevation: 4,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    marginBottom: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  ListTitle: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  ModalView: {
-    gap: 20,
-  },
-  UploadArea: {
-    marginTop: 20,
-  },
-  UploadText: {
-    textAlign: 'center',
-    color: colors.MAIN,
-    fontSize: 14,
-    fontFamily: 'Pretendard-Medium',
-  },
-  InputArea: {
-    backgroundColor: colors.WHITE_GRAY,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-  },
-  imageContainer: {
-    position: 'relative',
-    alignItems: 'center',
-    margin: 10,
-    marginVertical: 20,
-  },
-  closeBtn: {
-    width: 30,
-    height: 30,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.MAIN,
-    position: 'absolute',
-    right: 0,
-    margin: 5,
-    zIndex: 1000,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+      paddingHorizontal: 20,
+      paddingVertical: 20,
+    },
+    mainArea: {
+      flex: 0.9,
+    },
+    topArea: {
+      gap: 10,
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignContent: 'center',
+      marginBottom: 20,
+    },
+    listBoxArea: {
+      gap: 10,
+    },
+    ListArea: {
+      flex: 0.5,
+      elevation: 4,
+      borderRadius: 10,
+      backgroundColor: colors[theme].WHITE,
+      marginBottom: 20,
+      paddingHorizontal: 20,
+      paddingVertical: 20,
+    },
+    BottomListArea: {
+      flex: 0.42,
+      elevation: 4,
+      borderRadius: 10,
+      backgroundColor: colors[theme].WHITE,
+      marginBottom: 20,
+      paddingHorizontal: 20,
+      paddingVertical: 20,
+    },
+    ListTitle: {
+      justifyContent: 'space-between',
+      flexDirection: 'row',
+      marginBottom: 10,
+    },
+    ModalView: {
+      gap: 20,
+    },
+    UploadArea: {
+      marginTop: 20,
+    },
+    UploadText: {
+      textAlign: 'center',
+      color: colors[theme].MAIN,
+      fontSize: 14,
+      fontFamily: 'Pretendard-Medium',
+    },
+    InputArea: {
+      backgroundColor: colors[theme].WHITE_GRAY,
+      borderRadius: 10,
+      paddingHorizontal: 10,
+    },
+    imageContainer: {
+      position: 'relative',
+      alignItems: 'center',
+      margin: 10,
+      marginVertical: 20,
+    },
+    closeBtn: {
+      width: 30,
+      height: 30,
+      borderRadius: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors[theme].MAIN,
+      position: 'absolute',
+      right: 0,
+      margin: 5,
+      zIndex: 1000,
+    },
+  });

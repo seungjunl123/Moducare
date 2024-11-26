@@ -8,6 +8,8 @@ import Config from 'react-native-config';
 import {getEncryptStorage} from '../util';
 import {postLogin} from '../api/login-api';
 import useAuth from '../hook/useAuth';
+import {ThemeMode} from '../types/common';
+import useThemeStorage from '../hook/useThemeStorage';
 
 const OkPage = ({route}) => {
   const {loginMutation} = useAuth();
@@ -48,6 +50,10 @@ const OkPage = ({route}) => {
     console.log('로그인 성공 액세스', result.jwtAccessToken);
     console.log('로그인 성공 리프레시', result.refreshToken);
   };
+
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
+
   return (
     <SafeAreaView style={styles.container}>
       <CustomText label="로그인 중 입니다." />
@@ -55,16 +61,17 @@ const OkPage = ({route}) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  img: {
-    margin: 'auto',
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    img: {
+      margin: 'auto',
+    },
+  });
 
 export default OkPage;

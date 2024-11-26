@@ -16,6 +16,8 @@ import {postResult} from '../../api/stress-check-api';
 
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {Stack} from '../../util/stack';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 const WIDTH = Dimensions.get('window').width;
 
 type RootStackParamList = {
@@ -60,6 +62,9 @@ export default function StressDiagnosisPage() {
     }
   };
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
+
   return (
     <View style={styles.container}>
       <View style={styles.questionContainer}>
@@ -82,7 +87,11 @@ export default function StressDiagnosisPage() {
             <AntDesign
               name={isChecked === answer.id ? 'checksquare' : 'checksquareo'}
               size={24}
-              color={isChecked === answer.id ? colors.MAIN : colors.GRAY}
+              color={
+                isChecked === answer.id
+                  ? colors[theme].MAIN
+                  : colors[theme].GRAY
+              }
             />
             <Text
               style={[
@@ -124,64 +133,65 @@ export default function StressDiagnosisPage() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    width: '100%',
-  },
-  questionContainer: {
-    paddingVertical: 40,
-  },
-  answerContainer: {
-    gap: 20,
-  },
-  answer: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderWidth: 1,
-    borderRadius: 10,
-    width: WIDTH * 0.8,
-    height: 50,
-    borderColor: colors.GRAY,
-    flexDirection: 'row',
-    gap: 20,
-  },
-  answerText: {
-    fontSize: 16,
-  },
-  selectedAnswerContainer: {
-    borderWidth: 2,
-    borderColor: colors.MAIN,
-  },
-  selectedAnswerText: {
-    color: colors.MAIN,
-    fontWeight: 'bold',
-  },
-  progressContainer: {
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  progressLine: {
-    width: WIDTH * 0.9,
-    height: 6,
-    backgroundColor: colors.LIGHT_GRAY,
-    borderRadius: 10,
-  },
-  progressBar: {
-    height: 6,
-    backgroundColor: colors.MAIN,
-    borderRadius: 10,
-    alignSelf: 'flex-start',
-    position: 'absolute',
-  },
-  bottomContainer: {
-    position: 'absolute',
-    bottom: 50,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors[theme].WHITE,
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      width: '100%',
+    },
+    questionContainer: {
+      paddingVertical: 40,
+    },
+    answerContainer: {
+      gap: 20,
+    },
+    answer: {
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderWidth: 1,
+      borderRadius: 10,
+      width: WIDTH * 0.8,
+      height: 50,
+      borderColor: colors[theme].GRAY,
+      flexDirection: 'row',
+      gap: 20,
+    },
+    answerText: {
+      fontSize: 16,
+    },
+    selectedAnswerContainer: {
+      borderWidth: 2,
+      borderColor: colors[theme].MAIN,
+    },
+    selectedAnswerText: {
+      color: colors[theme].MAIN,
+      fontWeight: 'bold',
+    },
+    progressContainer: {
+      alignSelf: 'center',
+      marginBottom: 20,
+    },
+    progressLine: {
+      width: WIDTH * 0.9,
+      height: 6,
+      backgroundColor: colors[theme].LIGHT_GRAY,
+      borderRadius: 10,
+    },
+    progressBar: {
+      height: 6,
+      backgroundColor: colors[theme].MAIN,
+      borderRadius: 10,
+      alignSelf: 'flex-start',
+      position: 'absolute',
+    },
+    bottomContainer: {
+      position: 'absolute',
+      bottom: 50,
+    },
+  });

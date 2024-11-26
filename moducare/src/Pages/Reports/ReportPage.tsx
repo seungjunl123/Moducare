@@ -16,6 +16,8 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {RootStackParamList} from '../../navigate/StackNavigate';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {getEncryptStorage} from '../../util';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 const HEIGHT = Dimensions.get('window').height;
 
@@ -40,6 +42,9 @@ export default function ReportPage() {
       getInfo();
     }, []),
   );
+
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
 
   return (
     <View style={styles.container}>
@@ -95,44 +100,45 @@ export default function ReportPage() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 20,
-    margin: 20,
-  },
-  reportIcon: {
-    width: 80,
-    height: 100,
-  },
-  reportList: {
-    margin: 20,
-    gap: 12,
-  },
-  reportCard: {
-    width: '100%',
-  },
-  reportCardItem: {
-    flexDirection: 'row',
-    gap: 20,
-  },
-  reportListEmpty: {
-    height: HEIGHT * 0.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  pressed: {
-    borderWidth: 3,
-  },
-  buttonContainer: {
-    borderColor: colors.SUB,
-    borderWidth: 1,
-    borderRadius: 10,
-    width: '100%',
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 20,
+      margin: 20,
+    },
+    reportIcon: {
+      width: 80,
+      height: 100,
+    },
+    reportList: {
+      margin: 20,
+      gap: 12,
+    },
+    reportCard: {
+      width: '100%',
+    },
+    reportCardItem: {
+      flexDirection: 'row',
+      gap: 20,
+    },
+    reportListEmpty: {
+      height: HEIGHT * 0.5,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    pressed: {
+      borderWidth: 3,
+    },
+    buttonContainer: {
+      borderColor: colors[theme].SUB,
+      borderWidth: 1,
+      borderRadius: 10,
+      width: '100%',
+    },
+  });

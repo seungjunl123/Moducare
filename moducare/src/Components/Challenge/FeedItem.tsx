@@ -4,6 +4,8 @@ import CustomText from '../Common/CustomText';
 import {colors} from '../../constants/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {postLike} from '../../api/challenge-api';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 interface FeedType {
   feedId: number;
@@ -37,6 +39,9 @@ const FeedItem = ({
     setCount(count - 1);
     setLove(0);
   };
+
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
   return (
     <View style={styles.container}>
       <CustomText label={feedUserName} size={20} />
@@ -65,40 +70,41 @@ const FeedItem = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.WHITE,
-    borderRadius: 20,
-    marginHorizontal: 20,
-    padding: 20,
-    elevation: 4,
-    marginBottom: 20,
-  },
-  dateText: {
-    fontFamily: 'Pretendard-Medium',
-    fontSize: 12,
-    textAlign: 'right',
-    marginBottom: 10,
-  },
-  imgArea: {
-    width: '100%',
-    height: 300,
-    marginHorizontal: 'auto',
-    resizeMode: 'cover',
-    borderRadius: 15,
-  },
-  Content: {
-    fontFamily: 'Pretendard-Bold',
-    fontSize: 15,
-    color: colors.DARK_GRAY,
-    marginVertical: 10,
-  },
-  likeArea: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    gap: 10,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      backgroundColor: colors[theme].WHITE,
+      borderRadius: 20,
+      marginHorizontal: 20,
+      padding: 20,
+      elevation: 4,
+      marginBottom: 20,
+    },
+    dateText: {
+      fontFamily: 'Pretendard-Medium',
+      fontSize: 12,
+      textAlign: 'right',
+      marginBottom: 10,
+    },
+    imgArea: {
+      width: '100%',
+      height: 300,
+      marginHorizontal: 'auto',
+      resizeMode: 'cover',
+      borderRadius: 15,
+    },
+    Content: {
+      fontFamily: 'Pretendard-Bold',
+      fontSize: 15,
+      color: colors[theme].DARK_GRAY,
+      marginVertical: 10,
+    },
+    likeArea: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      gap: 10,
+    },
+  });
 
 export default FeedItem;

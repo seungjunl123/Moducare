@@ -18,6 +18,8 @@ import {RootStackParamList} from '../../navigate/StackNavigate';
 import {usePopup} from '../../hook/usePopup';
 import PopupModal from '../../Components/Common/PopupModal';
 import useGetFeeds from '../../hook/useGetFeeds';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 const ChallengeFeedPage = ({
   route,
@@ -94,19 +96,22 @@ const ChallengeFeedPage = ({
     }, []),
   );
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
+
   return (
     <SafeAreaView style={styles.container}>
       <Text
         style={[
           styles.text,
-          {fontFamily: 'Pretendard-Bold', color: colors.BLACK},
+          {fontFamily: 'Pretendard-Bold', color: colors[theme].BLACK},
         ]}>
         {title}
       </Text>
       <Text
         style={[
           styles.text,
-          {fontFamily: 'Pretendard-Regular', color: colors.DARK_GRAY},
+          {fontFamily: 'Pretendard-Regular', color: colors[theme].DARK_GRAY},
         ]}>
         다른 사람들과 함께 루틴을 지켜봐요!
       </Text>
@@ -167,22 +172,23 @@ const ChallengeFeedPage = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-  },
-  text: {
-    textAlign: 'center',
-    fontSize: 20,
-  },
-  FeedList: {
-    padding: 5,
-  },
-  nullList: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+    },
+    text: {
+      textAlign: 'center',
+      fontSize: 20,
+    },
+    FeedList: {
+      padding: 5,
+    },
+    nullList: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  });
 
 export default ChallengeFeedPage;

@@ -20,6 +20,9 @@ import EditUserPage from '../Pages/User/EditUserPage';
 import StressResultPage from '../Pages/StressCheck/StressResultPage';
 import DiagnosisIOT from '../Pages/AIDiagnosis/DiagnosisIOT';
 import DiagnosisFail from '../Pages/AIDiagnosis/DiagnosisFail';
+import useThemeStorage from '../hook/useThemeStorage';
+import {StyleSheet} from 'react-native';
+import {ThemeMode} from '../types/common';
 
 type RootStackParamList = {
   StressResultPage: {stressScore: number};
@@ -61,12 +64,14 @@ type RootStackParamList = {
   stress: undefined;
 };
 
-const PrevIcon = () => (
-  <Entypo name="chevron-left" color={colors.BLACK} size={25} />
-);
-
 const StackNavigate = () => {
+  const PrevIcon = () => (
+    <Entypo name="chevron-left" color={colors[theme].BLACK} size={25} />
+  );
   const Stack = createStackNavigator<RootStackParamList>();
+
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
   return (
     <Stack.Navigator initialRouteName="bottomNavigate">
       <Stack.Screen name="main" component={MainPage} />
@@ -77,6 +82,10 @@ const StackNavigate = () => {
           title: 'AI 두피 진단',
           headerTitleAlign: 'center',
           headerBackImage: () => <PrevIcon />,
+          headerTitleStyle: {
+            color: colors[theme].BLACK,
+          },
+          headerStyle: styles.header,
         }}
       />
       <Stack.Screen
@@ -87,6 +96,10 @@ const StackNavigate = () => {
           headerTitleAlign: 'center',
           headerBackImage: () => <PrevIcon />,
           animationEnabled: false,
+          headerTitleStyle: {
+            color: colors[theme].BLACK,
+          },
+          headerStyle: styles.header,
         }}
       />
       <Stack.Screen
@@ -97,6 +110,10 @@ const StackNavigate = () => {
           headerTitleAlign: 'center',
           headerBackImage: () => <PrevIcon />,
           animationEnabled: false,
+          headerTitleStyle: {
+            color: colors[theme].BLACK,
+          },
+          headerStyle: styles.header,
         }}
       />
       <Stack.Screen
@@ -120,6 +137,10 @@ const StackNavigate = () => {
           title: 'AI 두피 진단 결과지',
           headerTitleAlign: 'center',
           headerLeft: () => null,
+          headerTitleStyle: {
+            color: colors[theme].BLACK,
+          },
+          headerStyle: styles.header,
         }}
       />
       <Stack.Screen
@@ -129,6 +150,10 @@ const StackNavigate = () => {
           title: 'AI 상품 추천',
           headerTitleAlign: 'center',
           headerBackImage: () => <PrevIcon />,
+          headerTitleStyle: {
+            color: colors[theme].BLACK,
+          },
+          headerStyle: styles.header,
         }}
       />
       <Stack.Screen
@@ -137,6 +162,10 @@ const StackNavigate = () => {
         options={{
           title: '',
           headerBackImage: () => <PrevIcon />,
+          headerTitleStyle: {
+            color: colors[theme].BLACK,
+          },
+          headerStyle: styles.header,
         }}
       />
       <Stack.Screen
@@ -145,6 +174,10 @@ const StackNavigate = () => {
         options={{
           title: '',
           headerBackImage: () => <PrevIcon />,
+          headerTitleStyle: {
+            color: colors[theme].BLACK,
+          },
+          headerStyle: styles.header,
         }}
       />
       <Stack.Screen
@@ -153,6 +186,10 @@ const StackNavigate = () => {
         options={{
           title: '',
           headerBackImage: () => <PrevIcon />,
+          headerTitleStyle: {
+            color: colors[theme].BLACK,
+          },
+          headerStyle: styles.header,
         }}
       />
       <Stack.Screen
@@ -161,13 +198,24 @@ const StackNavigate = () => {
         options={{
           title: '',
           headerBackImage: () => <PrevIcon />,
+          headerTitleStyle: {
+            color: colors[theme].BLACK,
+          },
+          headerStyle: styles.header,
         }}
       />
       <Stack.Screen name="report" component={ReportPage} />
       <Stack.Screen
         name="회원 정보 수정"
         component={EditUserPage}
-        options={{title: '회원 정보'}}
+        options={{
+          title: '회원 정보',
+          headerBackImage: () => <PrevIcon />,
+          headerTitleStyle: {
+            color: colors[theme].BLACK,
+          },
+          headerStyle: styles.header,
+        }}
       />
       <Stack.Screen
         name="StressResultPage"
@@ -187,11 +235,23 @@ const StackNavigate = () => {
           title: '스트레스 자가 진단',
           headerTitleAlign: 'center',
           headerBackImage: () => <PrevIcon />,
+          headerTitleStyle: {
+            color: colors[theme].BLACK,
+          },
+          headerStyle: styles.header,
         }}
       />
     </Stack.Navigator>
   );
 };
+
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    header: {
+      backgroundColor: colors[theme].WHITE,
+      color: colors[theme].BLACK,
+    },
+  });
 
 export default StackNavigate;
 

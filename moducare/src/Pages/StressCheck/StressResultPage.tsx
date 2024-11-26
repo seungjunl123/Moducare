@@ -10,6 +10,8 @@ import {LineChart} from 'react-native-gifted-charts';
 import {getResult, ResultData} from '../../api/stress-check-api';
 import {getEncryptStorage} from '../../util';
 import {RootStackParamList} from '../../navigate/StackNavigate';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
 
@@ -57,6 +59,9 @@ export default function StressResultPage({
       navigation.navigate('bottomNavigate');
     }
   };
+
+  const {theme} = useThemeStorage();
+  const style = styling(theme);
 
   return (
     <SafeAreaView style={style.container}>
@@ -168,7 +173,7 @@ export default function StressResultPage({
                 hideRules={true}
                 thickness={1}
                 hideYAxisText
-                textColor={colors.BLACK}
+                textColor={colors[theme].BLACK}
                 textFontSize={12}
                 textShiftY={-10}
                 textShiftX={-3}
@@ -188,52 +193,53 @@ export default function StressResultPage({
   );
 }
 
-const style = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-  },
-  DonePage: {
-    top: HEIGHT * 0.3,
-    alignSelf: 'center',
-    gap: 40,
-    width: '80%',
-  },
-  ResultPage: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  ResultTitle: {
-    marginTop: 20,
-    marginBottom: HEIGHT * 0.05,
-  },
-  TextContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ResultContent: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 20,
-  },
-  ButtonContainer: {
-    width: '80%',
-    alignSelf: 'center',
-    position: 'absolute',
-    bottom: 50,
-  },
-  ResultScore: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  ResultText: {
-    flexDirection: 'row',
-  },
-  ResultTextHeader: {
-    width: WIDTH * 0.15,
-  },
-  ResultGraph: {
-    gap: 10,
-    marginEnd: 30,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+    },
+    DonePage: {
+      top: HEIGHT * 0.3,
+      alignSelf: 'center',
+      gap: 40,
+      width: '80%',
+    },
+    ResultPage: {
+      flex: 1,
+      alignItems: 'center',
+    },
+    ResultTitle: {
+      marginTop: 20,
+      marginBottom: HEIGHT * 0.05,
+    },
+    TextContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    ResultContent: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 20,
+    },
+    ButtonContainer: {
+      width: '80%',
+      alignSelf: 'center',
+      position: 'absolute',
+      bottom: 50,
+    },
+    ResultScore: {
+      flexDirection: 'row',
+      gap: 10,
+    },
+    ResultText: {
+      flexDirection: 'row',
+    },
+    ResultTextHeader: {
+      width: WIDTH * 0.15,
+    },
+    ResultGraph: {
+      gap: 10,
+      marginEnd: 30,
+    },
+  });

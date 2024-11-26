@@ -9,6 +9,8 @@ import {getEncryptStorage} from '../util';
 import {initializeKakaoSDK} from '@react-native-kakao/core';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import useAuth from '../hook/useAuth';
+import {ThemeMode} from '../types/common';
+import useThemeStorage from '../hook/useThemeStorage';
 
 initializeKakaoSDK('585639d392d8089816cb2f337aea44d9');
 
@@ -64,6 +66,9 @@ const LoginPage = ({navigation}: {navigation: any}) => {
     }
   };
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
+
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -104,71 +109,72 @@ const LoginPage = ({navigation}: {navigation: any}) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'space-between',
-    alignContent: 'center',
-    borderColor: 'red',
-    backgroundColor: colors.WHITE,
-  },
-  mainArea: {
-    flex: 0.9,
-    justifyContent: 'flex-end',
-  },
-  btnArea: {
-    marginVertical: 20,
-    gap: 10,
-  },
-  btn: {
-    height: 40,
-    width: 250,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    borderRadius: 10,
-    margin: 'auto',
-    elevation: 4,
-  },
-  kakaoText: {
-    fontSize: 15,
-    fontFamily: 'Pretendard-Bold',
-    color: colors.BLACK,
-    alignSelf: 'center',
-  },
-  naverText: {
-    fontSize: 15,
-    fontFamily: 'Pretendard-Bold',
-    color: colors.WHITE,
-    alignSelf: 'center',
-  },
-  kakao: {
-    backgroundColor: '#FEE500',
-  },
-  naver: {
-    backgroundColor: '#03C75A',
-  },
-  google: {
-    borderColor: '#4285F4',
-    borderWidth: 1,
-    alignItems: 'center',
-    gap: 20,
-    backgroundColor: colors.WHITE,
-  },
-  googleImg: {
-    width: 25,
-    height: 25,
-  },
-  googleText: {
-    fontSize: 15,
-    fontFamily: 'Pretendard-Bold',
-    color: colors.BLACK,
-    alignSelf: 'center',
-  },
-  ImgArea: {
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'space-between',
+      alignContent: 'center',
+      borderColor: 'red',
+      backgroundColor: colors[theme].WHITE,
+    },
+    mainArea: {
+      flex: 0.9,
+      justifyContent: 'flex-end',
+    },
+    btnArea: {
+      marginVertical: 20,
+      gap: 10,
+    },
+    btn: {
+      height: 40,
+      width: 250,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      borderRadius: 10,
+      margin: 'auto',
+      elevation: 4,
+    },
+    kakaoText: {
+      fontSize: 15,
+      fontFamily: 'Pretendard-Bold',
+      color: colors[theme].BLACK,
+      alignSelf: 'center',
+    },
+    naverText: {
+      fontSize: 15,
+      fontFamily: 'Pretendard-Bold',
+      color: colors[theme].WHITE,
+      alignSelf: 'center',
+    },
+    kakao: {
+      backgroundColor: '#FEE500',
+    },
+    naver: {
+      backgroundColor: '#03C75A',
+    },
+    google: {
+      borderColor: '#4285F4',
+      borderWidth: 1,
+      alignItems: 'center',
+      gap: 20,
+      backgroundColor: colors[theme].WHITE,
+    },
+    googleImg: {
+      width: 25,
+      height: 25,
+    },
+    googleText: {
+      fontSize: 15,
+      fontFamily: 'Pretendard-Bold',
+      color: colors[theme].BLACK,
+      alignSelf: 'center',
+    },
+    ImgArea: {
+      position: 'relative',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });
 
 export default LoginPage;

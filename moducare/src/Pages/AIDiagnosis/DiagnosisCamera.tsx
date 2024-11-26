@@ -13,6 +13,8 @@ import {colors} from '../../constants/colors';
 import usePermission from '../../hook/usePermission';
 import {usePopup} from '../../hook/usePopup';
 import PopupModal from '../../Components/Common/PopupModal';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 const DiagnosisCamera = ({navigation}: {navigation: any}) => {
   const {checkPermission} = usePermission('CAM');
@@ -101,6 +103,9 @@ const DiagnosisCamera = ({navigation}: {navigation: any}) => {
     setImageUri(null);
   };
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
+
   return (
     <SafeAreaView style={styles.container}>
       <CustomText label="두피가 잘 나오게 사진을 찍어주세요." size={20} />
@@ -160,63 +165,65 @@ const DiagnosisCamera = ({navigation}: {navigation: any}) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 10,
-  },
-  cameraArea: {
-    borderWidth: 1,
-    borderColor: colors.WHITE,
-    width: '100%',
-    height: 300,
-    marginVertical: 10,
-    justifyContent: 'center',
-    alignItems: 'center', // 카메라 영역 가운데 정렬
-  },
-  cameraStyle: {
-    width: '100%',
-    height: '100%',
-    borderWidth: 1,
-  },
-  BtnArea: {
-    width: 80,
-    height: 80,
-    borderWidth: 8,
-    borderRadius: 50,
-    borderColor: colors.MAIN,
-    backgroundColor: colors.WHITE,
-    marginTop: 50,
-    elevation: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  capturedImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover', // 이미지 크기에 맞게 조정
-  },
-  PhotoBtnArea: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 50,
-    marginTop: 50,
-    elevation: 4,
-  },
-  zoomArea: {
-    width: 300,
-    height: 10,
-    backgroundColor: colors.WHITE_GRAY,
-  },
-  zoomTest: {
-    backgroundColor: colors.MAIN,
-    height: 10,
-    borderRadius: 10,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 10,
+    },
+    cameraArea: {
+      borderWidth: 1,
+      borderColor: colors[theme].WHITE,
+      width: '100%',
+      height: 300,
+      marginVertical: 10,
+      justifyContent: 'center',
+      alignItems: 'center', // 카메라 영역 가운데 정렬
+    },
+    cameraStyle: {
+      width: '100%',
+      height: '100%',
+      borderWidth: 1,
+    },
+    BtnArea: {
+      width: 80,
+      height: 80,
+      borderWidth: 8,
+      borderRadius: 50,
+      borderColor: colors[theme].MAIN,
+      backgroundColor: colors[theme].WHITE,
+      marginTop: 50,
+      elevation: 4,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    capturedImage: {
+      width: '100%',
+      height: '100%',
+      resizeMode: 'cover', // 이미지 크기에 맞게 조정
+    },
+    PhotoBtnArea: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 50,
+      marginTop: 50,
+      elevation: 4,
+    },
+    zoomArea: {
+      width: 300,
+      height: 10,
+      backgroundColor: colors[theme].WHITE_GRAY,
+      borderRadius: 10,
+    },
+    zoomTest: {
+      backgroundColor: colors[theme].MAIN,
+      height: 10,
+      borderRadius: 10,
+    },
+  });
 
 export default DiagnosisCamera;

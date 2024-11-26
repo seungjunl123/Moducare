@@ -7,6 +7,8 @@ import {
   Dimensions,
 } from 'react-native';
 import {colors} from '../../constants/colors';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 
 interface CustomButtomProps extends PressableProps {
   label: string;
@@ -23,6 +25,8 @@ const CustomButtom = ({
   inValid = false,
   ...props
 }: CustomButtomProps) => {
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
   return (
     <Pressable
       disabled={inValid}
@@ -38,52 +42,53 @@ const CustomButtom = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: 10,
-    justifyContent: 'center',
-    marginHorizontal: 'auto',
-  },
-  inVaild: {
-    opacity: 0.5,
-  },
-  filled: {
-    backgroundColor: colors.MAIN,
-  },
-  outlined: {
-    borderColor: colors.MAIN,
-    borderWidth: 3,
-  },
-  large: {
-    width: '100%',
-    paddingVertical: deviceHeight > 700 ? 15 : 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  medium: {
-    width: '50%',
-    paddingVertical: deviceHeight > 700 ? 12 : 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  small: {
-    width: '30%',
-    paddingVertical: deviceHeight > 700 ? 12 : 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    fontSize: 20,
-    fontWeight: '100',
-  },
-  filledText: {
-    color: colors.WHITE,
-    fontFamily: 'Pretendard-SemiBold',
-  },
-  outlinedText: {
-    color: colors.MAIN,
-    fontFamily: 'Pretendard-SemiBold',
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      borderRadius: 10,
+      justifyContent: 'center',
+      marginHorizontal: 'auto',
+    },
+    inVaild: {
+      opacity: 0.5,
+    },
+    filled: {
+      backgroundColor: colors[theme].MAIN,
+    },
+    outlined: {
+      borderColor: colors[theme].MAIN,
+      borderWidth: 3,
+    },
+    large: {
+      width: '100%',
+      paddingVertical: deviceHeight > 700 ? 15 : 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    medium: {
+      width: '50%',
+      paddingVertical: deviceHeight > 700 ? 12 : 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    small: {
+      width: '30%',
+      paddingVertical: deviceHeight > 700 ? 12 : 8,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    text: {
+      fontSize: 20,
+      fontWeight: '100',
+    },
+    filledText: {
+      color: '#fff',
+      fontFamily: 'Pretendard-SemiBold',
+    },
+    outlinedText: {
+      color: '#fff',
+      fontFamily: 'Pretendard-SemiBold',
+    },
+  });
 
 export default CustomButtom;

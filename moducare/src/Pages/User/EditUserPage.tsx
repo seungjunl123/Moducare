@@ -12,6 +12,8 @@ import {putMember} from '../../api/login-api';
 import {getEncryptStorage, setEncryptStorage} from '../../util';
 import PopupModal from '../../Components/Common/PopupModal';
 import {usePopup} from '../../hook/usePopup';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
 const WIDTH = Dimensions.get('window').width;
 
 type userInfo = {
@@ -80,6 +82,9 @@ export default function EditUserPage() {
     }, []),
   );
 
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.infoContainer}>
@@ -140,58 +145,59 @@ export default function EditUserPage() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    gap: 80,
-  },
-  infoContainer: {
-    height: 50,
-    gap: 10,
-  },
-  input: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: colors.GRAY,
-    borderRadius: 10,
-    width: WIDTH * 0.8,
-  },
-  buttonContainer: {
-    marginTop: 20,
-    width: WIDTH * 0.7,
-  },
-  calenderContainer: {
-    width: WIDTH * 0.8,
-    height: 50,
-    borderWidth: 1,
-    borderColor: colors.GRAY,
-    borderRadius: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  calenderText: {
-    marginStart: 10,
-    color: colors.BLACK,
-  },
-  calenderIcon: {
-    marginEnd: 10,
-  },
-  calenderButton: {
-    marginTop: 10,
-    alignSelf: 'center',
-    position: 'absolute',
-    bottom: 20,
-  },
-  errorText: {
-    marginStart: 10,
-    color: colors.NEGATIVE,
-    fontSize: 10,
-  },
-  bottom: {
-    marginBottom: 50,
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors[theme].WHITE,
+      gap: 80,
+    },
+    infoContainer: {
+      height: 50,
+      gap: 10,
+    },
+    input: {
+      padding: 10,
+      borderWidth: 1,
+      borderColor: colors[theme].GRAY,
+      borderRadius: 10,
+      width: WIDTH * 0.8,
+    },
+    buttonContainer: {
+      marginTop: 20,
+      width: WIDTH * 0.7,
+    },
+    calenderContainer: {
+      width: WIDTH * 0.8,
+      height: 50,
+      borderWidth: 1,
+      borderColor: colors[theme].GRAY,
+      borderRadius: 10,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    calenderText: {
+      marginStart: 10,
+      color: colors[theme].BLACK,
+    },
+    calenderIcon: {
+      marginEnd: 10,
+    },
+    calenderButton: {
+      marginTop: 10,
+      alignSelf: 'center',
+      position: 'absolute',
+      bottom: 20,
+    },
+    errorText: {
+      marginStart: 10,
+      color: colors[theme].NEGATIVE,
+      fontSize: 10,
+    },
+    bottom: {
+      marginBottom: 50,
+    },
+  });

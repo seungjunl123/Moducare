@@ -10,7 +10,9 @@ import {usePopup} from '../../hook/usePopup';
 import PopupModal from '../../Components/Common/PopupModal';
 import {useFocusEffect} from '@react-navigation/native';
 import useChallenge from '../../hook/useChallenge';
-import {setEncryptStorage} from '../../util';
+import useThemeStorage from '../../hook/useThemeStorage';
+import {ThemeMode} from '../../types/common';
+
 
 export default function ChallengeListPage({navigation}) {
   const {
@@ -40,6 +42,9 @@ export default function ChallengeListPage({navigation}) {
       getAllList.refetch();
     }, []),
   );
+
+  const {theme} = useThemeStorage();
+  const styles = styling(theme);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -136,41 +141,42 @@ export default function ChallengeListPage({navigation}) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-    paddingHorizontal: 20,
-  },
-  mainArea: {
-    flex: 1,
-  },
-  topArea: {
-    gap: 10,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignContent: 'center',
-    marginBottom: 20,
-  },
-  ListArea: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-    borderColor: colors.WHITE_GRAY,
-    paddingTop: 20,
-    borderWidth: 1,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    elevation: 4,
-  },
-  getListArea: {
-    paddingVertical: 20,
-    textAlign: 'center',
-    fontFamily: 'Pretendard-Bold',
-    fontSize: 15,
-    color: colors.DARK_GRAY,
-  },
-  nullList: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+const styling = (theme: ThemeMode) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+      paddingHorizontal: 20,
+    },
+    mainArea: {
+      flex: 1,
+    },
+    topArea: {
+      gap: 10,
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      alignContent: 'center',
+      marginBottom: 20,
+    },
+    ListArea: {
+      flex: 1,
+      backgroundColor: colors[theme].WHITE,
+      borderColor: colors[theme].WHITE_GRAY,
+      paddingTop: 20,
+      borderWidth: 1,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      elevation: 4,
+    },
+    getListArea: {
+      paddingVertical: 20,
+      textAlign: 'center',
+      fontFamily: 'Pretendard-Bold',
+      fontSize: 15,
+      color: colors[theme].DARK_GRAY,
+    },
+    nullList: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  });
