@@ -1,5 +1,6 @@
 package world.moducare.global.config.oauth;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -9,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 @RequiredArgsConstructor
 public class CustomOAuth2User implements OAuth2User {
 
@@ -36,7 +38,6 @@ public class CustomOAuth2User implements OAuth2User {
     public Long getId() {
         return member.getId();
     }
-
 
     public String getEmail() {
         return member.getEmail();

@@ -34,8 +34,9 @@ public class StressResultService {
         // ResponseDto로 변환
         return recentResults.stream()
                 .map(stressResult -> StressResultResponseDto.builder()
-                        .date(stressResult.getCreatedAt().toString())
-                        .score(String.valueOf(stressResult.getScore()))
+                        .value(stressResult.getScore())
+                        .label(stressResult.getCreatedAt().toString())
+                        .dataPointText(String.valueOf(stressResult.getScore()))
                         .build())
                 .collect(Collectors.toList());
     }

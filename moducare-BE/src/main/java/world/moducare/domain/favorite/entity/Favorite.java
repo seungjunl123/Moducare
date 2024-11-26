@@ -2,6 +2,7 @@ package world.moducare.domain.favorite.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,6 +27,12 @@ public class Favorite {
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime createdAt;
+
+    @Builder
+    public Favorite(ChallengeFeed feed, Member member) {
+        this.feed = feed;
+        this.member = member;
+    }
 
     @PrePersist
     public void prePersist() {

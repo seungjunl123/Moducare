@@ -7,7 +7,8 @@ import lombok.Getter;
 @Getter
 public class StressResultResponseDto {
 
-    private String date;  // 날짜
-    private String score; // 점수
+    private int value; // 점수
+    private String label;  // 날짜
+    private String dataPointText; // 점수 (toString)
 
 }

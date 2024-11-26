@@ -3,46 +3,54 @@ package world.moducare.domain.member.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import world.moducare.domain.member.dto.LogoutRequest;
 import world.moducare.domain.member.dto.ModifyRequest;
+import world.moducare.domain.member.dto.SocialLoginRequest;
 import world.moducare.domain.member.dto.SocialLoginResponse;
-import world.moducare.domain.member.dto.TokenRequest;
 import world.moducare.domain.member.entity.Member;
 import world.moducare.domain.member.service.MemberService;
+import world.moducare.global.config.jwt.TokenProvider;
 import world.moducare.global.config.oauth.CustomOAuth2User;
+import world.moducare.global.config.oauth.OAuth2UserCustomService;
+
+import java.time.Duration;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/members")
-@Tag(name = "Member API", description = "시민 사용자 관련 API")
+@RequestMapping("/api/members")
+@Tag(name = "회원 관리 컨트롤러", description = "사용자 관련 API")
 public class MemberController {
     private final MemberService memberService;
+    private final TokenProvider tokenProvider;
+    private final OAuth2UserCustomService oAuth2UserCustomService;
+    public static final Duration ACCESS_TOKEN_DURATION = Duration.ofHours(2);
+    public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
 
-    @PostMapping("/fcm")
-    @Operation(summary = "토큰 전송", description = "시민 사용자의 fcm 토큰과 refresh 토큰 전송")
-    public ResponseEntity<SocialLoginResponse> saveTokens(@AuthenticationPrincipal CustomOAuth2User principal, @RequestBody TokenRequest tokenRequest) {
-        if (principal == null) {
-            System.out.println("nothing!!");
-        }
-        SocialLoginResponse socialLoginResponse = memberService.saveFcmAndRefresh(principal.getId(), tokenRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(socialLoginResponse);
+    @PostMapping("/login/{registerId}")
+    @Operation(summary = "소셜 로그인", description = "프론트엔드로부터 소셜 액세스 토큰을 받아 사용자 인증을 처리합니다.")
+    public ResponseEntity<SocialLoginResponse> socialLogin(@RequestBody SocialLoginRequest socialLoginRequest,
+                                                           @PathVariable String registerId) {
+        String accessToken = socialLoginRequest.getAccessToken();
+        CustomOAuth2User oAuth2User = oAuth2UserCustomService.loadUser(accessToken, registerId);
+
+        // JWT 액세스 및 리프레시 토큰 생성
+        String jwtToken = tokenProvider.generateMemberToken(oAuth2User.getMember(), ACCESS_TOKEN_DURATION);
+        String refreshToken = tokenProvider.generateMemberToken(oAuth2User.getMember(), REFRESH_TOKEN_DURATION);
+
+        memberService.saveMemberAndToken(oAuth2User.getMember(), socialLoginRequest.getFcmToken(), refreshToken);
+
+        // 응답 생성
+        SocialLoginResponse response = memberService.getSocialMember(oAuth2User.getMember(), jwtToken);
+        return ResponseEntity.ok(response);
     }
 
-    // 로그아웃 API
     @PostMapping("/logout")
     @Operation(summary = "로그아웃", description = "로그아웃입니다.")
     public ResponseEntity<String> logout(@AuthenticationPrincipal CustomOAuth2User principal) {
-
-        Long id = principal.getId(); // 현재 인증된 사용자의 이메일 가져오기
-        Member member = memberService.findById(id);
-        memberService.logout(member);
-
-        // 로그아웃 로직 (SecurityContext 초기화 등)
+        memberService.logout(principal.getMember());
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok("Logout successful");
     }

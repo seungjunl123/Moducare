@@ -1,11 +1,15 @@
 package world.moducare.domain.challengefeed.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import world.moducare.domain.challenge.entity.Challenge;
 import world.moducare.domain.challengefeed.entity.ChallengeFeed;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 public interface ChallengeFeedRepository extends JpaRepository<ChallengeFeed, Long> {
 
@@ -15,5 +19,7 @@ public interface ChallengeFeedRepository extends JpaRepository<ChallengeFeed, Lo
             "AND DATE(cf.createdAt) = :today")
     boolean existsByChallengeAndMemberAndToday(@Param("memberId") Long memberId,
                                                @Param("challengeId") Long challengeId,
-                                               @Param("today")LocalDate today);
+                                               @Param("today") LocalDate today);
+
+    Optional<List<ChallengeFeed>> findAllByChallengeOrderByCreatedAtDesc(Challenge challenge, Pageable pageable);
 }

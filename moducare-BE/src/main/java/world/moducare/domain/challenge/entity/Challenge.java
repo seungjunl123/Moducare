@@ -1,6 +1,7 @@
 package world.moducare.domain.challenge.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "challenge")
 public class Challenge {
     @Id
@@ -32,7 +34,7 @@ public class Challenge {
     @ColumnDefault(value = "1")
     private int headCount = 1;
 
-    @Column(name = "img_src", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "img_src", columnDefinition = "TEXT")
     private String image;
 
     @CreatedDate

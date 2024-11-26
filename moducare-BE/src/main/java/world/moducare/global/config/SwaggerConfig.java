@@ -6,13 +6,18 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 
 import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
+
+    @Value("${BASE_URL}")
+    private String BASE_URL;
 
     @Bean
     public OpenAPI openAPI() {
@@ -30,10 +35,15 @@ public class SwaggerConfig {
                 )
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .servers(List.of(
-                        new Server().url("http://localhost:8080/api/swagger-ui/index.html").description("Production server")  // HTTPS로 설정
+                        new Server().url(BASE_URL).description("SSAFY server")
                 ))
                 .info(new Info().title("MODU CARE Swagger")
                         .description("탈모 두피 케어 플랫폼 MODU REST API")
-                        .version("3.0.3")); // OpenAPI 버전 정의
+                        .version("3.0.3"));
+    }
+
+    @Bean
+    ForwardedHeaderFilter forwardedHeaderFilter() {
+        return new ForwardedHeaderFilter();
     }
 }

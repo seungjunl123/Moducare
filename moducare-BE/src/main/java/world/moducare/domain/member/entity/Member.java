@@ -13,7 +13,9 @@ import world.moducare.domain.diary.entity.HeadDiary;
 import world.moducare.domain.favorite.entity.Favorite;
 import world.moducare.domain.mychallenge.entity.MyChallenge;
 import world.moducare.domain.notification.entity.Notification;
+import world.moducare.domain.product.entity.LatestProduct;
 import world.moducare.domain.stress.entity.StressResult;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -22,7 +24,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "member")
@@ -47,10 +48,6 @@ public class Member {
     @Column(name = "refresh_token", columnDefinition = "TEXT")
     private String refreshToken;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private DeviceType type;
-
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime createdAt;
@@ -58,6 +55,12 @@ public class Member {
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime updatedAt;
+
+    @Builder
+    public Member(String email, String name) {
+        this.email = email;
+        this.name = name;
+    }
 
     @PrePersist
     public void prePersist() {
@@ -71,6 +74,9 @@ public class Member {
     }
 
     // relationships
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private LatestProduct latestProduct;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<StressResult> stressResults = new ArrayList<>();
 
@@ -95,17 +101,10 @@ public class Member {
     public void updateRefreshAndFcm(String newRefreshToken, String newFcmToken) {
         this.refreshToken = newRefreshToken;
         this.fcmToken = newFcmToken;
-        this.type = DeviceType.PHONE;
     }
 
-    public Member updateRefresh(String newRefreshToken) {
+    public void updateRefresh(String newRefreshToken) {
         this.refreshToken = newRefreshToken;
-        return this;
-    }
-
-    public Member updateName(String name) {
-        this.name = name;
-        return this;
     }
 
     public void logout() {
@@ -114,7 +113,11 @@ public class Member {
     }
 
     public void modify(String name, String birth) {
-        this.name=name;
-        this.birth=birth;
+        this.name = name;
+        this.birth = birth;
+    }
+
+    public Member findMember() {
+        return this;
     }
 }

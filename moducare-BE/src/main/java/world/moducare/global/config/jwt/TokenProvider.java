@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import world.moducare.domain.member.entity.Member;
 import world.moducare.domain.member.service.MemberService;
 import world.moducare.global.config.oauth.CustomOAuth2User;
-import world.moducare.global.exception.ErrorCode;
-import world.moducare.global.exception.RestApiException;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -27,7 +25,7 @@ public class TokenProvider {
 
     public String generateMemberToken(Member member, Duration expiredAt) {
         Date now = new Date();
-        return makeToken(new Date(now.getTime()+expiredAt.toMillis()), member.getEmail(), member.getId());
+        return makeToken(new Date(now.getTime() + expiredAt.toMillis()), member.getEmail(), member.getId());
     }
 
     // JWT 토큰 생성 메서드
@@ -41,45 +39,12 @@ public class TokenProvider {
                 .setIssuedAt(now) // 내용 iat 발급일시 : 현재 시간
                 .setExpiration(expiry) // 내용 exp 만료 일시 : expiry 멤버 변숫값
                 .setSubject(email) // 내용 sub 토큰 제목 : 유저의 이메일
-                .claim("id",id) // 클레임 id : 유저 ID
+                .claim("id", id) // 클레임 id : 유저 ID
                 // 서명 : 비밀값과 함께 해시값을 HS256 방식으로 암호화
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
                 .compact();
     }
 
-//    private String makeToken(Date expiry, String email, Long id, String type) {
-//        if (email == null || id == null || type == null) {
-//            throw new RestApiException(ErrorCode.UNAUTHORIZED_REQUEST);
-//        }
-//
-//        return Jwts.builder()
-//                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
-//                .setIssuer(jwtProperties.getIssuer())
-//                .setIssuedAt(new Date())
-//                .setExpiration(expiry)
-//                .setSubject(email)
-//                .claim("id", id)
-//                .claim("type", type)
-//                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey())
-//                .compact();
-//    }
-
-
-    // JWT 토큰 유효성 검증 메서드
-//    public boolean validToken(String token) {
-//        try{
-//            // 프로퍼티즈 파일에 선언한 비밀값과 함께 토큰 복호화 진행
-//            Jwts.parser()
-//                    .setSigningKey(jwtProperties.getSecretKey()) // 비밀값으로 복호화
-//                    .parseClaimsJws(token);
-//
-//            System.out.println("Token is valid");
-//            return true;
-//        } catch (Exception e) { // 복호화 과정에서 에러가 나면 유효하지 않은 토큰
-//            System.out.println("Invalid Token: " + e.getMessage());
-//            return false;
-//        }
-//    }
     public boolean validToken(String token) {
         try {
             Jwts.parser()
@@ -92,18 +57,6 @@ public class TokenProvider {
             return false;
         }
     }
-
-
-//    // 토큰 기반으로 인증 정보를 가져오는 메서드
-//    public Authentication getAuthentication(String token) {
-//        Claims claims = getClaims(token);
-//        Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
-//
-//        // 클레임 정보를 반환받아 사용자 이메일이 들어 있는 토큰 제목 sub와 토큰 기반으로 인증 정보 생성
-//        return new UsernamePasswordAuthenticationToken(new org.springframework.
-//                security.core.userdetails.User(claims.getSubject
-//                (), "", authorities),token, authorities);
-//    }
 
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token);
@@ -121,13 +74,6 @@ public class TokenProvider {
                 authorities
         );
     }
-//
-//
-//    // 토큰 기반으로 유저 ID를 가져오는 메서드
-//    public Long getUserId(String token) {
-//        Claims claims = getClaims(token);
-//        return claims.get("id",Long.class);
-//    }
 
     // 비밀값으로 토큰을 복호화한 다음 클레임을 가져오는 메서드
     private Claims getClaims(String token) {

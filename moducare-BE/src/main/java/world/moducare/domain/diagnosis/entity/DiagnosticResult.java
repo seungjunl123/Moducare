@@ -1,11 +1,10 @@
 package world.moducare.domain.diagnosis.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import world.moducare.domain.member.entity.Member;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -24,30 +23,56 @@ public class DiagnosticResult {
     @Column(name = "img_src", nullable = false, columnDefinition = "TEXT")
     private String image;
 
+    @Setter
     @Column(name = "advice", nullable = false, columnDefinition = "TEXT")
     private String advice;
 
     @Column(name = "hairloss", nullable = false)
-    private float hairLoss;
+    private int hairLoss;
 
     @Column(name = "dandruff", nullable = false)
-    private float dandruff;
+    private int dandruff;
 
     @Column(name = "inflammatory", nullable = false)
-    private float inflammatory;
+    private int inflammatory;
 
     @Column(name = "erythema", nullable = false)
-    private float erythema;
+    private int erythema;
 
     @Column(name = "sebum", nullable = false)
-    private float sebum;
+    private int sebum;
 
     @Column(name = "deadskin", nullable = false)
-    private float deadSkin;
+    private int deadSkin;
+
+    @Column(name = "comparison", nullable = false)
+    private int comparison;
+
+    @Column(name = "average", nullable = false)
+    private int average;
+
+    @Column(name = "result", nullable = false, columnDefinition = "TEXT")
+    private String result;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime createdAt;
+
+    @Builder
+    public DiagnosticResult(String image, String advice, int hairLoss, int dandruff, int inflammatory, int erythema, int sebum, int deadSkin, int comparison, int average, String result, Member member) {
+        this.image = image;
+        this.advice = advice;
+        this.hairLoss = hairLoss;
+        this.dandruff = dandruff;
+        this.inflammatory = inflammatory;
+        this.erythema = erythema;
+        this.sebum = sebum;
+        this.deadSkin = deadSkin;
+        this.comparison = comparison;
+        this.average = average;
+        this.result = result;
+        this.member = member;
+    }
 
     @PrePersist
     public void prePersist() {
@@ -58,4 +83,5 @@ public class DiagnosticResult {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_idx", nullable = false)
     private Member member;
+
 }

@@ -2,10 +2,12 @@ package world.moducare.domain.diary.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import world.moducare.domain.member.entity.Member;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -31,6 +33,13 @@ public class HeadDiary {
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime createdAt;
+
+    @Builder
+    public HeadDiary(HeadType type, String image, Member member) {
+        this.type = type;
+        this.image = image;
+        this.member = member;
+    }
 
     @PrePersist
     public void prePersist() {

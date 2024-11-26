@@ -24,28 +24,38 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final static String TOKEN_PREFIX = "Bearer ";
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/v3/api-docs")
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/swagger-ui.html")
+                || path.startsWith("/api/tokens/refresh")
+                || path.startsWith("/api/health-check")
+                || path.startsWith("/swagger-resources")
+                || path.startsWith("/webjars/")
+                || path.startsWith("/api/v3/api-docs");
+    }
 
-//        // 요청 경로 확인
-//        String requestURI = request.getRequestURI();
-//
-//        // 로그인 또는 토큰 재발급 요청이면 토큰 검증을 하지 않음
-//        if (requestURI.equals("/tokens/refresh") || requestURI.equals("/health-check")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // 요청 경로 확인
+        String requestURI = request.getRequestURI();
+        // 로그인 또는 토큰 재발급 요청이면 토큰 검증을 하지 않음
+        if (requestURI.equals("/api/members/login/kakao")
+                || requestURI.equals("/api/members/login/naver")
+                || requestURI.equals("/api/members/login/google")
+                || requestURI.equals("/api/tokens/refresh")
+                || requestURI.equals("/api/login/oauth2/code/kakao")) { // Exclude OAuth callback path
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // 요청 헤더의 Authorization 키의 값 조회
-        String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
         // 가져온 값에서 접두사 제거
-        String token = getAccessToken(authorizationHeader);
-
-        System.out.println("Authorization Header: " + authorizationHeader);
-        System.out.println("Token: " + token);
-
+        String token = getAccessToken(request.getHeader(HEADER_AUTHORIZATION));
         // 가져온 토큰이 유효한지 확인하고, 유효한 때는 인증 정보 설정
         if (token != null && tokenProvider.validToken(token)) {
-            System.out.println("token vaild");
             Authentication authentication = tokenProvider.getAuthentication(token); // 인증 정보를 가져오면 유저 객체가 반환된다.
             // 유저 객체에는 유저 이름과 권한 목록과 같은 인증 정보가 포함
             SecurityContextHolder.getContext().setAuthentication(authentication);

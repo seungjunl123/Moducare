@@ -18,14 +18,14 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "마이 챌린지 컨트롤러", description = "마이 챌린지 관련 API")
-@RequestMapping("/my-challenges")
+@RequestMapping("/api/my-challenges")
 public class MyChallengeController {
 
     private final MyChallengeService myChallengeService;
     private final MemberService memberService;
 
     @PostMapping("/{challengeId}/in")
-    @Operation(summary="마이 챌린지 추가 API (챌린지 참여)")
+    @Operation(summary = "마이 챌린지 추가 API (챌린지 참여)")
     public ResponseEntity<Void> addMyChallenge(@AuthenticationPrincipal CustomOAuth2User principal, @PathVariable Long challengeId) {
         Member member = memberService.findById(principal.getId());
         myChallengeService.addMyChallenge(member, challengeId);
