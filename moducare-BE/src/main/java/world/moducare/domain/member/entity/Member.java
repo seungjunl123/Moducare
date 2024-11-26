@@ -75,7 +75,7 @@ public class Member {
 
     // relationships
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
-    private LatestProduct latestProduct = new LatestProduct();
+    private LatestProduct latestProduct;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<StressResult> stressResults = new ArrayList<>();

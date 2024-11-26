@@ -25,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
 @Service
@@ -97,11 +98,15 @@ public class DiagnosticResultService {
         }
 
         String prompt = promptService.makeDiagnosisPrompt(aiResultDto, comparison);
-        String advice = gptService.chat(prompt);
+        // GPT 호출을 비동기로 실행
+        CompletableFuture<String> adviceFuture = CompletableFuture.supplyAsync(() -> gptService.chat(prompt));
+
+//        String prompt = promptService.makeDiagnosisPrompt(aiResultDto, comparison);
+//        String advice = gptService.chat(prompt);
 
         DiagnosticResult diagnosticResult = DiagnosticResult.builder()
                 .image(url)
-                .advice(advice)
+                .advice("")
                 .hairLoss(aiResultDto.getResult()[0])
                 .dandruff(aiResultDto.getResult()[1])
                 .inflammatory(aiResultDto.getResult()[2])
@@ -114,6 +119,17 @@ public class DiagnosticResultService {
                 .member(member)
                 .build();
 
+
+        // GPT 결과 가져오기
+        String advice;
+        try {
+            advice = adviceFuture.get();
+        } catch (Exception e) {
+            advice = "제품 추천을 통해 솔루션을 함께 찾아볼까요?";
+//            throw new RestApiException(ErrorCode.BAD_REQUEST);
+        }
+
+        diagnosticResult.setAdvice(advice);
         diagnosticResultRepository.save(diagnosticResult);
 
         // TODO: 시간형식 확인하기
@@ -126,6 +142,8 @@ public class DiagnosticResultService {
                 .date(formatToCustomString(diagnosticResult.getCreatedAt()))
                 .build();
     }
+
+
 
     // YYYY-MM-DD 오전/오후 HH:MM:SS 형식으로 변환
     public static String formatToCustomString(ZonedDateTime zonedDateTime) {
@@ -146,6 +164,7 @@ public class DiagnosticResultService {
 
         // AI 서버로 요청 전송
         try {
+
             ResponseEntity<AiResultDto> response = restTemplate.exchange(
                     ai_url,
                     HttpMethod.POST,

@@ -58,4 +58,10 @@ public class LatestProduct {
         this.link = link;
         this.member = member;
     }
+
+    public LatestProduct update(String img, String link) {
+        this.imgSrc = img;
+        this.link = link;
+        return this;
+    }
 }

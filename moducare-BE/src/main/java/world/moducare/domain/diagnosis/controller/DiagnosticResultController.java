@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ import java.util.List;
 @Tag(name = "AI 진단 컨트롤러", description = "AI 진단 관련 API")
 public class DiagnosticResultController {
 
+    private static final Logger log = LoggerFactory.getLogger(DiagnosticResultController.class);
     private final MemberService memberService;
     private final DiagnosticResultService diagnosticResultService;
     private final S3Service s3Service;
@@ -55,15 +58,28 @@ public class DiagnosticResultController {
             @Parameter(description = "두피 사진파일", required = true) @RequestParam("file") MultipartFile file
             , @AuthenticationPrincipal CustomOAuth2User user) {
 
+        long startTime = System.currentTimeMillis();
+        log.info("Start time: {}", startTime);
         String url = s3Service.uploadImage(file);
+        long endTime = System.currentTimeMillis();
+        log.info("End time: {}", endTime);
+        log.info("Execution S3 time: {} ms", (endTime - startTime));
         if (url != null) {
             AiResultDto aiResultDto;
             try {
+                startTime = System.currentTimeMillis();
                 aiResultDto = diagnosticResultService.getResultByAI(url);
+                endTime = System.currentTimeMillis();
+                log.info("End time: {}", endTime);
+                log.info("Execution AI time: {} ms", (endTime - startTime));
             } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("두피 이미지가 아닙니다.");
             }
+            startTime = System.currentTimeMillis();
             DiagnosisRequestDto diagnosisRequestDto = diagnosticResultService.diagnoseByAI(user.getMember(), aiResultDto, url);
+            endTime = System.currentTimeMillis();
+            log.info("End time: {}", endTime);
+            log.info("Execution result time: {} ms", (endTime - startTime));
             return ResponseEntity.status(HttpStatus.CREATED).body(diagnosisRequestDto);
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미지 업로드에 문제가 발생했습니다.");
