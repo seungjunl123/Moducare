@@ -18,7 +18,15 @@ import {ThemeMode} from '../../types/common';
 
 const DiagnosisCamera = ({navigation}: {navigation: any}) => {
   const {checkPermission} = usePermission('CAM');
-  const {visible, option, content, showPopup, hidePopup} = usePopup();
+  const {
+    visible,
+    option,
+    content,
+    popupConfirm,
+    popupCancel,
+    showPopup,
+    hidePopup,
+  } = usePopup();
   const [res, setRes] = useState();
   const cameraRef = useRef<Camera>(null);
   const device = useCameraDevice('back');
@@ -148,16 +156,10 @@ const DiagnosisCamera = ({navigation}: {navigation: any}) => {
       <PopupModal
         visible={visible}
         option={option}
-        onClose={() => {
-          if (option === 'confirmMark') {
-            hidePopup();
-            navigation.navigate('aiResult', {
-              type: 'diagnosis',
-              diagnosisResult: res,
-            });
-          }
-        }}
+        onClose={hidePopup}
         content={content}
+        confirm={popupConfirm}
+        cancel={popupCancel}
       />
     </SafeAreaView>
   );

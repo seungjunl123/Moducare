@@ -278,16 +278,6 @@ export default function BottomNavBar({navigation}: {navigation: any}) {
           tabBarButton: () => CustomTabBarButton(),
         }}
       />
-      {/* <Tab.Screen
-        name="AuthStack"
-        component={AuthStackNavigate}
-        options={{
-          tabBarButton: () => null,
-          tabBarStyle: {
-            display: 'none',
-          },
-        }}
-      /> */}
     </Tab.Navigator>
   );
 }

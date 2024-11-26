@@ -50,7 +50,15 @@ const ChallengeWritePage = ({route}) => {
   const {id} = route.params;
   const [challengeContent, setChallengeContent] = React.useState<string>('');
   const [imgConfig, setImgConfig] = React.useState<any>(null);
-  const {visible, option, content, showPopup, hidePopup} = usePopup();
+  const {
+    visible,
+    option,
+    content,
+    showPopup,
+    hidePopup,
+    popupConfirm,
+    popupCancel,
+  } = usePopup();
 
   const openImageLibrary = async () => {
     const images = await launchImageLibrary(options);
@@ -61,7 +69,13 @@ const ChallengeWritePage = ({route}) => {
 
   const imageUpload = async () => {
     if (imgConfig === null) {
-      showPopup({option: 'Alert', content: '사진을 첨부해주세요!'});
+      showPopup({
+        option: 'Alert',
+        content: '사진을 첨부해주세요!',
+        confirm: () => {
+          hidePopup();
+        },
+      });
       return;
     }
     showPopup({option: 'Loading', content: '인증피드 작성 중입니다...'});
@@ -86,10 +100,17 @@ const ChallengeWritePage = ({route}) => {
       showPopup({
         option: 'confirmMark',
         content: '인증피드 작성 완료!',
+        confirm: () => navigation.goBack(),
       });
       // 페이지 전환
     } catch (error) {
-      showPopup({option: 'Alert', content: '인증피드 작성에 실패했습니다!'});
+      showPopup({
+        option: 'Alert',
+        content: '인증피드 작성에 실패했습니다!',
+        confirm: () => {
+          hidePopup();
+        },
+      });
     }
   };
 
@@ -136,15 +157,10 @@ const ChallengeWritePage = ({route}) => {
       <PopupModal
         visible={visible}
         option={option}
-        onClose={() => {
-          if (option === 'confirmMark') {
-            hidePopup();
-            navigation.goBack();
-          } else {
-            hidePopup();
-          }
-        }}
+        onClose={hidePopup}
         content={content}
+        confirm={popupConfirm}
+        cancel={popupCancel}
       />
     </SafeAreaView>
   );

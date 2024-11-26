@@ -13,8 +13,17 @@ import useChallenge from '../../hook/useChallenge';
 import useThemeStorage from '../../hook/useThemeStorage';
 import {ThemeMode} from '../../types/common';
 
+
 export default function ChallengeListPage({navigation}) {
-  const {visible, option, content, showPopup, hidePopup} = usePopup();
+  const {
+    visible,
+    option,
+    content,
+    showPopup,
+    hidePopup,
+    popupConfirm,
+    popupCancel,
+  } = usePopup();
   // const [allList, setAllList] = React.useState<getListType[] | []>([]);
   const [page, setPage] = React.useState(10);
 
@@ -108,6 +117,9 @@ export default function ChallengeListPage({navigation}) {
                     showPopup({
                       option: 'Alert',
                       content: '마지막 페이지 입니다.',
+                      confirm: () => {
+                        hidePopup();
+                      },
                     });
                   }
                 }}>
@@ -122,6 +134,8 @@ export default function ChallengeListPage({navigation}) {
         onClose={hidePopup}
         content={content}
         option={option}
+        confirm={popupConfirm}
+        cancel={popupCancel}
       />
     </SafeAreaView>
   );
